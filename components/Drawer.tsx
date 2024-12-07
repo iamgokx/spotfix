@@ -8,7 +8,25 @@ import hero from "../assets/images/hero.jpg";
 import gradient from "../assets/images/gradients/profileGradient.png";
 import { ImageBackground, Image, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { getStoredData } from "../hooks/useJwt";
+import { useEffect } from "react";
+import { useState } from "react";
 const CustomDrawer = (props: any) => {
+  const [user, setuser] = useState({
+    name: "",
+    email: "",
+  });
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+  const fetchUserData = async () => {
+    const tokenFromStorage = await getStoredData();
+    setuser({
+      name: tokenFromStorage?.name || "",
+      email: tokenFromStorage?.email || "",
+    });
+    console.log("home data", user);
+  };
   return (
     <View style={styles.drawerContainer}>
       <View style={[styles.headerContainer]}>
@@ -24,11 +42,11 @@ const CustomDrawer = (props: any) => {
           }}>
           <View style={{ width: "90%", marginBottom: 10 }}>
             <Image source={hero} style={styles.profileImage} />
-            <Text className="text-white text-2xl font-extrabold">
-              Gokul Lekhwar
+            <Text className="text-white text-2xl font-extrabold" style={{textTransform : 'capitalize'}}>
+              {user.name}
             </Text>
             <Text className="text-white text-l font-extralight">
-              lekhwargokul84@gmail.com
+              {user.email}
             </Text>
           </View>
         </ImageBackground>

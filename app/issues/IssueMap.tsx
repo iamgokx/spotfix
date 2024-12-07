@@ -117,7 +117,7 @@ const IssueMap = ({ goToAddressScreen }: any) => {
 
           <TouchableOpacity
             style={styles.confirmButton}
-            onPress={handleConfirmAddressClick}>
+            onPress={() => router.push("/issues/issueLocation")}>
             <Text style={styles.confirmButtonText}>Confirm Address</Text>
           </TouchableOpacity>
         </View>
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     position: "absolute",
-    bottom: "10%",
+    bottom: "2%",
     width: "90%",
     height: "25%",
     left: 20,

@@ -15,13 +15,14 @@ import { useVideoPlayer, VideoView } from "expo-video";
 import { useIssueContext } from "@/context/IssueContext";
 import * as ImagePicker from "expo-image-picker";
 import LottieView from "lottie-react-native";
+import { useRouter } from "expo-router";
 import uploadMedia from "../../assets/images/issues/uploadMedia.json";
 export default function IssueMedia({
   goToAddressScreen,
   goToSavingScreen,
 }: any) {
   const { details, setDetails, addMedia, removeMedia } = useIssueContext();
-
+  const router = useRouter();
   const pickMedia = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images", "videos"],
@@ -65,12 +66,12 @@ export default function IssueMedia({
 
       <View style={styles.dataContainer}>
         <TouchableOpacity style={styles.dropContainer} onPress={pickMedia}>
-        <LottieView
-                source={uploadMedia}
-                autoPlay
-                loop
-                style={{ width: 200, height: 200, marginBottom : -30 }}
-              />
+          <LottieView
+            source={uploadMedia}
+            autoPlay
+            loop
+            style={{ width: 200, height: 200, marginBottom: -30 }}
+          />
           <Text>Upload Media</Text>
         </TouchableOpacity>
 
@@ -98,12 +99,12 @@ export default function IssueMedia({
         <View style={styles.btnMainContainer}>
           <TouchableOpacity
             style={styles.backBtnContainer}
-            onPress={goToAddressScreen}>
+            onPress={() => router.push("/issues/issueLocation")}>
             <Text style={styles.backButton}>Back</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.btnContainer}
-            onPress={goToSavingScreen}>
+            onPress={() => router.push("/issues/SaveIssue")}>
             <Text style={styles.nextButton}>Next</Text>
           </TouchableOpacity>
         </View>

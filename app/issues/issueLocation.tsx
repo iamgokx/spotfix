@@ -49,7 +49,9 @@ const IssueLocation = ({
       </View>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={styles.dataContainer}>
-          <TouchableOpacity onPress={goToMapScreen} style={styles.mapContainer}>
+          <TouchableOpacity
+            onPress={() => router.push("/issues/IssueMap")}
+            style={styles.mapContainer}>
             <Text className="text-white text-xl" style={styles.mapText}>
               Drop Pin On Map
             </Text>
@@ -101,12 +103,12 @@ const IssueLocation = ({
           <View style={styles.btnMainContainer}>
             <TouchableOpacity
               style={styles.backBtnContainer}
-              onPress={goToTitleScreen}>
+              onPress={() => router.push("/issues/issue")}>
               <Text style={styles.backButton}>Back</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.btnContainer}
-              onPress={goToMediaScreen}>
+              onPress={() => router.push("/issues/IssueMedia")}>
               <Text style={styles.nextButton}>Next</Text>
             </TouchableOpacity>
           </View>

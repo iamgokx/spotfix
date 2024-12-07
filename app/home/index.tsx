@@ -32,7 +32,7 @@ const MyDrawer = () => {
         drawerContent={(props) => <CustomDrawer {...props} />}
         screenOptions={{
           drawerType: "front",
-          drawerHideStatusBarOnOpen: true,
+          // drawerHideStatusBarOnOpen: true,
           drawerStyle: {
             backgroundColor: "#f5f5f5",
             width: 300,

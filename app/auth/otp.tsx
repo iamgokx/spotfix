@@ -63,7 +63,7 @@ const Otp = () => {
 
     const user = await VerfyOtp(details.email, otpValue.join(""));
 
-    if (user.data.userStatus) {
+    if (user) {
       console.log("OTP Successfully Verified:", user.data.message);
     } else {
       setotpError(true);

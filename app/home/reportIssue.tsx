@@ -1,59 +1,48 @@
-import Issue from "../issues/issue";
-import IssueLocation from "../issues/issueLocation";
-import IssueMedia from "../issues/IssueMedia";
-import IssueMap from "../issues/IssueMap";
-import SaveIssue from "../issues/SaveIssue";
-import { View } from "react-native";
-import { useState } from "react";
-
-const REPORT_SCREENS = {
-  TITLE: "title",
-  ADDRESS: "address",
-  MAP: "map",
-  MEDIA: "media",
-  SAVING: "saving",
-};
-
+import { useRouter } from "expo-router";
+import { TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text } from "react-native";
+import { useIssueContext } from "@/context/IssueContext";
+import { IssueProvider } from "@/context/IssueContext";
 const ReportIssue = () => {
-  const [currentScreen, setCurrentScreen] = useState(REPORT_SCREENS.TITLE);
+  const router = useRouter();
+  return (
+    <IssueProvider>
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.btnContainer}
+          onPress={() => router.push("/issues/issue")}>
+          <Text style={styles.btn}>New Issue</Text>
+        </TouchableOpacity>
 
-  const renderScreen = () => {
-    switch (currentScreen) {
-      case REPORT_SCREENS.TITLE:
-        return (
-          <Issue
-            goToAddressScreen={() => setCurrentScreen(REPORT_SCREENS.ADDRESS)}
-          />
-        );
-      case REPORT_SCREENS.ADDRESS:
-        return (
-          <IssueLocation
-            goToTitleScreen={() => setCurrentScreen(REPORT_SCREENS.TITLE)}
-            goToMapScreen={() => setCurrentScreen(REPORT_SCREENS.MAP)}
-            goToMediaScreen={() => setCurrentScreen(REPORT_SCREENS.MEDIA)}
-          />
-        );
-      case REPORT_SCREENS.MAP:
-        return (
-          <IssueMap
-            goToAddressScreen={() => setCurrentScreen(REPORT_SCREENS.ADDRESS)}
-          />
-        );
-      case REPORT_SCREENS.MEDIA:
-        return (
-          <IssueMedia
-            goToAddressScreen={() => setCurrentScreen(REPORT_SCREENS.ADDRESS)}
-            goToSavingScreen={() => setCurrentScreen(REPORT_SCREENS.SAVING)}
-          />
-        );
-      case REPORT_SCREENS.SAVING:
-        return <SaveIssue />;
-      default:
-        return null;
-    }
-  };
-
-  return <View style={{ flex: 1 }}>{renderScreen()}</View>;
+        <TouchableOpacity style={styles.btnContainer}>
+          <Text style={styles.btn}>New Proposal</Text>
+        </TouchableOpacity>
+      </View>
+    </IssueProvider>
+  );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 50,
+  },
+
+  btn: {
+    width: "100%",
+    backgroundColor: "#0066ff",
+    padding: 20,
+    textAlign: "center",
+    borderRadius: 30,
+    color: "white",
+  },
+  btnContainer: {
+    width: "60%",
+  },
+});
 
 export default ReportIssue;

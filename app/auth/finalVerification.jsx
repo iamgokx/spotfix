@@ -2,13 +2,14 @@ import { View, Text, Button } from "react-native";
 import { SafeAreaView } from "react-native";
 import LottieView from "lottie-react-native";
 import verifyUser from "../../assets/images/welcome/verifyingUser.json";
-
+import { jwtDecode } from "jwt-decode";
 import { useSignupContext } from "../../context/SignupContext";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { API_IP_ADDRESS } from "../../ipConfig.json";
 import { useRouter } from "expo-router";
+import { generateJwt, getStoredData, storeData } from "../../hooks/useJwt";
 const finalVerification = () => {
   const { details } = useSignupContext();
   const router = useRouter();
@@ -43,10 +44,14 @@ const finalVerification = () => {
             setResponseMessage(
               "Aadhar Successfully Verified \n Creating Account"
             );
-            
-            // setTimeout(() => {
-            //   router.push("/home");
-            // }, 2000);
+            const jwtRes = generateJwt(details);
+            if (jwtRes) {
+              setTimeout(() => {
+                router.push("/home");
+              }, 2000);
+            } else {
+              console.log("failed to create jwt token");
+            }
           } else {
             setResponseMessage("Aadhar verification failed.");
           }

@@ -24,8 +24,14 @@ import { useFonts } from "expo-font";
 import { useRouter } from "expo-router";
 const { width, height } = Dimensions.get("window");
 import { useState } from "react";
+import { getStoredData } from "../hooks/useJwt";
+import axios from "axios";
+import { API_IP_ADDRESS } from "../ipConfig.json";
+
+import loading from "../assets/images/welcome/loading.json";
 const Index = () => {
   const router = useRouter();
+  const [isLoading, setisLoading] = useState(true);
   const [isPressed, setIsPressed] = useState(false);
   const [fontsLoaded] = useFonts({
     Poppins_400Regular: require("../assets/fonts/Poppins-Regular.ttf"),
@@ -48,10 +54,81 @@ const Index = () => {
     setIsPressed(true);
     router.push("/welcome");
   };
+  useEffect(() => {
+    setisLoading(true);
+    fetchTokenData();
+  }, []);
+  const fetchTokenData = async () => {
+    const tokenFromStorage = await getStoredData();
+
+    console.log(
+      tokenFromStorage?.name,
+      tokenFromStorage?.email,
+      tokenFromStorage?.userType
+    );
+
+    verifyUserToken(
+      tokenFromStorage?.name,
+      tokenFromStorage?.email,
+      tokenFromStorage?.userType
+    );
+  };
+
+  const verifyUserToken = async (name, email, userType) => {
+    const response = await axios.post(
+      `http://${API_IP_ADDRESS}:8000/api/users/verifyJwt`,
+      {
+        name: name,
+        email: email,
+        userType: userType,
+      }
+    );
+
+    if (response.data.jwtStatus) {
+      console.log("jwt authenticated");
+      console.log(response.data);
+      setisLoading(false);
+      router.push("/home");
+    } else {
+      console.log("couldnt authenticate jwt");
+    }
+  };
 
   return (
     <>
       <StatusBar style="dark" />
+      {isLoading && (
+        <View
+          style={{
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            backgroundColor: "white",
+            zIndex: 10,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}>
+          <Text
+            style={{
+              color: "black",
+              fontSize: 30,
+              fontWeight: 900,
+              marginBottom: 70,
+            }}>
+            SpotFix
+          </Text>
+          <LottieView
+            source={loading}
+            autoPlay
+            loop
+            style={{
+              width: 200,
+              height: 200,
+              position: "absolute",
+            }}></LottieView>
+        </View>
+      )}
       <Swiper
         style={styles.wrapper}
         showsButtons={false}

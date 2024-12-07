@@ -42,9 +42,11 @@ const useSignup = () => {
       console.log("response data:", response.data);
       if (response.data.userStatus) {
         router.replace("/auth/finalVerification");
-        return;
-      } else {
-        return response.data.userStatus;
+        return true;
+      }
+      if (response.data.otpStatus == false) {
+        console.log("opt dont match");
+        return false;
       }
     } catch (err) {
       setIsLoading(false);

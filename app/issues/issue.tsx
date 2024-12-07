@@ -18,8 +18,9 @@ import { useIssueContext } from "@/context/IssueContext";
 
 import { Picker } from "@react-native-picker/picker";
 const Issue = ({ goToAddressScreen }: any) => {
+  const router = useRouter();
   const { details, setDetails, clearDetails } = useIssueContext();
-  
+
   const departments = [
     "Public Works Department (PWD)",
     "Electricity Department",
@@ -33,7 +34,6 @@ const Issue = ({ goToAddressScreen }: any) => {
     "Department of Agriculture",
     "Department of Social Welfare",
   ];
-
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -141,13 +141,13 @@ const Issue = ({ goToAddressScreen }: any) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.btnContainer}
-              onPress={goToAddressScreen}>
+              onPress={() => router.push("/issues/issueLocation")}>
               <Text style={styles.nextButton}>Next</Text>
             </TouchableOpacity>
           </View>
         </View>
       </TouchableWithoutFeedback>
-      <View style={{width : '100%', height : 500,}}></View>
+      <View style={{ width: "100%", height: 500 }}></View>
     </ScrollView>
   );
 };
@@ -350,8 +350,8 @@ const styles = StyleSheet.create({
     textAlign: "left",
   },
   modalOverlay: {
-width : '100%',
-height : '100%',
+    width: "100%",
+    height: "100%",
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
