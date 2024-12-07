@@ -1,7 +1,9 @@
 import { useState } from "react";
 import axios from "axios";
 import { API_IP_ADDRESS } from "../ipConfig.json";
+import { useRouter } from "expo-router";
 const useSignup = () => {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,11 +36,16 @@ const useSignup = () => {
     try {
       const response = await axios.get(
         `http://${API_IP_ADDRESS}:8000/api/users/otp/verify`,
-        { params: { email, otp } } 
+        { params: { email, otp } }
       );
       setIsLoading(false);
       console.log("response data:", response.data);
-      return response.data;
+      if (response.data.userStatus) {
+        router.replace("/auth/finalVerification");
+        return;
+      } else {
+        return response.data.userStatus;
+      }
     } catch (err) {
       setIsLoading(false);
       if (axios.isAxiosError(err)) {
@@ -51,7 +58,6 @@ const useSignup = () => {
       return null;
     }
   };
-  
 
   return { Signup, isLoading, error, VerfyOtp };
 };

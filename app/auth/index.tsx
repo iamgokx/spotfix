@@ -20,6 +20,8 @@ import { Pressable } from "react-native";
 import useLogin from "@/hooks/useLogin";
 import Blob4 from "../../assets/images/blobs/b4.svg";
 import Blob5 from "../../assets/images/blobs/b5.svg";
+import LottieView from "lottie-react-native";
+import loginLottie from "../../assets/images/welcome/login.json";
 const Index = () => {
   const { login, isLoading, error } = useLogin();
   const router = useRouter();
@@ -27,6 +29,7 @@ const Index = () => {
   const [password, setPassword] = useState("");
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [loginModal, setloginModal] = useState(false);
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -52,11 +55,13 @@ const Index = () => {
       setModalVisible(true);
     } else {
       Keyboard.dismiss();
+
       const user = await login(email, password);
       if (user) {
         console.log(user);
         router.replace("/home");
       } else {
+        setloginModal(true);
         console.log("Login failed with error : ", error);
       }
     }
@@ -80,6 +85,8 @@ const Index = () => {
             width: "100%",
           }}>
           <View style={styles.container}>
+            <Text className="text-3xl font-extrabold">Spotfix Login</Text>
+
             <Modal
               animationType="fade"
               transparent={true}
@@ -99,14 +106,37 @@ const Index = () => {
                 </View>
               </View>
             </Modal>
-            {/* <Image
-              source={require("../../assets/images/blobs/b4.png")}
-              style={styles.blob2}
-            /> */}
-            <Blob4 style={styles.blob2} />
-            <Image
-              source={require("../../assets/images/welcome/welcome6.png")}
-              style={{ marginTop: "10%", marginBottom: "20%" }}
+
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={loginModal}
+              onRequestClose={() => setModalVisible(false)}>
+              <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                  <Text style={styles.modalTitle}>
+                    Login Failed - Invalid Credentials
+                  </Text>
+
+                  <Pressable
+                    style={styles.closeButton}
+                    onPress={() => setloginModal(false)}>
+                    <Text style={styles.closeButtonText}>Close</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </Modal>
+
+            <LottieView
+              source={loginLottie}
+              autoPlay
+              loop
+              style={{
+                marginTop: "10%",
+                marginBottom: "2%",
+                width: 300,
+                height: 300,
+              }}
             />
 
             <View style={styles.inputContainer}>
@@ -130,27 +160,28 @@ const Index = () => {
               />
             </View>
 
-            <TouchableOpacity
-              onPress={handleLogInPress}
-              style={{ paddingBottom: keyboardVisible ? 100 : 20 }}>
+            <TouchableOpacity onPress={handleLogInPress} style={{ zIndex: 3 }}>
               <Text style={styles.loginBtn}>Log in</Text>
             </TouchableOpacity>
 
-            {/* <Image
-              source={require("../../assets/images/blobs/b5.png")}
-              style={styles.blob}
-            /> */}
-            <Blob5 style={styles.blob} />
-            <View style={styles.bottomContainer}>
-              <Text>
-                Not a user?{" "}
-                <TouchableOpacity
-                  onPress={() => router.push("/auth/signup")}
-                  style={{ padding: 0 }}>
-                  <Text style={styles.signupText}>Sign Up</Text>
-                </TouchableOpacity>
-              </Text>
+            <View
+              style={{
+                padding: 10,
+                paddingBottom: keyboardVisible ? 100 : 20,
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}>
+              <Text>Not a user? </Text>
+              <TouchableOpacity
+                onPress={() => router.push("/auth/signup")}
+                style={{ zIndex: 2 }}>
+                <Text style={styles.signupText}>Sign Up</Text>
+              </TouchableOpacity>
             </View>
+
+            <Blob5 style={styles.blob} />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -188,9 +219,9 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   signupText: {
-    color: "white",
+    color: "orange",
     textDecorationLine: "underline",
-    marginTop: 10,
+    // marginTop: 10,
   },
   bottomContainer: {
     display: "flex",
@@ -205,7 +236,7 @@ const styles = StyleSheet.create({
   },
   blob: {
     position: "absolute",
-    bottom: -5,
+    bottom: -40,
     width: "100%",
     zIndex: 1,
     padding: 0,
@@ -217,7 +248,7 @@ const styles = StyleSheet.create({
     width: "100%",
     top: 0,
     transform: [{ scaleX: 1.1 }],
-    shadowColor : 'black',
+    shadowColor: "black",
     elevation: 15,
   },
   loginBtn: {
@@ -255,9 +286,9 @@ const styles = StyleSheet.create({
   closeButton: {
     marginTop: 20,
     paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingHorizontal: 30,
     backgroundColor: "#007BFF",
-    borderRadius: 5,
+    borderRadius: 30,
   },
   closeButtonText: {
     color: "white",

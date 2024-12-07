@@ -2,53 +2,58 @@ import Issue from "../issues/issue";
 import IssueLocation from "../issues/issueLocation";
 import IssueMedia from "../issues/IssueMedia";
 import IssueMap from "../issues/IssueMap";
-import { View, Text } from "react-native";
+import SaveIssue from "../issues/SaveIssue";
+import { View } from "react-native";
 import { useState } from "react";
-const reportIssue = () => {
-  const [isVisibleTitleScreen, setisVisibleTitleScreen] = useState(true);
-  const [isVisibleAddressScreen, setisVisibleAddressScreen] = useState(false);
-  const [isMapVisible, setisMapVisible] = useState(false);
-  const [isMediaScreenVisible, setisMediaScreenVisible] = useState(false);
 
-  const goToAddressScreen = () => {
-    setisVisibleTitleScreen(false);
-    setisVisibleAddressScreen(true);
-    setisMapVisible(false);
-    setisMediaScreenVisible(false);
-  };
-  const goToTitleScreen = () => {
-    setisVisibleTitleScreen(true);
-    setisVisibleAddressScreen(false);
-    setisMapVisible(false);
-    setisMediaScreenVisible(false);
-  };
-  const goToMapScreen = () => {
-    setisVisibleTitleScreen(false);
-    setisVisibleAddressScreen(false);
-    setisMapVisible(true);
-    setisMediaScreenVisible(false);
-  };
-  const goToMediaScreen = () => {
-    setisVisibleTitleScreen(false);
-    setisVisibleAddressScreen(false);
-    setisMapVisible(false);
-    setisMediaScreenVisible(true);
-  };
-  return (
-    <View style={{ flex: 1 }}>
-      {isVisibleTitleScreen && <Issue goToAddressScreen={goToAddressScreen} />}
-      {isVisibleAddressScreen && (
-        <IssueLocation
-          goToTitleScreen={goToTitleScreen}
-          goToMapScreen={goToMapScreen}
-          goToMediaScreen={goToMediaScreen}
-        />
-      )}
-      {isMapVisible && <IssueMap goToAddressScreen={goToAddressScreen} />}
-      {isMediaScreenVisible && (
-        <IssueMedia goToAddressScreen={goToAddressScreen} />
-      )}
-    </View>
-  );
+const REPORT_SCREENS = {
+  TITLE: "title",
+  ADDRESS: "address",
+  MAP: "map",
+  MEDIA: "media",
+  SAVING: "saving",
 };
-export default reportIssue;
+
+const ReportIssue = () => {
+  const [currentScreen, setCurrentScreen] = useState(REPORT_SCREENS.TITLE);
+
+  const renderScreen = () => {
+    switch (currentScreen) {
+      case REPORT_SCREENS.TITLE:
+        return (
+          <Issue
+            goToAddressScreen={() => setCurrentScreen(REPORT_SCREENS.ADDRESS)}
+          />
+        );
+      case REPORT_SCREENS.ADDRESS:
+        return (
+          <IssueLocation
+            goToTitleScreen={() => setCurrentScreen(REPORT_SCREENS.TITLE)}
+            goToMapScreen={() => setCurrentScreen(REPORT_SCREENS.MAP)}
+            goToMediaScreen={() => setCurrentScreen(REPORT_SCREENS.MEDIA)}
+          />
+        );
+      case REPORT_SCREENS.MAP:
+        return (
+          <IssueMap
+            goToAddressScreen={() => setCurrentScreen(REPORT_SCREENS.ADDRESS)}
+          />
+        );
+      case REPORT_SCREENS.MEDIA:
+        return (
+          <IssueMedia
+            goToAddressScreen={() => setCurrentScreen(REPORT_SCREENS.ADDRESS)}
+            goToSavingScreen={() => setCurrentScreen(REPORT_SCREENS.SAVING)}
+          />
+        );
+      case REPORT_SCREENS.SAVING:
+        return <SaveIssue />;
+      default:
+        return null;
+    }
+  };
+
+  return <View style={{ flex: 1 }}>{renderScreen()}</View>;
+};
+
+export default ReportIssue;

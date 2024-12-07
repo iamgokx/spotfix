@@ -3,7 +3,13 @@ import { TabBar } from "@/components/TabBar";
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { IssueProvider } from "../../context/IssueContext";
+import { useState } from "react";
+import CustomHeader from "@/components/CustomHeader";
+import { navigate } from "expo-router/build/global-state/routing";
+
 const HomeLayout = () => {
+  const [isDrawerOpen, setDrawerOpen] = useState(false);
+
   return (
     <IssueProvider>
       <Tabs

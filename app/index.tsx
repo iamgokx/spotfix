@@ -12,7 +12,12 @@ import {
   ImageBackground,
   Pressable,
 } from "react-native";
-
+import LottieView from "lottie-react-native";
+import welcomePageOne from "../assets/images/welcome/welcomePageOne.json";
+import welcomePageTwo from "../assets/images/welcome/welcomePageTwo.json";
+import welcomePageThree from "../assets/images/welcome/welcomePageThree.json";
+import welcomePageFour from "../assets/images/welcome/welcomePageFour.json";
+import welcomePageFive from "../assets/images/welcome/welcomePageFIve.json";
 import Swiper from "react-native-swiper";
 import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
@@ -41,8 +46,7 @@ const Index = () => {
 
   const handleGetStarted = () => {
     setIsPressed(true);
-    // router.push("/welcome");
-    router.push("/home");
+    router.push("/welcome");
   };
 
   return (
@@ -56,8 +60,11 @@ const Index = () => {
         activeDot={<View style={styles.activeDot} />}>
         <View style={[styles.slide, styles.slide1]} className="p-10">
           <Text style={styles.slideOneText}>Welcome To SpotFix!</Text>
-          <Image
-            source={require("../assets/images/welcome/welcome1.png")}
+
+          <LottieView
+            source={welcomePageOne}
+            autoPlay
+            loop
             style={[styles.image, { width: width * 0.8, height: height * 0.4 }]}
           />
           <Text className="text-black text-2xl text-center">
@@ -67,13 +74,21 @@ const Index = () => {
           <Pressable
             onPressIn={() => router.push("/home")}
             style={styles.devBtn}>
-            <Text style={styles.gettingStarted}>Dev Skip{"  </>"}</Text>
+            <Text className="text-xl text-yellow-400 bg-black p-5 rounded-full">
+              Dev Skip{"  </>"}
+            </Text>
           </Pressable>
         </View>
 
         <View style={styles.slide} className="p-10 bg-gray-50">
-          <Image
+          {/* <Image
             source={require("../assets/images/welcome/welcome2.png")}
+            style={[styles.image, { width: width * 0.8, height: height * 0.4 }]}
+          /> */}
+          <LottieView
+            source={welcomePageTwo}
+            autoPlay
+            loop
             style={[styles.image, { width: width * 0.8, height: height * 0.4 }]}
           />
           <Text className="text-black text-2xl text-center">
@@ -83,8 +98,14 @@ const Index = () => {
         </View>
 
         <View style={styles.slide} className="p-10">
-          <Image
+          {/* <Image
             source={require("../assets/images/welcome/welcome3.png")}
+            style={[styles.image, { width: width * 0.8, height: height * 0.4 }]}
+          /> */}
+          <LottieView
+            source={welcomePageThree}
+            autoPlay
+            loop
             style={[styles.image, { width: width * 0.8, height: height * 0.4 }]}
           />
           <Text className="text-2xl text-center">
@@ -107,15 +128,23 @@ const Index = () => {
                 the first step?
               </Text>
             </View>
-            <Image
+            {/* <Image
               // source={require("../assets/images/svg/welcome4svg.svg")}
               source={require("../assets/images/welcome/welcome4.png")}
               style={[
                 styles.image,
                 { width: width * 0.8, height: height * 0.4 },
               ]}
+            /> */}
+            <LottieView
+              source={welcomePageFour}
+              autoPlay
+              loop
+              style={[
+                styles.image,
+                { width: width * 0.8, height: height * 0.4 },
+              ]}
             />
-
             <Pressable
               onPressIn={handleGetStarted}
               style={[isPressed && styles.buttonPressed]}
@@ -172,7 +201,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins",
     color: "#fff",
     fontSize: 40,
-    fontWeight: "bold",
+    fontWeight: 900,
     marginBottom: 10,
   },
   dot: {
@@ -199,8 +228,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     position: "absolute",
     alignSelf: "center",
-    backgroundColor: "black",
-    color: "yellow",
+
     marginTop: 20,
     borderRadius: 60,
     elevation: 20,

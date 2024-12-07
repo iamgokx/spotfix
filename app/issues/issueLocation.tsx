@@ -13,7 +13,10 @@ import {
 import { useRouter } from "expo-router";
 import { useIssueContext } from "@/context/IssueContext";
 import { Ionicons } from "@expo/vector-icons";
-import mapImg from "../../assets/images/issues/map.png";
+
+import LottieView from "lottie-react-native";
+import deopPinOnMap from "../../assets/images/issues/mapAnimation.json";
+
 const IssueLocation = ({
   goToTitleScreen,
   goToMapScreen,
@@ -59,7 +62,12 @@ const IssueLocation = ({
 
           {!details.generatedAddress && (
             <View style={styles.imgContainer}>
-              <Image style={styles.mapIllustration} source={mapImg} />
+              <LottieView
+                source={deopPinOnMap}
+                autoPlay
+                loop
+                style={{ width: 200, height: 200 }}
+              />
             </View>
           )}
 
@@ -98,7 +106,7 @@ const IssueLocation = ({
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.btnContainer}
-              onPress={(goToMediaScreen)}>
+              onPress={goToMediaScreen}>
               <Text style={styles.nextButton}>Next</Text>
             </TouchableOpacity>
           </View>
@@ -220,6 +228,10 @@ const styles = StyleSheet.create({
   imgContainer: {
     width: "100%",
     height: "50%",
+
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   mapIllustration: {
     width: "100%",

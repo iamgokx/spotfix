@@ -8,6 +8,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { ActivityIndicator } from "react-native";
 import { useIssueContext } from "@/context/IssueContext";
+import LottieView from "lottie-react-native";
+import loading from "../../assets/images/welcome/loading.json";
 const IssueMap = ({ goToAddressScreen }: any) => {
   const [marker, setmarker] = useState("");
   const [userAddress, setAddress] = useState("");
@@ -80,8 +82,12 @@ const IssueMap = ({ goToAddressScreen }: any) => {
     <View style={styles.container}>
       {isloading && (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="white" style={{ zIndex: 5 }} />
-          <Text className="text-white">Loading Address...</Text>
+          <LottieView
+            source={loading}
+            autoPlay
+            loop
+            style={{ width: 200, height: 200 }}
+          />
         </View>
       )}
       <MapView

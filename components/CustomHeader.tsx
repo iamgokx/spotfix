@@ -7,7 +7,7 @@ interface Props {
   navigation: DrawerNavigationProp<any>;
 }
 
-const CustomHeader: React.FC<Props> = ({ navigation }) => {
+const CustomHeader: React.FC<Props> = ({ navigation }: any) => {
   return (
     <SafeAreaView style={styles.headerContainer}>
       <TouchableOpacity
@@ -25,13 +25,7 @@ const CustomHeader: React.FC<Props> = ({ navigation }) => {
       <TouchableOpacity
         onPress={() => alert("Notification Clicked")}
         style={styles.iconButton}>
-        <Ionicons name="notifications-circle" size={35} color="#FFA500" />
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={() => alert("Profile Clicked")}
-        style={styles.iconButton}>
-        <Ionicons name="person-circle" size={35} color="#FFA500" />
+        <Ionicons name="notifications-circle" size={35} color="#0066ff" />
       </TouchableOpacity>
     </SafeAreaView>
   );

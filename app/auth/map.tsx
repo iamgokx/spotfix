@@ -8,6 +8,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { ActivityIndicator } from "react-native";
 import { useSignupContext } from "@/context/SignupContext";
+import LottieView from "lottie-react-native";
+import loading from "../../assets/images/welcome/loading.json";
 const map = () => {
   const [marker, setmarker] = useState("");
   const [userAddress, setAddress] = useState("");
@@ -44,9 +46,13 @@ const map = () => {
           district,
           road,
           suburb,
+          locality,
           state_district,
         } = data.address;
-        
+
+        const generatedLocality =
+          locality || suburb || district || "Unknown Locality";
+
         setAddress(data.display_name);
 
         setaddressLoaded(true);
@@ -58,6 +64,7 @@ const map = () => {
         }));
 
         setDetails((prev) => ({ ...prev, generatedCountry: country }));
+        setDetails((prev) => ({ ...prev, locality: generatedLocality }));
         setDetails((prev) => ({ ...prev, generatedState: state }));
         setDetails((prev) => ({ ...prev, generatedCity: city }));
         setDetails((prev) => ({ ...prev, generatedDistrict: state_district }));
@@ -82,8 +89,17 @@ const map = () => {
     <View style={styles.container}>
       {isloading && (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="white" style={{ zIndex: 5 }} />
-          <Text className="text-white">Loading Address...</Text>
+          <LottieView
+            source={loading}
+            autoPlay
+            loop
+            style={{
+              marginTop: "10%",
+              width: 200,
+              height: 200,
+              marginBottom: "-10%",
+            }}
+          />
         </View>
       )}
       <MapView

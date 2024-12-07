@@ -12,7 +12,8 @@ import { useRouter } from "expo-router";
 import Blob1 from "../../assets/images/blobs/b1.svg";
 import Blob2 from "../../assets/images/blobs/b2.svg";
 const { width, height } = Dimensions.get("window");
-
+import loginSignup from "../../assets/images/welcome/loginSignup.json";
+import LottieView from "lottie-react-native";
 const index = () => {
   const router = useRouter();
 
@@ -40,17 +41,20 @@ const index = () => {
           style={styles.blob1}
         /> */}
         <Blob1 style={styles.blob1} />
-        <Image
+        {/* <Image
           source={require("../../assets/images/welcome/welcome5.png")}
           style={[
             styles.welcomeImage,
             { width: width * 0.8, height: height * 0.4 },
           ]}
-        />
-        {/* <Image
-          source={require("../../assets/images/blobs/b2.png")}
-          style={styles.blob2}
         /> */}
+         <LottieView
+            source={loginSignup}
+            autoPlay
+            loop
+            style={[styles.image, { width: width * 0.8, height: height * 0.4 }]}
+          />
+       
         <Blob2 style={styles.blob2} />
         <TouchableOpacity onPress={loginroute}>
           <Text style={styles.loginBtn}>Log In</Text>

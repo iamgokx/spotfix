@@ -17,7 +17,7 @@ const useLogin = () => {
       );
       setIsLoading(false);
       return response.data;
-    } catch (err) {
+    } catch (err: any) {
       setIsLoading(false);
       setError(err.message);
       return null;

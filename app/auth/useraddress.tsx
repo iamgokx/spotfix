@@ -19,6 +19,10 @@ import { useSignupContext } from "@/context/SignupContext";
 import { ImageBackground } from "react-native";
 import { Modal } from "react-native";
 import { Pressable } from "react-native";
+import LottieView from "lottie-react-native";
+import mapIcon from "../../assets/images/welcome/map.json";
+import Blob from "../../assets/images/blobs/b7.svg";
+
 const useraddress = () => {
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
@@ -87,9 +91,8 @@ const useraddress = () => {
     if (!isAddressComplete()) {
       setModalVisible(true);
     } else {
-      router.push('/auth/password')
+      router.push("/auth/password");
     }
- 
   };
 
   return (
@@ -153,6 +156,43 @@ const useraddress = () => {
               </View>
             </ImageBackground>
             <View style={styles.detailsContainer}>
+              <TouchableOpacity
+                style={{ width: "100%" }}
+                activeOpacity={0.7}
+                onPress={openMap}>
+                <View
+                  style={[
+                    styles.inputContainer,
+                    { backgroundColor: "#0066ff" },
+                  ]}>
+                  <TextInput
+                    style={[styles.input]}
+                    placeholderTextColor={"white"}
+                    placeholder={
+                      details.generatedCity === ""
+                        ? "Drop Pin On Map"
+                        : `${details.generatedState} , ${details.generatedCity} ${details.generatedPincode}`
+                    }
+                    value={password}
+                    editable={false}
+                    multiline={false}
+                  />
+
+                  <LottieView
+                    source={mapIcon}
+                    autoPlay
+                    loop
+                    style={{
+                      marginTop: "10%",
+                      marginBottom: "2%",
+                      width: 60,
+                      height: 60,
+                      position: "absolute",
+                      right: 0,
+                    }}
+                  />
+                </View>
+              </TouchableOpacity>
               <View
                 style={[
                   styles.inputContainer,
@@ -232,29 +272,6 @@ const useraddress = () => {
                   editable={!details.generatedPincode}
                 />
               </View>
-              <TouchableOpacity
-                style={{ width: "100%" }}
-                activeOpacity={0.7}
-                onPress={openMap}>
-                <View style={styles.inputContainer}>
-                  <TextInput
-                    style={styles.input}
-                    placeholder={
-                      details.generatedCity === ""
-                        ? "Drop Pin On Map"
-                        : `${details.generatedState} , ${details.generatedCity} ${details.generatedPincode}`
-                    }
-                    value={password}
-                    editable={false}
-                    multiline={false}
-                  />
-                  <Ionicons
-                    name="location"
-                    color="blue"
-                    size={32}
-                    style={{ marginRight: 10 }}></Ionicons>
-                </View>
-              </TouchableOpacity>
             </View>
             <View style={styles.btnContainer}>
               <TouchableOpacity
@@ -271,16 +288,14 @@ const useraddress = () => {
               <Text style={{ marginBottom: 6, textAlign: "center" }}>
                 Already Have An Account?{" "}
                 <TouchableOpacity
-                   onPress={() => router.push("/auth")}
+                  onPress={() => router.push("/auth")}
                   style={{ padding: 0 }}>
                   <Text style={styles.loginText}>Log In</Text>
                 </TouchableOpacity>
               </Text>
             </View>
 
-            <ImageBackground
-              style={styles.bottomImg}
-              source={require("../../assets/images/blobs/b7.png")}></ImageBackground>
+            <Blob style={styles.bottomImg} />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -318,6 +333,7 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "flex-end",
     alignItems: "center",
+    marginBottom: -10,
   },
   detailsContainer: {},
   inputContainer: {
@@ -330,7 +346,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   disabledContainer: {
-    backgroundColor: "rgba(125, 230, 255, 1)",
+    backgroundColor: "orange",
   },
   icon: {
     paddingLeft: 20,

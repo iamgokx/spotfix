@@ -19,6 +19,7 @@ interface SignupDetails {
   generatedTaluka: string;
   generatedPincode: string;
   generatedAddress: string;
+  locality: string;
 }
 
 interface SignupContextType {
@@ -59,6 +60,7 @@ export const SignupProvider: React.FC<{ children: React.ReactNode }> = ({
     generatedTaluka: "",
     generatedPincode: "",
     generatedAddress: "",
+    locality: "",
   });
 
   const clearDetails = () => {
@@ -81,6 +83,7 @@ export const SignupProvider: React.FC<{ children: React.ReactNode }> = ({
       generatedTaluka: "",
       generatedPincode: "",
       generatedAddress: "",
+      locality: "",
     });
   };
 

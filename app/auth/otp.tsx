@@ -27,7 +27,8 @@ const Otp = () => {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
   const inputRefs = useRef<(TextInput | null)[]>([]);
-  const { VerfyOtp, error, isLoading } = useSignup();
+  const [otpError, setotpError] = useState(false);
+  const { VerfyOtp, error, isLoading, Signup } = useSignup();
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -57,13 +58,16 @@ const Otp = () => {
   };
 
   const handleVerify = async () => {
+    setotpError(false);
     console.log("OTP Entered:", otpValue.join(""));
+
     const user = await VerfyOtp(details.email, otpValue.join(""));
-    if (user) {
-      console.log(user);
-      router.replace("/home");
+
+    if (user.data.userStatus) {
+      console.log("OTP Successfully Verified:", user.data.message);
     } else {
-      console.log("Login failed with error : ", error);
+      setotpError(true);
+      console.log("OTP Vefification Failed");
     }
   };
 
@@ -132,6 +136,7 @@ const Otp = () => {
                 />
               ))}
             </View>
+            {otpError && <Text style={{ color: "red" }}>OTP do not match</Text>}
 
             <View style={styles.btnContainer}>
               <TouchableOpacity

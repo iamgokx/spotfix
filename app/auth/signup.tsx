@@ -22,12 +22,14 @@ import { ImageBackground } from "react-native";
 import { useSignupContext } from "@/context/SignupContext";
 import Blob6 from "../../assets/images/blobs/b6.svg";
 import Blob7 from "../../assets/images/blobs/b7.svg";
+import useValidation from "@/hooks/useValidate";
 const Signup = () => {
   const router = useRouter();
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const { details, setDetails } = useSignupContext();
   const [modalVisible, setModalVisible] = useState(false);
-
+  const [formErrors, setFormErrors] = useState(false);
+  const { validate, errors } = useValidation();
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -57,7 +59,23 @@ const Signup = () => {
     ) {
       setModalVisible(true);
     } else {
+      handleSubmit();
+    }
+  };
+
+  const handleSubmit = () => {
+    const isFullNameValid = validate("fullName", details.name);
+    const isPhoneValid = validate("phoneNumber", details.phoneNumber);
+    const isAadhaarValid = validate(
+      "aadhaarCardNumber",
+      details.aadharCardNumber
+    );
+    const isEmailValid = validate("email", details.email);
+
+    if (isFullNameValid && isPhoneValid && isAadhaarValid && isEmailValid) {
       router.push("/auth/useraddress");
+    } else {
+      setFormErrors(true);
     }
   };
 
@@ -133,7 +151,18 @@ const Signup = () => {
                   }
                 />
               </View>
-
+              {errors.fullName && (
+                <View style={styles.errorContainer}>
+                  <Text
+                    style={{
+                      width: "90%",
+                      textAlign: "left",
+                      color: "red",
+                    }}>
+                    {errors.fullName}
+                  </Text>
+                </View>
+              )}
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
@@ -145,6 +174,18 @@ const Signup = () => {
                   keyboardType="number-pad"
                 />
               </View>
+              {errors.phoneNumber && (
+                <View style={styles.errorContainer}>
+                  <Text
+                    style={{
+                      width: "90%",
+                      textAlign: "left",
+                      color: "red",
+                    }}>
+                    {errors.phoneNumber}
+                  </Text>
+                </View>
+              )}
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
@@ -156,7 +197,18 @@ const Signup = () => {
                   }
                 />
               </View>
-
+              {errors.aadhaarCardNumber && (
+                <View style={styles.errorContainer}>
+                  <Text
+                    style={{
+                      width: "90%",
+                      textAlign: "left",
+                      color: "red",
+                    }}>
+                    {errors.aadhaarCardNumber}
+                  </Text>
+                </View>
+              )}
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
@@ -167,6 +219,18 @@ const Signup = () => {
                   }
                 />
               </View>
+              {errors.email && (
+                <View style={styles.errorContainer}>
+                  <Text
+                    style={{
+                      width: "90%",
+                      textAlign: "left",
+                      color: "red",
+                    }}>
+                    {errors.email}
+                  </Text>
+                </View>
+              )}
             </View>
             <View style={styles.btnContainer}>
               <TouchableOpacity
@@ -180,20 +244,24 @@ const Signup = () => {
                   backgroundColor: "#F4F2F2",
                   width: "80%",
                 }}></View>
-              <Text style={{ marginBottom: 6, textAlign: "center" }}>
-                Already Have An Account?{" "}
+              <View
+                style={{
+                  padding: 10,
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}>
+                <Text>Already a user? </Text>
                 <TouchableOpacity
-                  onPress={() => router.push("/auth")}
-                  style={{ padding: 0 }}>
-                  <Text style={styles.loginText}>Log In</Text>
+                  onPress={() => router.push("/auth/signup")}
+                  style={{ zIndex: 2 }}>
+                  <Text style={styles.loginText}> Log In</Text>
                 </TouchableOpacity>
-              </Text>
+              </View>
             </View>
 
             <Blob7 style={styles.bottomImg} />
-            {/* <ImageBackground
-              style={styles.bottomImg}
-              source={require("../../assets/images/blobs/b7.png")}></ImageBackground> */}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -204,7 +272,8 @@ const Signup = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
+    gap: 50,
     alignItems: "center",
     padding: 0,
     margin: 0,
@@ -235,7 +304,7 @@ const styles = StyleSheet.create({
   },
   bottomImg: {
     width: "100%",
-    height: 100,
+    marginBottom: -10,
     display: "flex",
     justifyContent: "flex-end",
     alignItems: "center",
@@ -251,6 +320,14 @@ const styles = StyleSheet.create({
     elevation: 20,
     marginBottom: 20,
   },
+  errorContainer: {
+    width: "80%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+
+    marginBottom: 5,
+  },
   icon: {
     paddingLeft: 20,
   },
@@ -265,7 +342,6 @@ const styles = StyleSheet.create({
   loginText: {
     color: "blue",
     textDecorationLine: "underline",
-    marginTop: 10,
   },
   bottomContainer: {
     display: "flex",

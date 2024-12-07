@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { View, Text, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "react-native";
-
+import LottieView from "lottie-react-native";
 import {
   responsiveFontSize,
   responsiveWidth,
@@ -18,23 +18,18 @@ const Issue = () => {
           color={"black"}
           size={25}
           style={styles.userPfp}></Ionicons>
-        <View
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "start",
-          }}>
+        <View style={styles.subContainer}>
           <Text style={styles.userName}>Gokul Lekhwar</Text>
-          <Text style={styles.dateTime}>Wed 9:42 am</Text>
+          <Text>Wed 9:42 am</Text>
         </View>
       </View>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Broken Street Light</Text>
         <Text style={styles.progress}>In progress</Text>
       </View>
-      <Image
-        style={styles.img}
-        source={require("../assets/images/light.png")}></Image>
+      <View style={styles.imgContainer}>
+       
+      </View>
       <Text style={styles.desc}>
         This light has been broken for the past 2 weeks, and the civilians have
         been <Text style={{ color: "#0066ff" }}>View more...</Text>
@@ -70,9 +65,14 @@ const Issue = () => {
 };
 
 const styles = StyleSheet.create({
+  ani: {
+    width: 400,
+    height: 400,
+  },
   container: {
     width: "90%",
     height: "auto",
+    alignSelf: "auto", //remove later
     borderWidth: 1,
     borderColor: "rgba(0,0,0,0.1)",
     borderRadius: 20,
@@ -83,6 +83,12 @@ const styles = StyleSheet.create({
     gap: 10,
     backgroundColor: "white",
     marginTop: 10,
+  },
+
+  subContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "flex-start",
   },
   nameContainer: {
     display: "flex",
@@ -102,11 +108,18 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: 900,
   },
-  img: {
+  imgContainer: {
     width: "100%",
-    height: 250,
+    height: 200,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
+  },
+  img: {
     objectFit: "cover",
-    borderRadius: 20,
+    height: 250,
+    aspectRatio: 1,
   },
   title: {
     width: " 70%",

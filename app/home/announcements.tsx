@@ -1,10 +1,10 @@
-import { View, Text } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-const announcements = () => {
+import React from "react";
+import LottieView from "lottie-react-native";
+import { Text } from "react-native";
+export default function announcements() {
   return (
-    <SafeAreaView>
-      <Text>this is announcements screen</Text>
-    </SafeAreaView>
+    <>
+      <Text>hiiiiiiiiiii</Text>
+    </>
   );
-};
-export default announcements;
+}

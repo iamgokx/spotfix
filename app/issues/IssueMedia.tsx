@@ -14,8 +14,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { useIssueContext } from "@/context/IssueContext";
 import * as ImagePicker from "expo-image-picker";
-
-export default function IssueMedia({ goToAddressScreen }: any) {
+import LottieView from "lottie-react-native";
+import uploadMedia from "../../assets/images/issues/uploadMedia.json";
+export default function IssueMedia({
+  goToAddressScreen,
+  goToSavingScreen,
+}: any) {
   const { details, setDetails, addMedia, removeMedia } = useIssueContext();
 
   const pickMedia = async () => {
@@ -61,7 +65,12 @@ export default function IssueMedia({ goToAddressScreen }: any) {
 
       <View style={styles.dataContainer}>
         <TouchableOpacity style={styles.dropContainer} onPress={pickMedia}>
-          <Ionicons name="push-outline" color={"#0066ff"} size={35} />
+        <LottieView
+                source={uploadMedia}
+                autoPlay
+                loop
+                style={{ width: 200, height: 200, marginBottom : -30 }}
+              />
           <Text>Upload Media</Text>
         </TouchableOpacity>
 
@@ -94,7 +103,7 @@ export default function IssueMedia({ goToAddressScreen }: any) {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.btnContainer}
-            onPress={() => console.log(details)}>
+            onPress={goToSavingScreen}>
             <Text style={styles.nextButton}>Next</Text>
           </TouchableOpacity>
         </View>

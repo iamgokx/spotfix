@@ -1,14 +1,16 @@
-
 import React, { useRef, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Animated } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Animated,
+} from "react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 
 import TabBarButton from "./TabBarButton";
 
 export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
-
- 
-
   return (
     <View style={styles.tabbar}>
       {state.routes.map((route, index) => {
@@ -49,8 +51,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
             isFocused={isFocused}
             routeName={route.name}
             color={isFocused ? "#0066ff" : "black"}
-            label={label}
-          ></TabBarButton>
+            label={label}></TabBarButton>
         );
       })}
     </View>

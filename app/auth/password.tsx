@@ -22,7 +22,12 @@ import { Modal } from "react-native";
 import { Pressable } from "react-native";
 import "../../global.css";
 import useSignup from "@/hooks/userSignup";
+import Blob from "../../assets/images/blobs/b7.svg";
+import LottieView from "lottie-react-native";
+import loading from "../../assets/images/welcome/loading.json";
+import useValidation from "@/hooks/useValidate";
 const password = () => {
+  const { validate, errors } = useValidation();
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
   const { details, setDetails } = useSignupContext();
@@ -32,6 +37,7 @@ const password = () => {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const { Signup, error, isLoading } = useSignup();
+
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -64,10 +70,15 @@ const password = () => {
       setModalVisible(true);
       return;
     }
-
-    const otpSent = await sendUserOtp();
-    if (otpSent) {
-      router.push("/auth/otp");
+    const password = validate("password", details.password);
+    if (password) {
+      console.log("password is strong");
+      const otpSent = await sendUserOtp();
+      if (otpSent) {
+        router.push("/auth/otp");
+      }
+    } else {
+      console.log(errors.password);
     }
   };
 
@@ -106,16 +117,17 @@ const password = () => {
             justifyContent: "center",
           }}>
           <View style={styles.container}>
-          {isLoading && (
-            <View style={styles.loadingScreen}>
-              <ActivityIndicator size="large" color="white" />
-              <Text style={{ color: "white", textAlign: "center" }}>
-                Please wait ...
-              </Text>
-            </View>
-          )}
-             
-            
+            {isLoading && (
+              <View style={styles.loadingScreen}>
+                <LottieView
+                  source={loading}
+                  autoPlay
+                  loop
+                  style={{ width: 90, height: 90 }}
+                />
+              </View>
+            )}
+
             <Modal
               animationType="fade"
               transparent={true}
@@ -195,6 +207,9 @@ const password = () => {
                     setconfirmPassword((prev) => !prev)
                   }></Ionicons>
               </View>
+              <View style={{ width: "80%" }}>
+                <Text style={{ color: "red" }}>{errors.password}</Text>
+              </View>
             </View>
             <View style={styles.btnContainer}>
               <TouchableOpacity
@@ -206,7 +221,7 @@ const password = () => {
                 style={{
                   height: 2,
                   backgroundColor: "#F4F2F2",
-                  width: "80%",
+                  width: "70%",
                 }}></View>
               <Text style={{ marginBottom: 6, textAlign: "center" }}>
                 Already Have An Account?{" "}
@@ -218,9 +233,7 @@ const password = () => {
               </Text>
             </View>
 
-            <ImageBackground
-              style={styles.bottomImg}
-              source={require("../../assets/images/blobs/b7.png")}></ImageBackground>
+            <Blob style={styles.bottomImg} />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -258,6 +271,7 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "flex-end",
     alignItems: "center",
+    marginBottom: -10,
   },
   detailsContainer: {},
   inputContainer: {
@@ -374,10 +388,10 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     position: "absolute",
-    zIndex : 5,
-    backgroundColor : 'rgba(0,0,0,0.5)',
-    justifyContent : 'center',
-    alignItems : 'center'
+    zIndex: 5,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

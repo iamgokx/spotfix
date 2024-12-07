@@ -47,6 +47,13 @@ const AuthLayout = () => {
             title: "otp",
           }}
         />
+        <Stack.Screen
+          name="finalVerification"
+          options={{
+            headerShown: false,
+            title: "otp",
+          }}
+        />
       </Stack>
     </SignupProvider>
   );
