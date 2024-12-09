@@ -24,7 +24,11 @@ import { useFonts } from "expo-font";
 import { useRouter } from "expo-router";
 const { width, height } = Dimensions.get("window");
 import { useState } from "react";
-import { getStoredData } from "../hooks/useJwt";
+import {
+  getStoredData,
+  getStoredRawToken,
+  clearStorage,
+} from "../hooks/useJwt";
 import axios from "axios";
 import { API_IP_ADDRESS } from "../ipConfig.json";
 
@@ -58,29 +62,12 @@ const Index = () => {
     setisLoading(true);
     fetchTokenData();
   }, []);
-  const fetchTokenData = async () => {
-    const tokenFromStorage = await getStoredData();
 
-    console.log(
-      tokenFromStorage?.name,
-      tokenFromStorage?.email,
-      tokenFromStorage?.userType
-    );
-
-    verifyUserToken(
-      tokenFromStorage?.name,
-      tokenFromStorage?.email,
-      tokenFromStorage?.userType
-    );
-  };
-
-  const verifyUserToken = async (name, email, userType) => {
+  const verifyUserToken = async (token: any) => {
     const response = await axios.post(
       `http://${API_IP_ADDRESS}:8000/api/users/verifyJwt`,
       {
-        name: name,
-        email: email,
-        userType: userType,
+        token,
       }
     );
 
@@ -91,7 +78,29 @@ const Index = () => {
       router.push("/home");
     } else {
       console.log("couldnt authenticate jwt");
+      setisLoading(false);
+      clearStorage();
+      router.push("/auth");
     }
+  };
+
+  const fetchTokenData = async () => {
+    const tokenFromStorage = await getStoredData();
+    if (!tokenFromStorage) {
+      clearStorage();
+      setisLoading(false);
+    } else {
+      const rawToken = await getStoredRawToken();
+      setisLoading(false);
+      verifyUserToken(rawToken);
+      console.log(
+        tokenFromStorage?.name,
+        tokenFromStorage?.email,
+        tokenFromStorage?.userType
+      );
+    }
+
+   
   };
 
   return (

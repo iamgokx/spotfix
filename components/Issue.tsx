@@ -9,6 +9,14 @@ import {
   responsiveHeight,
 } from "react-native-responsive-dimensions";
 import { FeSpotLight } from "react-native-svg";
+
+const getIssueData = async () => {
+  try {
+  } catch (error) {
+    console.log("error getting issues from backend : ", error);
+  }
+};
+
 const Issue = () => {
   return (
     <SafeAreaView style={styles.container}>
@@ -27,9 +35,7 @@ const Issue = () => {
         <Text style={styles.title}>Broken Street Light</Text>
         <Text style={styles.progress}>In progress</Text>
       </View>
-      <View style={styles.imgContainer}>
-       
-      </View>
+      <View style={styles.imgContainer}></View>
       <Text style={styles.desc}>
         This light has been broken for the past 2 weeks, and the civilians have
         been <Text style={{ color: "#0066ff" }}>View more...</Text>

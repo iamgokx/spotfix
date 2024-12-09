@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Image,
@@ -10,6 +10,7 @@ import {
   ImageBackground,
   StatusBar,
 } from "react-native";
+import { API_IP_ADDRESS } from "../../ipConfig.json";
 import { Ionicons } from "@expo/vector-icons";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { useIssueContext } from "@/context/IssueContext";
@@ -17,32 +18,129 @@ import * as ImagePicker from "expo-image-picker";
 import LottieView from "lottie-react-native";
 import { useRouter } from "expo-router";
 import uploadMedia from "../../assets/images/issues/uploadMedia.json";
-export default function IssueMedia({
-  goToAddressScreen,
-  goToSavingScreen,
-}: any) {
+import axios from "axios";
+import { getStoredRawToken, getStoredData } from "../../hooks/useJwt";
+export default function IssueMedia() {
   const { details, setDetails, addMedia, removeMedia } = useIssueContext();
+  const [user, setuser] = useState("");
   const router = useRouter();
   const pickMedia = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images", "videos"],
+      mediaTypes: ["images"],
       quality: 1,
       allowsMultipleSelection: true,
       selectionLimit: 5 - details.media.length,
     });
 
-    if (!result.canceled) {
+    if (!result.canceled && result.assets?.length > 0) {
+      const newImages = result.assets.map((asset) => ({
+        uri: asset.uri.startsWith("file://")
+          ? asset.uri
+          : `file://${asset.uri}`,
+        type: asset.type === "video" ? "video" : "image",
+      }));
       result.assets.forEach((asset) => {
         addMedia({
           uri: asset.uri,
           type: asset.type === "video" ? "video" : "image",
         });
       });
+    } else {
+      console.log("No media selected or operation canceled.");
     }
   };
 
   const handleRemoveItem = (uri: string) => {
     removeMedia(uri);
+  };
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      const storedUser = await getStoredData();
+      setuser(storedUser?.name || "Unknown User");
+    };
+    fetchUserDetails();
+  }, []);
+
+  const submitIssue = async () => {
+    try {
+      const formData = new FormData();
+
+      formData.append("title", details.title);
+      formData.append("user", user);
+      formData.append("anonymous", details.anonymous);
+      formData.append("description", details.description);
+      formData.append("suggestions", details.suggestions);
+      formData.append("department", details.department);
+      formData.append("latitude", details.latitude);
+      formData.append("longitude", details.longitude);
+      formData.append("generatedCity", details.generatedCity);
+      formData.append("generatedPincode", details.generatedPincode);
+      formData.append("generatedAddress", details.generatedAddress);
+      formData.append("generatedLocality", details.generatedLocality);
+      formData.append("generatedState", details.generatedState);
+
+      if (details.media[0]) {
+        formData.append("media", {
+          uri: details.media[0].uri.startsWith("file://")
+            ? details.media[0].uri
+            : `file://${details.media[0].uri}`,
+          type: "image/jpeg",
+          name: "issue.jpg",
+        });
+      }
+      if (details.media[1]) {
+        formData.append("media", {
+          uri: details.media[1].uri.startsWith("file://")
+            ? details.media[1].uri
+            : `file://${details.media[1].uri}`,
+          type: "image/jpeg",
+          name: "issue.jpg",
+        });
+      }
+      if (details.media[2]) {
+        formData.append("media", {
+          uri: details.media[2].uri.startsWith("file://")
+            ? details.media[2].uri
+            : `file://${details.media[2].uri}`,
+          type: "image/jpeg",
+          name: "issue.jpg",
+        });
+      }
+      if (details.media[3]) {
+        formData.append("media", {
+          uri: details.media[3].uri.startsWith("file://")
+            ? details.media[3].uri
+            : `file://${details.media[3].uri}`,
+          type: "image/jpeg",
+          name: "issue.jpg",
+        });
+      }
+      if (details.media[4]) {
+        formData.append("media", {
+          uri: details.media[4].uri.startsWith("file://")
+            ? details.media[4].uri
+            : `file://${details.media[4].uri}`,
+          type: "image/jpeg",
+          name: "issue.jpg",
+        });
+      }
+
+      console.log("FormData:", formData);
+
+      const response = await axios.post(
+        `http://${API_IP_ADDRESS}:8000/api/users/submitIssue`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      console.log("Response from server:", response.data);
+      router.push("/issues/SaveIssue");
+    } catch (error) {
+      console.error("Error uploading files:", error);
+    }
   };
 
   return (
@@ -104,7 +202,8 @@ export default function IssueMedia({
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.btnContainer}
-            onPress={() => router.push("/issues/SaveIssue")}>
+            onPress={() => submitIssue()}>
+            {/* onPress={() => router.push("/issues/SaveIssue")}> */}
             <Text style={styles.nextButton}>Next</Text>
           </TouchableOpacity>
         </View>

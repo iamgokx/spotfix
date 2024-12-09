@@ -1,17 +1,19 @@
 import { View, Text, StyleSheet, Image } from "react-native";
 import LottieView from "lottie-react-native";
 import { useRef, useEffect } from "react";
-const b1 = require("../../assets/images/blobs/b1.png");
+import Blob9 from "../../assets/images/blobs/b9.svg";
+import Blob10 from "../../assets/images/blobs/b10.svg";
 import loading from "../../assets/lottie/process.json";
 import { TouchableOpacity } from "react-native";
 import { useIssueContext } from "../../context/IssueContext";
 import { API_IP_ADDRESS } from "../../ipConfig.json";
 import axios from "axios";
 import { useState } from "react";
+import { useRouter } from "expo-router";
 
 const SaveIssue = () => {
   const animationRef = useRef(null);
-  const { details } = useIssueContext();
+  const router = useRouter();
   const handlePress = () => {
     if (animationRef.current) {
       animationRef.current.play();
@@ -20,53 +22,22 @@ const SaveIssue = () => {
   const [isloading, setisloading] = useState(false);
 
   useEffect(() => {
-    submitIssue();
-  }, []);
-
-  const submitIssue = async () => {
     setisloading(true);
-    try {
-      const formData = new FormData();
-      formData.append("title", details.title);
-      formData.append("description", details.description);
-      formData.append("suggestions", details.suggestions);
-      formData.append("department", details.department);
-      formData.append("latitude", details.latitude);
-      formData.append("longitude", details.longitude);
-      formData.append("generatedCity", details.generatedCity);
-      formData.append("generatedPincode", details.generatedPincode);
-      formData.append("generatedAddress", details.generatedAddress);
-      formData.append("generatedLocality", details.generatedLocality);
-
-      details.media.forEach((file, index) => {
-        const fileType = file.type.split("/")[1];
-        formData.append("media", {
-          uri: file.uri,
-          type: file.type,
-          name: `media-${index}.${fileType}`,
-        });
-      });
-
-      const response = await axios.post(
-        `http://${API_IP_ADDRESS}:8000/api/users/submitIssue`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+    setTimeout(() => {
       setisloading(false);
-      console.log("Response from server:", response.data);
-    } catch (error) {}
-  };
+      //change this later nigga, you are supposed to show a message that issue is registered
+    }, 2000);
+  }, []);
 
   return (
     <View style={styles.container}>
-      <Image source={b1} style={styles.blob1} />
+      <Blob9 style={styles.blob1} />
       <Text style={styles.text}>Saving Your Report</Text>
       <TouchableOpacity onPress={handlePress}>
         <LottieView autoPlay source={loading} style={styles.lottie} loop />
       </TouchableOpacity>
       {isloading && <Text>Loading</Text>}
+      <Blob10 style={styles.blob2} />
     </View>
   );
 };
@@ -90,6 +61,11 @@ const styles = StyleSheet.create({
     width: "120%",
     position: "absolute",
     top: 0,
+  },
+  blob2: {
+    width: "120%",
+    position: "absolute",
+    bottom: -10,
   },
   lottie: {
     width: 300,

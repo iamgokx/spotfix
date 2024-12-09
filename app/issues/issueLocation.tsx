@@ -17,11 +17,7 @@ import { Ionicons } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
 import deopPinOnMap from "../../assets/images/issues/mapAnimation.json";
 
-const IssueLocation = ({
-  goToTitleScreen,
-  goToMapScreen,
-  goToMediaScreen,
-}: any) => {
+const IssueLocation = () => {
   const { details, setDetails } = useIssueContext();
   const router = useRouter();
   return (

@@ -10,6 +10,7 @@ import {
   Keyboard,
   Modal,
   FlatList,
+  Switch,
 } from "react-native";
 import { ScrollView } from "react-native";
 import { useState } from "react";
@@ -21,10 +22,14 @@ const Issue = ({ goToAddressScreen }: any) => {
   const router = useRouter();
   const { details, setDetails, clearDetails } = useIssueContext();
 
+  const [isEnabled, setIsEnabled] = useState(false);
+
+  const toggleSwitch = () => setDetails((previousState) => !previousState);
+
   const departments = [
-    "Public Works Department (PWD)",
+    "Public Works Department",
     "Electricity Department",
-    "Municipal Administration (Urban Development)",
+    "Municipal Administration",
     "Department of Water Resources",
     "Department of Health",
     "Department of Transport",
@@ -41,6 +46,12 @@ const Issue = ({ goToAddressScreen }: any) => {
     setDetails((prev) => ({ ...prev, department: dep }));
     setIsModalVisible(false);
   };
+
+  const handleClearButtonPress = () => {
+    clearDetails();
+    router.push("/home");
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container} scrollEnabled={true}>
       <StatusBar
@@ -66,6 +77,30 @@ const Issue = ({ goToAddressScreen }: any) => {
       </View>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={styles.dataContainer}>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "#60b5ff",
+              paddingVertical: 10,
+              paddingHorizontal: 15,
+              borderRadius: 40,
+            }}>
+            <Text style={{ color: "white", fontWeight: 900 }}>
+              Report Anonymously
+            </Text>
+            <Switch
+              trackColor={{ false: "rgba(0,0,0,0.5)", true: "rgba(0,0,0,0.5)" }}
+              thumbColor={details.anonymous ? "orange" : "rgba(1,1,1,1)"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={() =>
+                setDetails((prev) => ({ ...prev, anonymous: !prev.anonymous }))
+              }
+              value={details.anonymous}
+            />
+          </View>
           <View style={styles.subContainer}>
             <Text style={styles.inputTitles}>Report Title</Text>
             <TextInput
@@ -136,8 +171,8 @@ const Issue = ({ goToAddressScreen }: any) => {
           <View style={styles.btnMainContainer}>
             <TouchableOpacity
               style={styles.backBtnContainer}
-              onPress={() => clearDetails()}>
-              <Text style={styles.backButton}>Clear</Text>
+              onPress={() => handleClearButtonPress()}>
+              <Text style={styles.backButton}>Close</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.btnContainer}

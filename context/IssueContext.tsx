@@ -1,6 +1,8 @@
 import React, { createContext, useState, useContext } from "react";
 
 interface IssueDetails {
+  username: string;
+  anonymous: boolean;
   title: string;
   description: string;
   suggestions: string;
@@ -39,6 +41,8 @@ export const useIssueContext = () => {
 
 export const IssueProvider: React.FC<IssueProviderProps> = ({ children }) => {
   const [details, setDetails] = useState<IssueDetails>({
+    username: "",
+    anonymous: false,
     title: "",
     description: "",
     suggestions: "",
@@ -55,6 +59,8 @@ export const IssueProvider: React.FC<IssueProviderProps> = ({ children }) => {
 
   const clearDetails = () => {
     setDetails({
+      username: "",
+      anonymous: false,
       title: "",
       description: "",
       suggestions: "",

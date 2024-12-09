@@ -14,7 +14,8 @@ const ReportIssue = () => {
           <Text style={styles.btn}>New Issue</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.btnContainer}>
+        <TouchableOpacity style={styles.btnContainer} 
+         onPress={() => router.push("/issues/SaveIssue")}>
           <Text style={styles.btn}>New Proposal</Text>
         </TouchableOpacity>
       </View>

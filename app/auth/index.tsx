@@ -21,6 +21,7 @@ import useLogin from "@/hooks/useLogin";
 import Blob4 from "../../assets/images/blobs/b4.svg";
 import Blob5 from "../../assets/images/blobs/b5.svg";
 import LottieView from "lottie-react-native";
+import { generateJwt } from "../../hooks/useJwt";
 import loginLottie from "../../assets/images/welcome/login.json";
 const Index = () => {
   const { login, isLoading, error } = useLogin();
@@ -51,6 +52,7 @@ const Index = () => {
   }, []);
 
   const handleLogInPress = async () => {
+    console.log(email , password);
     if (!email && !password) {
       setModalVisible(true);
     } else {
@@ -58,8 +60,16 @@ const Index = () => {
 
       const user = await login(email, password);
       if (user) {
-        console.log(user);
-        router.replace("/home");
+        const details = {
+          name: `${user.first_name} ${user.last_name}`,
+          email: user.email,
+        };
+        console.log('converted details : ',details);
+        const jwtRes = await generateJwt(details);
+        if (jwtRes) {
+          console.log("Login Token Set");
+          router.push("/home");
+        }
       } else {
         setloginModal(true);
         console.log("Login failed with error : ", error);
@@ -206,6 +216,7 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     elevation: 20,
     marginBottom: 20,
+    zIndex: 3,
   },
   icon: {
     paddingLeft: 20,

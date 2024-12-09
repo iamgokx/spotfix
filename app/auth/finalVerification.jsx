@@ -11,7 +11,7 @@ import { API_IP_ADDRESS } from "../../ipConfig.json";
 import { useRouter } from "expo-router";
 import { generateJwt, getStoredData, storeData } from "../../hooks/useJwt";
 const finalVerification = () => {
-  const { details } = useSignupContext();
+  const { details, clearDetails } = useSignupContext();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [responseMessage, setResponseMessage] = useState("");
@@ -47,6 +47,7 @@ const finalVerification = () => {
             const jwtRes = generateJwt(details);
             if (jwtRes) {
               setTimeout(() => {
+                clearDetails();
                 router.push("/home");
               }, 2000);
             } else {

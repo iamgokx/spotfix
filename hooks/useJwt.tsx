@@ -50,3 +50,28 @@ export const getStoredData = async () => {
     return null;
   }
 };
+
+export const getStoredRawToken = async () => {
+  try {
+    const storedToken = await AsyncStorage.getItem("jwtToken");
+    if (storedToken !== null) {
+      return storedToken;
+    } else {
+      console.log("No token found in AsyncStorage.");
+      return null;
+    }
+  } catch (e) {
+    console.error("Error retrieving data: ", e);
+    return null;
+  }
+};
+
+export const clearStorage = async () => {
+  try {
+    await AsyncStorage.clear();
+    console.log(AsyncStorage.getAllKeys);
+  } catch (error) {
+    console.log("error clearing storage  : ", error);
+    return null;
+  }
+};
