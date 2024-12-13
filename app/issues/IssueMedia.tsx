@@ -197,7 +197,7 @@ export default function IssueMedia() {
         <View style={styles.btnMainContainer}>
           <TouchableOpacity
             style={styles.backBtnContainer}
-            onPress={() => router.push("/issues/issueLocation")}>
+            onPress={() => router.back()}>
             <Text style={styles.backButton}>Back</Text>
           </TouchableOpacity>
           <TouchableOpacity

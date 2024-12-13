@@ -1,8 +1,9 @@
 import { useRouter } from "expo-router";
-import { TouchableOpacity, StyleSheet } from "react-native";
+import { TouchableOpacity, StyleSheet, Modal } from "react-native";
 import { View, Text } from "react-native";
 import { useIssueContext } from "@/context/IssueContext";
 import { IssueProvider } from "@/context/IssueContext";
+
 const ReportIssue = () => {
   const router = useRouter();
   return (
@@ -14,8 +15,9 @@ const ReportIssue = () => {
           <Text style={styles.btn}>New Issue</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.btnContainer} 
-         onPress={() => router.push("/issues/SaveIssue")}>
+        <TouchableOpacity
+          style={styles.btnContainer}
+          onPress={() => router.push("/auth")}>
           <Text style={styles.btn}>New Proposal</Text>
         </TouchableOpacity>
       </View>

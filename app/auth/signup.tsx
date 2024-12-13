@@ -13,6 +13,8 @@ import {
   Keyboard,
   Pressable,
 } from "react-native";
+import { useColorScheme } from "react-native";
+import {Colors} from '../../constants/Colors'
 import { Modal } from "react-native";
 import { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
@@ -24,6 +26,8 @@ import Blob6 from "../../assets/images/blobs/b6.svg";
 import Blob7 from "../../assets/images/blobs/b7.svg";
 import useValidation from "@/hooks/useValidate";
 const Signup = () => {
+  const colorScheme = useColorScheme();
+  const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
   const router = useRouter();
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const { details, setDetails } = useSignupContext();
@@ -84,7 +88,7 @@ const Signup = () => {
       <StatusBar
         barStyle="light-content"
         translucent
-        backgroundColor="transparent"
+        backgroundColor={currentColors.background}
       />
 
       <KeyboardAvoidingView
@@ -95,7 +99,7 @@ const Signup = () => {
             flexGrow: 1,
             justifyContent: "center",
           }}>
-          <View style={styles.container}>
+          <View style={[styles.container, {backgroundColor : currentColors.background}]}>
             <Modal
               animationType="fade"
               transparent={true}
@@ -236,7 +240,7 @@ const Signup = () => {
               <TouchableOpacity
                 onPress={goToAddressScreen}
                 style={{ paddingBottom: keyboardVisible ? 100 : 20 }}>
-                <Text style={styles.nextButton}>Next</Text>
+                <Text style={[styles.nextButton,{backgroundColor : currentColors.secondary}]}>Next</Text>
               </TouchableOpacity>
               <View
                 style={{
@@ -252,11 +256,11 @@ const Signup = () => {
                   justifyContent: "center",
                   alignItems: "center",
                 }}>
-                <Text>Already a user? </Text>
+                <Text style={[{color : currentColors.text}]}>Already a user? </Text>
                 <TouchableOpacity
-                  onPress={() => router.push("/auth/signup")}
+                  onPress={() => router.push("/auth")}
                   style={{ zIndex: 2 }}>
-                  <Text style={styles.loginText}> Log In</Text>
+                  <Text style={[styles.loginText, {color : currentColors.secondary}]}> Log In</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -280,7 +284,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     zIndex: 8,
-    backgroundColor: "white",
+    backgroundColor: "rgb(239, 247, 255)",
   },
   topContainer: {
     width: "100%",
@@ -310,15 +314,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     transform: [{ scaleX: 1.1 }],
   },
-  detailsContainer: {},
+  detailsContainer: {
+    // backgroundColor: "#ffffff",
+    width: "90%",
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius : 20,
+    gap : 20
+  },
   inputContainer: {
-    width: "80%",
+    width: "90%",
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "white",
     borderRadius: 40,
     elevation: 20,
-    marginBottom: 20,
+    
   },
   errorContainer: {
     width: "80%",
@@ -372,7 +384,7 @@ const styles = StyleSheet.create({
     color: "white",
     backgroundColor: "#0066ff",
     paddingVertical: 15,
-    paddingHorizontal: 70,
+    paddingHorizontal: 50,
     elevation: 10,
   },
   modalContainer: {

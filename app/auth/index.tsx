@@ -23,7 +23,11 @@ import Blob5 from "../../assets/images/blobs/b5.svg";
 import LottieView from "lottie-react-native";
 import { generateJwt } from "../../hooks/useJwt";
 import loginLottie from "../../assets/images/welcome/login.json";
+import { useColorScheme } from "react-native";
+import { Colors } from "../../constants/Colors";
 const Index = () => {
+  const colorScheme = useColorScheme();
+  const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
   const { login, isLoading, error } = useLogin();
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -31,6 +35,7 @@ const Index = () => {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [loginModal, setloginModal] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(true);
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -52,7 +57,7 @@ const Index = () => {
   }, []);
 
   const handleLogInPress = async () => {
-    console.log(email , password);
+    console.log(email, password);
     if (!email && !password) {
       setModalVisible(true);
     } else {
@@ -64,7 +69,7 @@ const Index = () => {
           name: `${user.first_name} ${user.last_name}`,
           email: user.email,
         };
-        console.log('converted details : ',details);
+        console.log("converted details : ", details);
         const jwtRes = await generateJwt(details);
         if (jwtRes) {
           console.log("Login Token Set");
@@ -79,11 +84,7 @@ const Index = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, padding: 0, width: "100%" }}>
-      <StatusBar
-        barStyle="light-content"
-        translucent
-        backgroundColor="transparent"
-      />
+      <StatusBar backgroundColor={currentColors.background} />
       <KeyboardAvoidingView
         style={{ flex: 1, padding: 0, width: "100%" }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}>
@@ -94,8 +95,12 @@ const Index = () => {
             padding: 0,
             width: "100%",
           }}>
-          <View style={styles.container}>
-            <Text className="text-3xl font-extrabold">Spotfix Login</Text>
+          <View
+            style={[
+              styles.container,
+              { backgroundColor: currentColors.background },
+            ]}>
+            <Text className="text-3xl font-extrabold" style={[{color : currentColors.text}]}>Spotfix Login</Text>
 
             <Modal
               animationType="fade"
@@ -160,13 +165,21 @@ const Index = () => {
             </View>
 
             <View style={styles.inputContainer}>
-              <Ionicons name="eye" size={20} color="gray" style={styles.icon} />
+              <TouchableOpacity>
+                <Ionicons
+                  name={passwordVisible ? "eye" : "eye-off"}
+                  onPress={() => setPasswordVisible((prev) => !prev)}
+                  size={20}
+                  color="gray"
+                  style={styles.icon}
+                />
+              </TouchableOpacity>
               <TextInput
                 style={styles.input}
                 placeholder="Enter password"
                 value={password}
                 onChangeText={(text) => setPassword(text)}
-                secureTextEntry={true}
+                secureTextEntry={passwordVisible ? true : false}
               />
             </View>
 
@@ -183,7 +196,7 @@ const Index = () => {
                 justifyContent: "center",
                 alignItems: "center",
               }}>
-              <Text>Not a user? </Text>
+              <Text style={[{color : currentColors.text}]}>Not a user? </Text>
               <TouchableOpacity
                 onPress={() => router.push("/auth/signup")}
                 style={{ zIndex: 2 }}>

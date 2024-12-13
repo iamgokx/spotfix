@@ -23,6 +23,8 @@ import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
 import { useRouter } from "expo-router";
 const { width, height } = Dimensions.get("window");
+import { Colors } from "../constants/Colors";
+import { useColorScheme } from "react-native";
 import { useState } from "react";
 import {
   getStoredData,
@@ -34,6 +36,8 @@ import { API_IP_ADDRESS } from "../ipConfig.json";
 
 import loading from "../assets/images/welcome/loading.json";
 const Index = () => {
+  const colorScheme = useColorScheme();
+  const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
   const router = useRouter();
   const [isLoading, setisLoading] = useState(true);
   const [isPressed, setIsPressed] = useState(false);
@@ -74,8 +78,8 @@ const Index = () => {
     if (response.data.jwtStatus) {
       console.log("jwt authenticated");
       console.log(response.data);
-      setisLoading(false);
       router.push("/home");
+      setisLoading(false);
     } else {
       console.log("couldnt authenticate jwt");
       setisLoading(false);
@@ -99,32 +103,36 @@ const Index = () => {
         tokenFromStorage?.userType
       );
     }
-
-   
   };
 
   return (
     <>
-      <StatusBar style="dark" />
+      <StatusBar backgroundColor={currentColors.background} />
       {isLoading && (
         <View
-          style={{
-            width: "100%",
-            height: "100%",
-            position: "absolute",
-            backgroundColor: "white",
-            zIndex: 10,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}>
+          style={[
+            {
+              width: "100%",
+              height: "100%",
+              position: "absolute",
+              // backgroundColor: "white",
+              zIndex: 10,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            },
+            { backgroundColor: currentColors.background },
+          ]}>
           <Text
-            style={{
-              color: "black",
-              fontSize: 30,
-              fontWeight: 900,
-              marginBottom: 70,
-            }}>
+            style={[
+              {
+                // color: "black",
+                fontSize: 30,
+                fontWeight: 900,
+                marginBottom: 70,
+              },
+              { color: currentColors.text },
+            ]}>
             SpotFix
           </Text>
           <LottieView
@@ -139,13 +147,21 @@ const Index = () => {
         </View>
       )}
       <Swiper
-        style={styles.wrapper}
+        style={[styles.wrapper, { backgroundColor: currentColors.background }]}
         showsButtons={false}
         loop={false}
         dot={<View style={styles.dot} />}
         activeDot={<View style={styles.activeDot} />}>
-        <View style={[styles.slide, styles.slide1]} className="p-10">
-          <Text style={styles.slideOneText}>Welcome To SpotFix!</Text>
+        <View
+          style={[
+            styles.slide,
+            styles.slide1,
+            { backgroundColor: currentColors.background },
+          ]}
+          className="p-10">
+          <Text style={[styles.slideOneText, { color: currentColors.link }]}>
+            Welcome To SpotFix!
+          </Text>
 
           <LottieView
             source={welcomePageOne}
@@ -153,7 +169,9 @@ const Index = () => {
             loop
             style={[styles.image, { width: width * 0.8, height: height * 0.4 }]}
           />
-          <Text className="text-black text-2xl text-center">
+          <Text
+            className="text-black text-2xl text-center"
+            style={[{ color: currentColors.text }]}>
             Effortlessly identify and report local issues to your government for
             prompt resolution.
           </Text>
@@ -166,24 +184,24 @@ const Index = () => {
           </Pressable>
         </View>
 
-        <View style={styles.slide} className="p-10 bg-gray-50">
-          {/* <Image
-            source={require("../assets/images/welcome/welcome2.png")}
-            style={[styles.image, { width: width * 0.8, height: height * 0.4 }]}
-          /> */}
+        <View
+          style={[styles.slide, { backgroundColor: currentColors.background }]}
+          className="p-10 bg-gray-50">
           <LottieView
             source={welcomePageTwo}
             autoPlay
             loop
             style={[styles.image, { width: width * 0.8, height: height * 0.4 }]}
           />
-          <Text className="text-black text-2xl text-center">
+          <Text
+            className="text-black text-2xl text-center"
+            style={[{ color: currentColors.text }]}>
             Participating in project voting, proposing new ideas, and sharing
             your suggestions.
           </Text>
         </View>
 
-        <View style={styles.slide} className="p-10">
+        <View  style={[styles.slide, { backgroundColor: currentColors.background }]} className="p-10">
           {/* <Image
             source={require("../assets/images/welcome/welcome3.png")}
             style={[styles.image, { width: width * 0.8, height: height * 0.4 }]}
@@ -194,7 +212,7 @@ const Index = () => {
             loop
             style={[styles.image, { width: width * 0.8, height: height * 0.4 }]}
           />
-          <Text className="text-2xl text-center">
+          <Text className="text-2xl text-center" style={[{ color: currentColors.text }]}>
             Stay informed with real-time updates, crucial alerts, and detailed
             reports on local developments.
           </Text>

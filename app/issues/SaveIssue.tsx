@@ -25,7 +25,7 @@ const SaveIssue = () => {
     setisloading(true);
     setTimeout(() => {
       setisloading(false);
-      //change this later nigga, you are supposed to show a message that issue is registered
+      router.push('/home')
     }, 2000);
   }, []);
 

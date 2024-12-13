@@ -12,6 +12,8 @@ import CustomHeader from "@/components/CustomHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ProfileScreen from "../Screens/Profile";
 import HomeScreen from "../Screens/Home";
+import YourIssues from "../Screens/YourIssues";
+import YourProposals from "../Screens/YourProposals";
 import { Ionicons } from "@expo/vector-icons";
 import CustomDrawer from "@/components/Drawer";
 import Feedback from "../Screens/Feedback";
@@ -47,11 +49,11 @@ const MyDrawer = () => {
           header: ({ navigation }) => <CustomHeader navigation={navigation} />,
         }}>
         <Drawer.Screen
-          name="Home"
+          name="Issues"
           component={HomeScreen}
           options={{
             drawerIcon: ({ size, color }) => (
-              <Ionicons name="home-outline" size={size} color={color} />
+              <Ionicons name="build-outline" size={size} color={color} />
             ),
           }}
         />
@@ -61,6 +63,24 @@ const MyDrawer = () => {
           options={{
             drawerIcon: ({ size, color }) => (
               <Ionicons name="person-outline" size={size} color={color} />
+            ),
+          }}
+        />
+        <Drawer.Screen
+          name="My Issues"
+          component={YourIssues}
+          options={{
+            drawerIcon: ({ size, color }) => (
+              <Ionicons name="create-outline" size={size} color={color} />
+            ),
+          }}
+        />
+        <Drawer.Screen
+          name="My Proposals"
+          component={YourProposals}
+          options={{
+            drawerIcon: ({ size, color }) => (
+              <Ionicons name="newspaper-outline" size={size} color={color} />
             ),
           }}
         />

@@ -22,8 +22,11 @@ import { Pressable } from "react-native";
 import LottieView from "lottie-react-native";
 import mapIcon from "../../assets/images/welcome/map.json";
 import Blob from "../../assets/images/blobs/b7.svg";
-
+import { useColorScheme } from "react-native";
+import { Colors } from "@/constants/Colors";
 const useraddress = () => {
+  const colorScheme = useColorScheme();
+  const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
   const { details, setDetails } = useSignupContext();
@@ -100,7 +103,7 @@ const useraddress = () => {
       <StatusBar
         barStyle="light-content"
         translucent
-        backgroundColor="transparent"
+        backgroundColor={currentColors.background}
       />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -110,7 +113,11 @@ const useraddress = () => {
             flexGrow: 1,
             justifyContent: "center",
           }}>
-          <View style={styles.container}>
+          <View
+            style={[
+              styles.container,
+              { backgroundColor: currentColors.background },
+            ]}>
             <Modal
               animationType="fade"
               transparent={true}
@@ -157,17 +164,22 @@ const useraddress = () => {
             </ImageBackground>
             <View style={styles.detailsContainer}>
               <TouchableOpacity
-                style={{ width: "100%" }}
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
                 activeOpacity={0.7}
                 onPress={openMap}>
                 <View
                   style={[
                     styles.inputContainer,
-                    { backgroundColor: "#0066ff" },
+                    { backgroundColor: currentColors.backgroundSecondary },
                   ]}>
                   <TextInput
                     style={[styles.input]}
-                    placeholderTextColor={"white"}
+                    placeholderTextColor={currentColors.textSecondary}
                     placeholder={
                       details.generatedCity === ""
                         ? "Drop Pin On Map"
@@ -193,91 +205,45 @@ const useraddress = () => {
                   />
                 </View>
               </TouchableOpacity>
-              <View
-                style={[
-                  styles.inputContainer,
-                  !details.generatedAddress ? null : styles.disabledContainer,
-                ]}>
-                <TextInput
-                  style={[styles.input]}
-                  placeholder="Address"
-                  value={
-                    details.generatedAddress == ""
-                      ? details.address
-                      : details.generatedAddress
-                  }
-                  onChangeText={(text) =>
-                    setDetails((prev) => ({ ...prev, address: text }))
-                  }
-                  editable={!details.generatedAddress}
-                />
-              </View>
-
-              <View
-                style={[
-                  styles.inputContainer,
-                  !details.generatedCity ? null : styles.disabledContainer,
-                ]}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="City/Town"
-                  value={
-                    details.generatedCity == ""
-                      ? details.city
-                      : details.generatedCity
-                  }
-                  onChangeText={(text) =>
-                    setDetails((prev) => ({ ...prev, city: text }))
-                  }
-                  editable={!details.generatedCity}
-                />
-              </View>
-              <View
-                style={[
-                  styles.inputContainer,
-                  !details.generatedState ? null : styles.disabledContainer,
-                ]}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="State"
-                  value={
-                    details.generatedState == ""
-                      ? details.state
-                      : details.generatedState
-                  }
-                  onChangeText={(text) =>
-                    setDetails((prev) => ({ ...prev, state: text }))
-                  }
-                  editable={!details.generatedState}
-                />
-              </View>
-
-              <View
-                style={[
-                  styles.inputContainer,
-                  !details.generatedPincode ? null : styles.disabledContainer,
-                ]}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Pincode"
-                  value={
-                    details.generatedPincode == ""
-                      ? details.pincode
-                      : details.generatedPincode
-                  }
-                  onChangeText={(text) =>
-                    setDetails((prev) => ({ ...prev, pincode: text }))
-                  }
-                  keyboardType="number-pad"
-                  editable={!details.generatedPincode}
-                />
-              </View>
+              {details.generatedAddress && (
+                <>
+                  <Text style={{ margin: 10 ,color : currentColors.text}}>Location Details</Text>
+                  <View
+                    style={[
+                      styles.inputContainer,
+                      !details.generatedAddress
+                        ? null
+                        : styles.disabledContainer,
+                    ]}>
+                    <TextInput
+                      style={[styles.input]}
+                      placeholder="Address"
+                      multiline
+                      value={
+                        details.generatedAddress == ""
+                          ? details.address
+                          : details.generatedAddress
+                      }
+                      onChangeText={(text) =>
+                        setDetails((prev) => ({ ...prev, address: text }))
+                      }
+                      editable={!details.generatedAddress}
+                    />
+                  </View>
+                </>
+              )}
             </View>
             <View style={styles.btnContainer}>
               <TouchableOpacity
                 onPress={goToPasswordScreen}
                 style={{ paddingBottom: keyboardVisible ? 100 : 20 }}>
-                <Text style={styles.loginBtn}>Next</Text>
+                <Text
+                  style={[
+                    styles.loginBtn,
+                    { backgroundColor: currentColors.secondary },
+                  ]}>
+                  Next
+                </Text>
               </TouchableOpacity>
               <View
                 style={{
@@ -285,12 +251,23 @@ const useraddress = () => {
                   backgroundColor: "#F4F2F2",
                   width: "80%",
                 }}></View>
-              <Text style={{ marginBottom: 6, textAlign: "center" }}>
+              <Text
+                style={{
+                  marginBottom: 6,
+                  textAlign: "center",
+                  color: currentColors.text,
+                }}>
                 Already Have An Account?{" "}
                 <TouchableOpacity
                   onPress={() => router.push("/auth")}
                   style={{ padding: 0 }}>
-                  <Text style={styles.loginText}>Log In</Text>
+                  <Text
+                    style={[
+                      styles.loginText,
+                      { color: currentColors.secondary },
+                    ]}>
+                    Log In
+                  </Text>
                 </TouchableOpacity>
               </Text>
             </View>
@@ -313,7 +290,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     zIndex: 8,
-    backgroundColor: "white",
+    backgroundColor: "#eff7ff",
   },
   topContainer: {
     width: "100%",
@@ -335,18 +312,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: -10,
   },
-  detailsContainer: {},
+  detailsContainer: {
+    // backgroundColor: "#ffffff",
+    width: "90%",
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 20,
+    gap: 20,
+  },
   inputContainer: {
-    width: "80%",
+    width: "90%",
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "white",
     borderRadius: 40,
     elevation: 20,
-    marginBottom: 20,
   },
   disabledContainer: {
-    backgroundColor: "orange",
+    backgroundColor: "white",
   },
   icon: {
     paddingLeft: 20,

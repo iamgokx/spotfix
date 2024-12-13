@@ -36,7 +36,7 @@ const CustomDrawer = (props: any) => {
   };
 
   const handleLogOutButtonPress = () => {
-    // clearStorage();
+    clearStorage();
     router.push("/");
   };
 

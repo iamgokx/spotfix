@@ -15,7 +15,7 @@ import { useIssueContext } from "@/context/IssueContext";
 import { Ionicons } from "@expo/vector-icons";
 
 import LottieView from "lottie-react-native";
-import deopPinOnMap from "../../assets/images/issues/mapAnimation.json";
+import deopPinOnMap from "../../assets/images/issues/selectLocationOnMap.json";
 
 const IssueLocation = () => {
   const { details, setDetails } = useIssueContext();
@@ -64,7 +64,7 @@ const IssueLocation = () => {
                 source={deopPinOnMap}
                 autoPlay
                 loop
-                style={{ width: 200, height: 200 }}
+                style={{ width: 250, height: 250 }}
               />
             </View>
           )}
@@ -99,7 +99,7 @@ const IssueLocation = () => {
           <View style={styles.btnMainContainer}>
             <TouchableOpacity
               style={styles.backBtnContainer}
-              onPress={() => router.push("/issues/issue")}>
+              onPress={() => router.back()}>
               <Text style={styles.backButton}>Back</Text>
             </TouchableOpacity>
             <TouchableOpacity

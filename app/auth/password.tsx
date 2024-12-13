@@ -207,9 +207,11 @@ const password = () => {
                     setconfirmPassword((prev) => !prev)
                   }></Ionicons>
               </View>
-              <View style={{ width: "80%" }}>
-                <Text style={{ color: "red" }}>{errors.password}</Text>
-              </View>
+              {errors.password && (
+                <View style={{ width: "80%" }}>
+                  <Text style={{ color: "red" }}>{errors.password}</Text>
+                </View>
+              )}
             </View>
             <View style={styles.btnContainer}>
               <TouchableOpacity
@@ -251,7 +253,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     zIndex: 8,
-    backgroundColor: "white",
+    backgroundColor: "rgb(239, 247, 255)",
   },
   topContainer: {
     width: "100%",
@@ -273,15 +275,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: -10,
   },
-  detailsContainer: {},
+  detailsContainer: {
+    // backgroundColor: "#ffffff",
+    width: "90%",
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 20,
+    gap : 20
+  },
   inputContainer: {
-    width: "80%",
+    width: "90%",
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "white",
     borderRadius: 40,
     elevation: 20,
-    marginBottom: 20,
+  
+    // marginBottom: 20,
   },
   disabledContainer: {
     backgroundColor: "rgba(125, 230, 255, 1)",

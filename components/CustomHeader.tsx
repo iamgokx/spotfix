@@ -38,9 +38,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 10,
     backgroundColor: "#fff",
-    elevation: 4,
+    elevation: 10,
     borderBottomLeftRadius: 35,
     borderBottomRightRadius: 35,
+    zIndex : 1
   },
   iconButton: {
     padding: 5,
