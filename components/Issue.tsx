@@ -104,8 +104,13 @@ const Issue = ({
       console.log("error while adding vote : ", error);
     }
   };
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={[
+        styles.container,
+        { backgroundColor: currentColors.backgroundDarker },
+      ]}>
       <View style={styles.nameContainer}>
         <Ionicons
           name="person"
@@ -113,14 +118,18 @@ const Issue = ({
           size={25}
           style={styles.userPfp}></Ionicons>
         <View style={styles.subContainer}>
-          <Text style={styles.userName}>
+          <Text style={[styles.userName, { color: currentColors.text }]}>
             {is_anonymous == 1 ? "Spotfix User" : username}
           </Text>
-          <Text>{getDateFormatted(dateTime)}</Text>
+          <Text style={[{ color: currentColors.text }]}>
+            {getDateFormatted(dateTime)}
+          </Text>
         </View>
       </View>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>{title}</Text>
+        <Text style={[styles.title, { color: currentColors.text }]}>
+          {title}
+        </Text>
         <Text
           style={[
             styles.progress,
@@ -155,10 +164,10 @@ const Issue = ({
         )}
       </Swiper>
 
-      <Text style={[styles.desc]}>
+      <Text style={[styles.desc, { color: currentColors.text }]}>
         {splitDescription}
         <Text
-          style={{ color: "#0066ff" }}
+          style={{ color: currentColors.link }}
           onPress={() =>
             router.push(`/Screens/DetailedIssue?issue_id=${issue_id}`)
           }>
@@ -172,8 +181,10 @@ const Issue = ({
               style={styles.reactionsIcon}
               name="arrow-up-circle"
               size={24}
-              color={"#0066ff"}></Ionicons>
-            <Text style={{ fontSize: 15 }}>{upvotes}</Text>
+              color={currentColors.secondary}></Ionicons>
+            <Text style={[{ fontSize: 15 }, { color: currentColors.link }]}>
+              {upvotes}
+            </Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => handelVoteClick("downvote")}>
@@ -182,18 +193,25 @@ const Issue = ({
               style={styles.reactionsIcon}
               name="arrow-down-circle"
               size={24}
-              color={"#0066ff"}></Ionicons>
-            <Text style={{ fontSize: 15 }}>{downvotes}</Text>
+              color={currentColors.secondary}></Ionicons>
+            <Text style={[{ fontSize: 15 }, { color: currentColors.link }]}>
+              {downvotes}
+            </Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>
+            router.push(`/Screens/DetailedIssue?issue_id=${issue_id}`)
+          }>
           <View style={styles.reactions}>
             <Ionicons
               style={styles.reactionsIcon}
               name="chatbubbles"
               size={24}
-              color={"#0066ff"}></Ionicons>
-            <Text style={{ fontSize: 15 }}>{suggestions}</Text>
+              color={currentColors.secondary}></Ionicons>
+            <Text style={[{ fontSize: 15 }, { color: currentColors.link }]}>
+              {suggestions}
+            </Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -247,7 +265,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     gap: 10,
     backgroundColor: "white",
-    marginTop: 10,
   },
 
   subContainer: {
@@ -322,7 +339,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
     alignItems: "center",
     gap: 5,
-    backgroundColor: "rgba(182, 231, 255, 0.8)",
+    // backgroundColor: "rgba(182, 231, 255, 0.8)",
     borderRadius: 20,
     padding: 15,
     paddingVertical: 1,

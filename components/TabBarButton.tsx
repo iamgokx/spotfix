@@ -2,7 +2,8 @@ import { Pressable, StyleSheet } from "react-native";
 import { icons } from "../constants/icons";
 import React from "react";
 import { Feather } from "@expo/vector-icons";
-
+import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "react-native";
 interface TabBarButtonProps {
   onPress: () => void;
   onLongPress: () => void;
@@ -19,10 +20,10 @@ const TabBarButton: React.FC<TabBarButtonProps> = ({
   routeName,
   color,
 }: any) => {
- 
+  const colorScheme = useColorScheme();
+  const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
   const noColorChange = routeName === "reportIssue";
 
- 
   const iconFunction =
     icons[routeName] || (() => <Feather name="help-circle" size={24} />);
 
@@ -34,12 +35,14 @@ const TabBarButton: React.FC<TabBarButtonProps> = ({
         styles.tabBarItem,
         {
           backgroundColor:
-            isFocused && !noColorChange ? "#0066ff" : "white",
+            isFocused && !noColorChange
+              ? currentColors.secondary
+              : currentColors.backgroundDarker,
         },
-      ]}
-    >
+      ]}>
       {iconFunction({
-        color: isFocused && !noColorChange ? "white" : "black", 
+        color:
+          isFocused && !noColorChange ? currentColors.text : currentColors.text,
       })}
     </Pressable>
   );
@@ -57,3 +60,5 @@ const styles = StyleSheet.create({
 });
 
 export default TabBarButton;
+
+

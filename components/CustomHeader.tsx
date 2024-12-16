@@ -3,29 +3,33 @@ import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useColorScheme } from "react-native";
+import { Colors } from "@/constants/Colors";
 interface Props {
   navigation: DrawerNavigationProp<any>;
 }
 
 const CustomHeader: React.FC<Props> = ({ navigation }: any) => {
+  const colorScheme = useColorScheme();
+  const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
   return (
-    <SafeAreaView style={styles.headerContainer}>
+    <SafeAreaView style={[styles.headerContainer,{backgroundColor : currentColors.backgroundDarker}]}>
       <TouchableOpacity
         onPress={() => navigation.openDrawer()}
-        style={styles.iconButton}>
-        <Ionicons name="menu" size={28} color="black" />
+        style={[styles.iconButton]}>
+        <Ionicons name="menu" size={28} color={currentColors.secondary}/>
       </TouchableOpacity>
 
       <TextInput
-        style={styles.searchInput}
+        style={[styles.searchInput,{backgroundColor : currentColors.background}, {color :  currentColors.text}]}
         placeholder="Search"
-        placeholderTextColor="gray"
+        placeholderTextColor={currentColors.textShade}
       />
 
       <TouchableOpacity
         onPress={() => alert("Notification Clicked")}
         style={styles.iconButton}>
-        <Ionicons name="notifications-circle" size={35} color="#0066ff" />
+        <Ionicons name="notifications-circle" size={35} color={currentColors.secondary} />
       </TouchableOpacity>
     </SafeAreaView>
   );

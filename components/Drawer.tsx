@@ -17,7 +17,11 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { router } from "expo-router";
+import { useColorScheme } from "react-native";
+import { Colors } from "@/constants/Colors";
 const CustomDrawer = (props: any) => {
+  const colorScheme = useColorScheme();
+  const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
   const [user, setuser] = useState({
     name: "",
     email: "",
@@ -41,7 +45,11 @@ const CustomDrawer = (props: any) => {
   };
 
   return (
-    <View style={styles.drawerContainer}>
+    <View
+      style={[
+        styles.drawerContainer,
+        { backgroundColor: currentColors.backgroundDarker },
+      ]}>
       <View style={[styles.headerContainer]}>
         <ImageBackground
           resizeMode="cover"

@@ -6,13 +6,17 @@ import {
   TouchableOpacity,
   Animated,
 } from "react-native";
+import { useColorScheme } from "react-native";
+import { Colors } from "@/constants/Colors";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 
 import TabBarButton from "./TabBarButton";
 
 export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
+  const colorScheme = useColorScheme();
+  const currentColors = colorScheme =='dark' ? Colors.dark : Colors.light
   return (
-    <View style={styles.tabbar}>
+    <View style={[styles.tabbar,{backgroundColor : currentColors.backgroundDarker}]}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const label =
@@ -71,7 +75,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderTopLeftRadius: 35,
     borderTopRightRadius: 35,
-    borderRadius: 20,
+   
     elevation: 20,
     // marginRight : 20,
     // marginLeft : 20,

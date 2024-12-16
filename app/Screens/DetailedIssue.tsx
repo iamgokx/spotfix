@@ -6,6 +6,8 @@ import {
   ScrollView,
   Switch,
   TouchableOpacity,
+  Keyboard,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, useLocalSearchParams } from "expo-router";
@@ -23,14 +25,21 @@ import { TextInput } from "react-native";
 import { format } from "date-fns";
 import { BlurView } from "expo-blur";
 import lazyLoading2 from "../../assets/images/issues/lazyLoading2.json";
+import { useColorScheme } from "react-native";
+import { Colors } from "@/constants/Colors";
+import { getStoredData } from "@/hooks/useJwt";
+import SuggestionsList from "@/components/SuggestionsList";
 const DetailedIssue = () => {
+  const colorScheme = useColorScheme();
+  const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
   const router = useRouter();
   const { issue_id } = useLocalSearchParams();
   const [issueDetails, setIssueDetails] = useState(null);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [geoCodedAddress, setGeoCodedAddress] = useState("");
   const [isAddressLoading, setIsAddressLoading] = useState(true);
-
+  const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
   const getDateFormatted = (date: any) => {
     const formattedDate = format(new Date(date), "eeee d MMMM yyyy");
     return formattedDate;
@@ -75,7 +84,7 @@ const DetailedIssue = () => {
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${issueDetails.latitude}&lon=${issueDetails.longitude}&addressdetails=1`,
         {
           headers: {
-            "User-Agent": "YourAppName/1.0 (your-email@example.com)",
+            "User-Agent": "spotfix/1.0 (lekhwargokul84.com)",
           },
         }
       );
@@ -91,23 +100,23 @@ const DetailedIssue = () => {
     }
   };
 
-  useEffect(() => {
-    const getIssueDetails = async () => {
-      try {
-        const response = await axios.post(
-          `http://${API_IP_ADDRESS}:8000/api/issues/getDetailedIssue`,
-          { issue_id }
-        );
-        if (response?.data) {
-          setIssueDetails(response.data);
-          console.log("detailed issue : ", response.data);
-          setIsDataLoaded(true);
-        }
-      } catch (error) {
-        console.error("Error fetching issue details:", error);
+  const getIssueDetails = async () => {
+    try {
+      const response = await axios.post(
+        `http://${API_IP_ADDRESS}:8000/api/issues/getDetailedIssue`,
+        { issue_id }
+      );
+      if (response?.data) {
+        setIssueDetails(response.data);
+        console.log("detailed issue : ", response.data);
+        setIsDataLoaded(true);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching issue details:", error);
+    }
+  };
 
+  useEffect(() => {
     getIssueDetails();
   }, [issue_id]);
 
@@ -125,7 +134,7 @@ const DetailedIssue = () => {
           flex: 1,
           justifyContent: "flex-start",
           alignItems: "center",
-          backgroundColor: "white",
+          backgroundColor: 'white'
         }}>
         <StatusBar translucent hidden />
 
@@ -138,6 +147,7 @@ const DetailedIssue = () => {
             width: "90%",
             height: "60%",
             borderRadius: 80,
+
           }}
         />
       </SafeAreaView>
@@ -148,8 +158,42 @@ const DetailedIssue = () => {
     ? issueDetails.media_files.split(",")
     : [];
 
+  const handelVoteClick = async (voteType: string) => {
+    try {
+      console.log(voteType);
+      const token = await getStoredData();
+
+      if (token) {
+        const response = await axios.post(
+          `http://${API_IP_ADDRESS}:8000/api/issues/addVote`,
+          { voteType: voteType, email: token.email, issue_id: issue_id }
+        );
+
+        if (response) {
+          console.log(response.data);
+          getIssueDetails();
+          // refreshIssue(issue_id);
+        }
+      } else {
+        console.log("User Details not found in JWT token, Please Login");
+      }
+    } catch (error) {
+      console.log("error while adding vote : ", error);
+    }
+  };
+
+  const openSuggestionBox = () => {
+    // Keyboard.addListener(
+    //   Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
+    //   (event) => {
+    //     setKeyboardHeight(event.endCoordinates.height);
+    //   }
+    // );
+    setIsSuggestionsOpen((prev) => !prev);
+  };
+
   return (
-    <View style={{ flex: 1, backgroundColor: "white" }}>
+    <View style={{ flex: 1, backgroundColor: currentColors.backgroundDarker }}>
       <StatusBar translucent hidden />
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -157,7 +201,7 @@ const DetailedIssue = () => {
           alignItems: "center",
           paddingBottom: 100,
         }}>
-        <View style={styles.header}>
+        <View style={[styles.header]}>
           <Ionicons
             name="chevron-back-outline"
             color={"white"}
@@ -199,8 +243,50 @@ const DetailedIssue = () => {
             </View>
           )}
         </Swiper>
+        <View style={[styles.iconsContainer]}>
+          <TouchableOpacity onPress={() => handelVoteClick("upvote")}>
+            <View style={styles.reactions}>
+              <Ionicons
+                style={styles.reactionsIcon}
+                name="arrow-up-circle"
+                size={24}
+                color={currentColors.secondary}></Ionicons>
+              <Text style={[{ fontSize: 15 }, { color: currentColors.link }]}>
+                {issueDetails.upvote_count}
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handelVoteClick("downvote")}>
+            <View style={styles.reactions}>
+              <Ionicons
+                style={styles.reactionsIcon}
+                name="arrow-down-circle"
+                size={24}
+                color={currentColors.secondary}></Ionicons>
+              <Text style={[{ fontSize: 15 }, { color: currentColors.link }]}>
+                {issueDetails.downvote_count}
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => openSuggestionBox()}>
+            <View style={styles.reactions}>
+              <Ionicons
+                style={styles.reactionsIcon}
+                name="chatbubbles"
+                size={24}
+                color={currentColors.secondary}></Ionicons>
+              <Text style={[{ fontSize: 15 }, { color: currentColors.link }]}>
+                {issueDetails.total_suggestions}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
 
-        <View style={styles.issueCreatorContainer}>
+        <View
+          style={[
+            styles.issueCreatorContainer,
+            { backgroundColor: currentColors.secondary },
+          ]}>
           <Image
             source={hero}
             style={{ width: 50, height: 50, borderRadius: 100 }}
@@ -237,8 +323,8 @@ const DetailedIssue = () => {
             flexDirection: "column",
             marginBottom: 20,
           }}>
-          <Text style={{ fontWeight: 900, fontSize: 17 }}>Description</Text>
-          <Text style={styles.desc}>
+          {/* <Text style={{ fontWeight: 900, fontSize: 17 }}>Description</Text> */}
+          <Text style={[styles.desc, { color: currentColors.text }]}>
             {issueDetails.issue_description || "No description available"}
           </Text>
         </View>
@@ -253,8 +339,8 @@ const DetailedIssue = () => {
 
             marginBottom: 20,
           }}>
-          <Text style={{ fontWeight: 900, fontSize: 17 }}>Suggestions</Text>
-          <Text style={styles.solution}>
+          {/* <Text style={{ fontWeight: 900, fontSize: 17 }}>Suggestions</Text> */}
+          <Text style={[styles.solution, { color: currentColors.text }]}>
             {issueDetails.solution || "No solution available"}
           </Text>
         </View>
@@ -269,77 +355,23 @@ const DetailedIssue = () => {
               alignItems: "center",
               marginBottom: 20,
               flexDirection: "row",
-              backgroundColor: "rgba(0, 234, 255, 0.39)",
+              // backgroundColor: "rgba(0, 234, 255, 0.39)",
               overflow: "hidden",
               padding: 10,
               borderRadius: 20,
             }}>
-            <Ionicons name="location" size={25} color={"#0066ff"} />
+            <Ionicons name="location" size={25} color={currentColors.link} />
             <TextInput
               value={geoCodedAddress}
-              style={{ color: "#0066ff", width: "90%" }}
+              style={{ color: currentColors.link, width: "90%" }}
               editable={false}
               multiline></TextInput>
           </View>
         ) : (
           <Text style={{ color: "#0066ff" }}>Loading address...</Text>
         )}
-
-        <View
-          style={{
-            width: "90%",
-          }}>
-          <View style={styles.iconsContainer}>
-            <TouchableOpacity onPress={() => console.log("press")}>
-              <View style={styles.reactions}>
-                <Ionicons
-                  style={styles.reactionsIcon}
-                  name="arrow-up-circle"
-                  size={24}
-                  color={"#0066ff"}></Ionicons>
-                <Text style={{ fontSize: 15 }}>
-                  {issueDetails.upvote_count}
-                </Text>
-              </View>
-            </TouchableOpacity>
-            <View style={styles.reactions}>
-              <Ionicons
-                style={styles.reactionsIcon}
-                name="arrow-down-circle"
-                size={24}
-                color={"#0066ff"}></Ionicons>
-              <Text style={{ fontSize: 15 }}>
-                {issueDetails.downvote_count}
-              </Text>
-            </View>
-            <View style={styles.reactions}>
-              <Ionicons
-                style={styles.reactionsIcon}
-                name="chatbubbles"
-                size={24}
-                color={"#0066ff"}></Ionicons>
-              <Text style={{ fontSize: 15 }}>
-                {issueDetails.total_suggestions}
-              </Text>
-            </View>
-          </View>
-        </View>
       </ScrollView>
-      {/* <View
-        style={{
-          width: "100%",
-          backgroundColor: "#F8EDED",
-          height: 60,
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
-          position: "absolute",
-          bottom: 0,
-        }}>
-        <TextInput style={{ width: "90%" }} />
-        <Ionicons name="send" size={25} color={"#0066ff"} />
-      </View> */}
+      {isSuggestionsOpen && <SuggestionsList issue_id={issue_id} />}
     </View>
   );
 };
@@ -398,6 +430,7 @@ const styles = StyleSheet.create({
     // backgroundColor: "#D4F6FF",
     padding: 20,
     borderRadius: 20,
+    textAlign: "justify",
   },
   solution: {
     fontSize: 16,
@@ -406,6 +439,7 @@ const styles = StyleSheet.create({
     // backgroundColor: "#D4F6FF",
     padding: 20,
     borderRadius: 20,
+    textAlign: "justify",
   },
   noMediaContainer: {
     justifyContent: "center",
@@ -434,6 +468,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-evenly",
     alignItems: "center",
+    margin: 20,
   },
   reactions: {
     display: "flex",
@@ -441,7 +476,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
     alignItems: "center",
     gap: 5,
-    backgroundColor: "rgba(182, 231, 255, 0.8)",
+    // backgroundColor: "rgba(182, 231, 255, 0.8)",
     borderRadius: 20,
     padding: 15,
     paddingVertical: 1,

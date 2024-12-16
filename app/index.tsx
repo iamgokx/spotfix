@@ -107,7 +107,7 @@ const Index = () => {
 
   return (
     <>
-      <StatusBar backgroundColor={currentColors.background} />
+      <StatusBar backgroundColor={currentColors.backgroundDarker} />
       {isLoading && (
         <View
           style={[
@@ -121,7 +121,7 @@ const Index = () => {
               justifyContent: "center",
               alignItems: "center",
             },
-            { backgroundColor: currentColors.background },
+            { backgroundColor: currentColors.backgroundDarker },
           ]}>
           <Text
             style={[
@@ -147,7 +147,7 @@ const Index = () => {
         </View>
       )}
       <Swiper
-        style={[styles.wrapper, { backgroundColor: currentColors.background }]}
+        style={[styles.wrapper, { backgroundColor: currentColors.backgroundDarker }]}
         showsButtons={false}
         loop={false}
         dot={<View style={styles.dot} />}
@@ -156,7 +156,7 @@ const Index = () => {
           style={[
             styles.slide,
             styles.slide1,
-            { backgroundColor: currentColors.background },
+            { backgroundColor: currentColors.backgroundDarker },
           ]}
           className="p-10">
           <Text style={[styles.slideOneText, { color: currentColors.link }]}>
@@ -185,7 +185,7 @@ const Index = () => {
         </View>
 
         <View
-          style={[styles.slide, { backgroundColor: currentColors.background }]}
+          style={[styles.slide, { backgroundColor: currentColors.backgroundDarker }]}
           className="p-10 bg-gray-50">
           <LottieView
             source={welcomePageTwo}
@@ -201,7 +201,7 @@ const Index = () => {
           </Text>
         </View>
 
-        <View  style={[styles.slide, { backgroundColor: currentColors.background }]} className="p-10">
+        <View  style={[styles.slide, { backgroundColor: currentColors.backgroundDarker }]} className="p-10">
           {/* <Image
             source={require("../assets/images/welcome/welcome3.png")}
             style={[styles.image, { width: width * 0.8, height: height * 0.4 }]}
@@ -222,6 +222,7 @@ const Index = () => {
           source={require("../assets/images/gradients/bluegradient.png")}
           style={styles.background}
           resizeMode="cover">
+                  <StatusBar translucent />
           <View
             style={[styles.slide, styles.slideFour]}
             className="p-10 flex-1">

@@ -17,7 +17,8 @@ import YourProposals from "../Screens/YourProposals";
 import { Ionicons } from "@expo/vector-icons";
 import CustomDrawer from "@/components/Drawer";
 import Feedback from "../Screens/Feedback";
-
+import { useColorScheme } from "react-native";
+import { Colors } from "@/constants/Colors";
 import {
   DrawerContentScrollView,
   DrawerItem,
@@ -26,8 +27,9 @@ import {
 import Help from "../Screens/Help";
 
 const Drawer = createDrawerNavigator();
-
 const MyDrawer = () => {
+  const colorScheme = useColorScheme();
+  const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
   return (
     <NavigationIndependentTree>
       <Drawer.Navigator
@@ -43,7 +45,7 @@ const MyDrawer = () => {
             backgroundColor: "#0066ff",
           },
           headerTintColor: "#fff",
-          drawerActiveTintColor: "#0066ff",
+          drawerActiveTintColor: currentColors.secondary,
           drawerInactiveTintColor: "gray",
           headerShown: false,
           header: ({ navigation }) => <CustomHeader navigation={navigation} />,

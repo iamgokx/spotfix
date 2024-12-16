@@ -1,25 +1,38 @@
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+import { useColorScheme, View } from "react-native";
+import useThemeColors from "@/hooks/useThemeColors";
+
+const findTheme = () => {
+  const colors = useColorScheme();
+};
 
 export const icons = {
   index: (props: any) => <Feather name="home" size={24} {...props} />,
   analytics: (props: any) => <Ionicons name="analytics" size={24} {...props} />,
   reportIssue: (props: any) => (
-    <Ionicons
-      name="add-circle"
-      size={76}
-      {...props}
+    <View
       style={{
-        color: "orange",
-        backgroundColor: "white",
-        borderRadius: 35,
-        paddingTop : 3,
-        textAlign: "center",
-        width: 70,
+        backgroundColor: "orange",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: 60,
+        height: 60,
         position: "absolute",
-        top: -40,
-      }}
-    />
+        bottom: "10%",
+        borderRadius: 50,
+      }}>
+      <Ionicons
+        name="add"
+        size={30}
+        {...props}
+        style={{
+          color: "white",
+          textAlign: "center",
+        }}
+      />
+    </View>
   ),
   announcements: (props: any) => (
     <Ionicons name="megaphone-outline" size={24} {...props} />

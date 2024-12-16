@@ -30,7 +30,7 @@ const HomeScreen = ({ navigation }: any) => {
   const tokenF = async () => {
     const token = await getStoredRawToken();
     const dtoken = jwtDecode(token);
-    console.log("decoded token : ", dtoken);
+    
   };
 
   const getIssueData = async () => {
@@ -41,7 +41,7 @@ const HomeScreen = ({ navigation }: any) => {
 
       if (response) {
         setIssueData(response.data);
-        console.log("data from backend", response.data);
+      
       }
     } catch (error) {
       console.log("error getting issues from backend : ", error);
@@ -51,11 +51,9 @@ const HomeScreen = ({ navigation }: any) => {
     getIssueData();
   }, []);
 
-  const [refreshing, setrefreshing] = useState(false);
   const refreshIssue = async (issue_id: number) => {
     // getIssueData();
     try {
-      setrefreshing(true);
       const response = await axios.post(
         `http://${API_IP_ADDRESS}:8000/api/issues/getDetailedIssue`,
         { issue_id }
@@ -68,16 +66,16 @@ const HomeScreen = ({ navigation }: any) => {
             issue.issue_id === issue_id ? response.data : issue
           )
         );
-        setrefreshing(false);
       }
     } catch (error) {
       console.error("Error refreshing issue data: ", error);
     }
   };
   return (
-    <View style={[styles.container, {}]}>
+    <View
+      style={[styles.container, { backgroundColor: currentColors.backgroundDarkest }]}>
       <CustomHeader navigation={navigation} />
-      <StatusBar barStyle="light-content" translucent />
+      <StatusBar backgroundColor={currentColors.backgroundDarker} translucent />
 
       <FlatList
         contentContainerStyle={{
@@ -88,8 +86,22 @@ const HomeScreen = ({ navigation }: any) => {
         data={issuedata}
         showsVerticalScrollIndicator={false}
         ListFooterComponent={
-          <View style={{ width: "100%", height: 100, marginTop: 30 }}></View>
+          <View style={{ width: "100%", height: 100, margin: 30 }}><Text style={{color : currentColors.text}}>Nothing more to view.</Text></View>
         }
+        ItemSeparatorComponent={(item) => {
+          return (
+            <Text
+              style={{
+                // backgroundColor: currentColors.textShade,
+                height: 1,
+                margin: 10,
+              }}></Text>
+          );
+        }}
+        ListHeaderComponent={(item) => {
+          return <Text style={{ marginTop: 10 }}></Text>;
+        }}
+        
         renderItem={({ item }: any) => {
           return (
             <Issue
