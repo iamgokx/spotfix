@@ -16,6 +16,7 @@ const useLogin = () => {
         }
       );
       setIsLoading(false);
+      console.log('check this log in data : ', response.data);
       return response.data;
     } catch (err: any) {
       setIsLoading(false);

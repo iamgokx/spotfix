@@ -1,4 +1,4 @@
-import { View, Text, Button } from "react-native";
+import { View, Text, Button, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native";
 import LottieView from "lottie-react-native";
 import verifyUser from "../../assets/images/welcome/verifyingUser.json";
@@ -19,7 +19,7 @@ const finalVerification = () => {
     aadharVerification: false,
     userExists: false,
   });
-
+  const [aadharUserExists, setAadharUserExists] = useState(false);
   const handleVerifyUser = async () => {
     setLoading(true);
     setResponseMessage("");
@@ -40,6 +40,7 @@ const finalVerification = () => {
             setResponseMessage(
               "Aadhar Successfully Verified, User Already Exists Please Log In"
             );
+            setAadharUserExists(true);
           } else if (response.data.aadharVerification) {
             setResponseMessage(
               "Aadhar Successfully Verified \n Creating Account"
@@ -108,6 +109,25 @@ const finalVerification = () => {
         }}>
         {responseMessage}
       </Text>
+
+      {aadharUserExists && (
+        <TouchableOpacity
+          onPress={() => router.push("/auth")}
+          style={{ margin: 20, postion: "absolute", bottom: -100 }}>
+          <Text
+            style={{
+              fontSize: 20,
+              borderRadius: 30,
+              color: "white",
+              backgroundColor: "orange",
+              paddingVertical: 15,
+              paddingHorizontal: 50,
+              elevation: 10,
+            }}>
+            Log In
+          </Text>
+        </TouchableOpacity>
+      )}
     </SafeAreaView>
   );
 };

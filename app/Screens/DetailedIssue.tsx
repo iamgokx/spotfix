@@ -33,7 +33,7 @@ const DetailedIssue = () => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
   const router = useRouter();
-  const { issue_id } = useLocalSearchParams();
+  const { issue_id, suggestions } = useLocalSearchParams();
   const [issueDetails, setIssueDetails] = useState(null);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [geoCodedAddress, setGeoCodedAddress] = useState("");
@@ -118,6 +118,10 @@ const DetailedIssue = () => {
 
   useEffect(() => {
     getIssueDetails();
+
+    if(suggestions){
+      setIsSuggestionsOpen(true)
+    }
   }, [issue_id]);
 
   useEffect(() => {
@@ -296,7 +300,7 @@ const DetailedIssue = () => {
               style={{
                 fontWeight: 900,
                 fontSize: 20,
-              }}>{`${issueDetails.first_name} ${issueDetails.last_name}`}</Text>
+              }}>{issueDetails.full_name}</Text>
             <Text>{getDateFormatted(issueDetails.date_time_created)}</Text>
           </View>
           <Text

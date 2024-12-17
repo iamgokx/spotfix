@@ -66,7 +66,7 @@ const Index = () => {
       const user = await login(email, password);
       if (user) {
         const details = {
-          name: `${user.first_name} ${user.last_name}`,
+          name: user.full_name,
           email: user.email,
         };
         console.log("converted details : ", details);

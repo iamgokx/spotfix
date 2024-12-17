@@ -147,7 +147,10 @@ const Index = () => {
         </View>
       )}
       <Swiper
-        style={[styles.wrapper, { backgroundColor: currentColors.backgroundDarker }]}
+        style={[
+          styles.wrapper,
+          { backgroundColor: currentColors.backgroundDarker },
+        ]}
         showsButtons={false}
         loop={false}
         dot={<View style={styles.dot} />}
@@ -185,7 +188,10 @@ const Index = () => {
         </View>
 
         <View
-          style={[styles.slide, { backgroundColor: currentColors.backgroundDarker }]}
+          style={[
+            styles.slide,
+            { backgroundColor: currentColors.backgroundDarker },
+          ]}
           className="p-10 bg-gray-50">
           <LottieView
             source={welcomePageTwo}
@@ -201,7 +207,12 @@ const Index = () => {
           </Text>
         </View>
 
-        <View  style={[styles.slide, { backgroundColor: currentColors.backgroundDarker }]} className="p-10">
+        <View
+          style={[
+            styles.slide,
+            { backgroundColor: currentColors.backgroundDarker },
+          ]}
+          className="p-10">
           {/* <Image
             source={require("../assets/images/welcome/welcome3.png")}
             style={[styles.image, { width: width * 0.8, height: height * 0.4 }]}
@@ -212,7 +223,9 @@ const Index = () => {
             loop
             style={[styles.image, { width: width * 0.8, height: height * 0.4 }]}
           />
-          <Text className="text-2xl text-center" style={[{ color: currentColors.text }]}>
+          <Text
+            className="text-2xl text-center"
+            style={[{ color: currentColors.text }]}>
             Stay informed with real-time updates, crucial alerts, and detailed
             reports on local developments.
           </Text>
@@ -222,7 +235,7 @@ const Index = () => {
           source={require("../assets/images/gradients/bluegradient.png")}
           style={styles.background}
           resizeMode="cover">
-                  <StatusBar translucent />
+          <StatusBar translucent />
           <View
             style={[styles.slide, styles.slideFour]}
             className="p-10 flex-1">

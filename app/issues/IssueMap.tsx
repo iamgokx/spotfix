@@ -26,7 +26,7 @@ const IssueMap = ({ goToAddressScreen }: any) => {
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`,
         {
           headers: {
-            "User-Agent": "YourAppName/1.0 (your-email@example.com)",
+            "User-Agent": "spotfix/1.0 (lekhwargokul84@gmail.com)",
           },
         }
       );

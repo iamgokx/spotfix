@@ -19,24 +19,30 @@ import CustomDrawer from "@/components/Drawer";
 import Feedback from "../Screens/Feedback";
 import { useColorScheme } from "react-native";
 import { Colors } from "@/constants/Colors";
+import { useRouter } from "expo-router";
+import HomeLayout from "./_layout";
 import {
   DrawerContentScrollView,
   DrawerItem,
   DrawerItemList,
 } from "@react-navigation/drawer";
 import Help from "../Screens/Help";
-
+import { clearStorage } from "@/hooks/useJwt";
 const Drawer = createDrawerNavigator();
+
 const MyDrawer = () => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
+  const router = useRouter();
+
+ 
   return (
     <NavigationIndependentTree>
       <Drawer.Navigator
         drawerContent={(props) => <CustomDrawer {...props} />}
         screenOptions={{
           drawerType: "front",
-          // drawerHideStatusBarOnOpen: true,
+          drawerHideStatusBarOnOpen: true,
           drawerStyle: {
             backgroundColor: "#f5f5f5",
             width: 300,
@@ -50,6 +56,7 @@ const MyDrawer = () => {
           headerShown: false,
           header: ({ navigation }) => <CustomHeader navigation={navigation} />,
         }}>
+       
         <Drawer.Screen
           name="Issues"
           component={HomeScreen}

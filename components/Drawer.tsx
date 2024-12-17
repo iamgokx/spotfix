@@ -61,7 +61,7 @@ const CustomDrawer = (props: any) => {
             justifyContent: "flex-end",
             alignItems: "center",
           }}>
-          <View style={{ width: "90%", marginBottom: 10 }}>
+          <View style={{ width: "90%", marginBottom: 10,}}>
             <Image source={hero} style={styles.profileImage} />
             <Text
               className="text-white text-2xl font-extrabold"
@@ -81,9 +81,18 @@ const CustomDrawer = (props: any) => {
         <DrawerItemList {...props} />
         <DrawerItem
           label="Logout"
+          labelStyle={{
+            color: currentColors.secondary, // Adjust color if needed
+            fontWeight: "bold",
+          }}
           icon={({ color, size }) => (
-            <Ionicons name="log-out-outline" size={size} color={color} />
+            <Ionicons
+              name="log-out-outline"
+              size={size}
+              color={currentColors.secondary}
+            />
           )}
+          style={{}}
           onPress={() => handleLogOutButtonPress()}
         />
       </DrawerContentScrollView>
@@ -119,6 +128,7 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     resizeMode: "cover",
+    marginBottom : 6
   },
   footer: {
     padding: 10,

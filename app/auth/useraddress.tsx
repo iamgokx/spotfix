@@ -205,7 +205,7 @@ const useraddress = () => {
                   />
                 </View>
               </TouchableOpacity>
-              {details.generatedAddress && (
+              {details.address && (
                 <>
                   <Text style={{ margin: 10 ,color : currentColors.text}}>Location Details</Text>
                   <View

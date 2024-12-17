@@ -4,6 +4,7 @@ import { Colors } from "@/constants/Colors";
 import axios from "axios";
 import { API_IP_ADDRESS } from "../ipConfig.json";
 import hero from "../assets/images/hero.jpg";
+import { formatDistanceToNow } from "date-fns";
 import {
   View,
   Text,
@@ -20,6 +21,7 @@ import {
 import { useEffect, useState } from "react";
 import { formatDate, format } from "date-fns";
 import { withDecay } from "react-native-reanimated";
+import { getStoredData } from "@/hooks/useJwt";
 const SuggestionsList = ({ issue_id }: any) => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
@@ -32,8 +34,10 @@ const SuggestionsList = ({ issue_id }: any) => {
     getIssueSuggestions();
   }, []);
 
-  const getDateFormatted = (date: any) => {
-    const formattedDate = format(new Date(date), "eeee d MMMM yyyy");
+  const getDateFormatted = (date: Date | string) => {
+    const formattedDate = formatDistanceToNow(new Date(date), {
+      addSuffix: true,
+    });
     return formattedDate;
   };
 
@@ -64,21 +68,53 @@ const SuggestionsList = ({ issue_id }: any) => {
       Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
       (event) => setKeyboardHeight(event.endCoordinates.height)
     );
-  
+
     const keyboardHideListener = Keyboard.addListener(
       Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
       () => setKeyboardHeight(0)
     );
-  
-  
+
     setKeyboardHeight(0);
-  
+
     return () => {
       keyboardShowListener.remove();
       keyboardHideListener.remove();
     };
   }, []);
-  
+
+  const getUserDetails = async () => {
+    const user = await getStoredData();
+    console.log("returned user email : ", user.email);
+    return user.email;
+  };
+
+  const handleSubmitSuggestion = async () => {
+    try {
+      const user = await getUserDetails();
+      const suggestion = userSuggestions;
+
+      if (!user || !suggestion) {
+        console.error("User details are missing or incomplete.");
+        return;
+      }
+      console.log("this is nigga", user, suggestion);
+      const response = await axios.post(
+        `http://${API_IP_ADDRESS}:8000/api/issues/submitSuggestion`,
+        {
+          issueId: issue_id,
+          email: user,
+          userSuggestion: suggestion,
+          isanonymous: isAnonymous,
+        }
+      );
+      if (response) {
+        console.log(response.data);
+        setUserSuggestions("")
+      }
+    } catch (error) {
+      console.log("error submitting issue : ", error);
+    }
+  };
 
   return (
     <SafeAreaView
@@ -95,9 +131,7 @@ const SuggestionsList = ({ issue_id }: any) => {
         <FlatList
           keyExtractor={(item, index) => index.toString()}
           data={suggestions}
-          renderItem={(
-            { item } 
-          ) => (
+          renderItem={({ item }) => (
             <View
               style={{
                 margin: 10,
@@ -148,7 +182,7 @@ const SuggestionsList = ({ issue_id }: any) => {
         style={{
           width: "100%",
           backgroundColor: currentColors.backgroundDarkest,
-          maxHeight : 100,
+          maxHeight: 100,
           height: 60,
           display: "flex",
           flexDirection: "row",
@@ -156,10 +190,13 @@ const SuggestionsList = ({ issue_id }: any) => {
           alignItems: "flex-start",
           position: "relative",
           bottom: keyboardHeight ? keyboardHeight : 0,
-          paddingTop :5
+          paddingTop: 5,
         }}>
         <Switch
-          trackColor={{ false: currentColors.primary, true: currentColors.secondary }}
+          trackColor={{
+            false: currentColors.primary,
+            true: currentColors.secondary,
+          }}
           thumbColor={isAnonymous ? currentColors.text : currentColors.text}
           ios_backgroundColor="#3e3e3e"
           onValueChange={() => setIsAnonymous((prev) => !prev)}
@@ -167,12 +204,18 @@ const SuggestionsList = ({ issue_id }: any) => {
         />
 
         <TextInput
-          style={{ width: "80%", color:currentColors.text }}
+          style={{ width: "80%", color: currentColors.text }}
           value={userSuggestions}
           multiline
-          onChange={(text) => setUserSuggestions(text)}
+          onChangeText={(text) => setUserSuggestions(text)} //
         />
-        <Ionicons name="send" size={25} color={"#0066ff"} />
+
+        <Ionicons
+          name="send"
+          size={25}
+          color={"#0066ff"}
+          onPress={() => handleSubmitSuggestion()}
+        />
       </View>
     </SafeAreaView>
   );

@@ -201,7 +201,9 @@ const Issue = ({
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() =>
-            router.push(`/Screens/DetailedIssue?issue_id=${issue_id}`)
+            router.push(
+              `/Screens/DetailedIssue?issue_id=${issue_id}&suggestions=${true}`
+            )
           }>
           <View style={styles.reactions}>
             <Ionicons

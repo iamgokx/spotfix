@@ -18,10 +18,12 @@ import { FlatList } from "react-native";
 import { isThisMinute } from "date-fns";
 import { Colors } from "../../constants/Colors";
 import { ServerContainer } from "@react-navigation/native";
+import LottieView from "lottie-react-native";
+import loading from "../../assets/images/welcome/loading.json";
 const HomeScreen = ({ navigation }: any) => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
-
+  const [isLoading, setIsLoading] = useState(false);
   const [issuedata, setIssueData] = useState();
   useEffect(() => {
     tokenF();
@@ -30,10 +32,10 @@ const HomeScreen = ({ navigation }: any) => {
   const tokenF = async () => {
     const token = await getStoredRawToken();
     const dtoken = jwtDecode(token);
-    
   };
 
   const getIssueData = async () => {
+    setIsLoading(true);
     try {
       const response = await axios.post(
         `http://${API_IP_ADDRESS}:8000/api/issues/getIssues`
@@ -41,7 +43,6 @@ const HomeScreen = ({ navigation }: any) => {
 
       if (response) {
         setIssueData(response.data);
-      
       }
     } catch (error) {
       console.log("error getting issues from backend : ", error);
@@ -49,6 +50,7 @@ const HomeScreen = ({ navigation }: any) => {
   };
   useEffect(() => {
     getIssueData();
+    setIsLoading(false);
   }, []);
 
   const refreshIssue = async (issue_id: number) => {
@@ -73,53 +75,73 @@ const HomeScreen = ({ navigation }: any) => {
   };
   return (
     <View
-      style={[styles.container, { backgroundColor: currentColors.backgroundDarkest }]}>
+      style={[
+        styles.container,
+        { backgroundColor: currentColors.backgroundDarkest },
+      ]}>
       <CustomHeader navigation={navigation} />
       <StatusBar backgroundColor={currentColors.backgroundDarker} translucent />
 
-      <FlatList
-        contentContainerStyle={{
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-        }}
-        data={issuedata}
-        showsVerticalScrollIndicator={false}
-        ListFooterComponent={
-          <View style={{ width: "100%", height: 100, margin: 30 }}><Text style={{color : currentColors.text}}>Nothing more to view.</Text></View>
-        }
-        ItemSeparatorComponent={(item) => {
-          return (
-            <Text
-              style={{
-                // backgroundColor: currentColors.textShade,
-                height: 1,
-                margin: 10,
-              }}></Text>
-          );
-        }}
-        ListHeaderComponent={(item) => {
-          return <Text style={{ marginTop: 10 }}></Text>;
-        }}
-        
-        renderItem={({ item }: any) => {
-          return (
-            <Issue
-              issue_id={item.issue_id}
-              username={`${item.first_name} ${item.last_name}`}
-              dateTime={item.date_time_created}
-              title={item.title}
-              status={item.issue_status}
-              description={item.issue_description}
-              mediaLinks={item.media_files}
-              is_anonymous={item.is_anonymous}
-              upvotes={item.upvote_count}
-              downvotes={item.downvote_count}
-              suggestions={item.total_suggestions}
-              refreshIssue={refreshIssue}
-            />
-          );
-        }}></FlatList>
+      {!isLoading && (
+        <FlatList
+          contentContainerStyle={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+          }}
+          data={issuedata}
+          showsVerticalScrollIndicator={false}
+          ListFooterComponent={
+            <View style={{ width: "100%", height: 100, margin: 30 }}>
+              <Text style={{ color: currentColors.text }}>
+                Nothing more to view.
+              </Text>
+            </View>
+          }
+          ItemSeparatorComponent={(item) => {
+            return (
+              <Text
+                style={{
+                  // backgroundColor: currentColors.textShade,
+                  height: 1,
+                  margin: 10,
+                }}></Text>
+            );
+          }}
+          ListHeaderComponent={(item) => {
+            return <Text style={{ marginTop: 10 }}></Text>;
+          }}
+          renderItem={({ item }: any) => {
+            return (
+              <Issue
+                issue_id={item.issue_id}
+                username={item.full_name}
+                dateTime={item.date_time_created}
+                title={item.title}
+                status={item.issue_status}
+                description={item.issue_description}
+                mediaLinks={item.media_files}
+                is_anonymous={item.is_anonymous}
+                upvotes={item.upvote_count}
+                downvotes={item.downvote_count}
+                suggestions={item.total_suggestions}
+                refreshIssue={refreshIssue}
+              />
+            );
+          }}></FlatList>
+      )}
+
+      {isLoading && (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <LottieView
+            source={loading}
+            autoPlay
+            loop
+            style={{ width: 200, height: 200 }}
+          />
+        </View>
+      )}
     </View>
   );
 };

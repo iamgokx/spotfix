@@ -68,6 +68,7 @@ const Otp = () => {
     } else {
       setotpError(true);
       console.log("OTP Vefification Failed");
+      setOtp(["", "", "", ""]);
     }
   };
 
