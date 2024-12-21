@@ -1,4 +1,4 @@
-import 'react-native-gesture-handler'
+import "react-native-gesture-handler";
 import { Stack } from "expo-router";
 import "../global.css";
 import * as SplashScreen from "expo-splash-screen";
@@ -17,6 +17,7 @@ const RootLayout = () => {
       <Stack.Screen name="auth" />
       <Stack.Screen name="home" />
       <Stack.Screen name="welcome" />
+      <Stack.Screen name="screens" />
     </Stack>
   );
 };

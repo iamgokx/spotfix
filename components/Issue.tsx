@@ -10,13 +10,20 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "react-native";
 import { format, formatDate } from "date-fns";
 import { API_IP_ADDRESS } from "../ipConfig.json";
+import * as Animatable from "react-native-animatable";
 import { useState, useEffect } from "react";
 import Swiper from "react-native-swiper";
 import { useRouter } from "expo-router";
 import { Colors } from "../constants/Colors";
-import { getStoredRawToken, getStoredData } from "../hooks/useJwt";
-import { jwtDecode } from "jwt-decode";
+import {
+  useFonts,
+  Poppins_300Light,
+  Poppins_400Regular,
+  Poppins_600SemiBold,
+  Poppins_200ExtraLight,
+} from "@expo-google-fonts/poppins";
 import axios from "axios";
+import { getStoredData } from "@/hooks/useJwt";
 const Issue = ({
   issue_id,
   username,
@@ -33,13 +40,19 @@ const Issue = ({
 }: any) => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
+  const [fontsLoaded] = useFonts({
+    Poppins_600SemiBold,
+    Poppins_400Regular,
+    Poppins_300Light,
+    Poppins_200ExtraLight,
+  });
 
   const splitDescription =
     description.split(" ").slice(0, 15).join(" ") + "...";
   const mediaArray = mediaLinks ? mediaLinks.split(",") : [];
 
   const getDateFormatted = (date: any) => {
-    const formattedDate = format(new Date(date), "eeee d MMMM yyyy");
+    const formattedDate = format(new Date(date), "d MMMM yyyy, h:mm a");
     return formattedDate;
   };
 
@@ -80,7 +93,7 @@ const Issue = ({
 
   useEffect(() => {
     getColorDetails(status);
-  }, []);
+  }, [status, colorScheme]);
 
   const handelVoteClick = async (voteType: string) => {
     try {
@@ -106,11 +119,10 @@ const Issue = ({
   };
 
   return (
-    <SafeAreaView
-      style={[
-        styles.container,
-        { backgroundColor: currentColors.backgroundDarker },
-      ]}>
+    <Animatable.View
+      animation="fadeInUp"
+      duration={1400}
+      style={[styles.container]}>
       <View style={styles.nameContainer}>
         <Ionicons
           name="person"
@@ -121,7 +133,10 @@ const Issue = ({
           <Text style={[styles.userName, { color: currentColors.text }]}>
             {is_anonymous == 1 ? "Spotfix User" : username}
           </Text>
-          <Text style={[{ color: currentColors.text }]}>
+          <Text
+            style={[
+              { color: currentColors.text, fontFamily: "Poppins_300Light" },
+            ]}>
             {getDateFormatted(dateTime)}
           </Text>
         </View>
@@ -164,12 +179,16 @@ const Issue = ({
         )}
       </Swiper>
 
-      <Text style={[styles.desc, { color: currentColors.text }]}>
+      <Text
+        style={[
+          styles.desc,
+          { color: currentColors.text, fontFamily: "Poppins_300Light" },
+        ]}>
         {splitDescription}
         <Text
           style={{ color: currentColors.link }}
           onPress={() =>
-            router.push(`/Screens/DetailedIssue?issue_id=${issue_id}`)
+            router.push(`/screens/DetailedIssue?issue_id=${issue_id}`)
           }>
           View more
         </Text>
@@ -202,7 +221,7 @@ const Issue = ({
         <TouchableOpacity
           onPress={() =>
             router.push(
-              `/Screens/DetailedIssue?issue_id=${issue_id}&suggestions=${true}`
+              `/screens/DetailedIssue?issue_id=${issue_id}&suggestions=${true}`
             )
           }>
           <View style={styles.reactions}>
@@ -217,7 +236,7 @@ const Issue = ({
           </View>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </Animatable.View>
   );
 };
 
@@ -255,18 +274,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   container: {
-    width: "90%",
+    width: "95%",
     height: "auto",
     alignSelf: "auto",
-    // borderWidth: 1,
-    // borderColor: "rgba(0,0,0,0.1)",
     borderRadius: 20,
     padding: 20,
     overflow: "hidden",
     display: "flex",
     flexDirection: "column",
     gap: 10,
-    backgroundColor: "white",
   },
 
   subContainer: {
@@ -290,7 +306,7 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontSize: 15,
-    fontWeight: 900,
+    fontFamily: "Poppins_600SemiBold",
   },
   imgContainer: {
     height: 200,
@@ -311,6 +327,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: "left",
     paddingLeft: 10,
+    fontFamily: "Poppins_400Regular",
   },
   titleContainer: {
     width: "100%",
@@ -324,9 +341,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     borderRadius: 20,
     color: "white",
+    fontFamily: "Poppins_400Regular",
   },
   desc: {
-    fontSize: 20,
+    fontSize: 17,
   },
   iconsContainer: {
     width: "100%",

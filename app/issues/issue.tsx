@@ -49,7 +49,7 @@ const Issue = ({ goToAddressScreen }: any) => {
 
   const handleClearButtonPress = () => {
     clearDetails();
-    router.push("/home");
+    router.push("/home/reportIssue");
   };
 
   return (
@@ -77,7 +77,8 @@ const Issue = ({ goToAddressScreen }: any) => {
       </View>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={styles.dataContainer}>
-          <View
+          <ImageBackground
+            source={require("../../assets/images/blobs/b8.png")}
             style={{
               display: "flex",
               flexDirection: "row",
@@ -85,22 +86,23 @@ const Issue = ({ goToAddressScreen }: any) => {
               alignItems: "center",
               backgroundColor: "#60b5ff",
               paddingVertical: 10,
-              paddingHorizontal: 15,
+              paddingHorizontal: 28,
               borderRadius: 40,
+              overflow: "hidden",
             }}>
             <Text style={{ color: "white", fontWeight: 900 }}>
               Report Anonymously
             </Text>
             <Switch
-              trackColor={{ false: "rgba(0,0,0,0.5)", true: "rgba(0,0,0,0.5)" }}
-              thumbColor={details.anonymous ? "orange" : "rgba(1,1,1,1)"}
+              trackColor={{ false: "rgba(255,255,255,0.4)", true: "orange" }}
+              thumbColor={details.anonymous ? "white" : "white"}
               ios_backgroundColor="#3e3e3e"
               onValueChange={() =>
                 setDetails((prev) => ({ ...prev, anonymous: !prev.anonymous }))
               }
               value={details.anonymous}
             />
-          </View>
+          </ImageBackground>
           <View style={styles.subContainer}>
             <Text style={styles.inputTitles}>Report Title</Text>
             <TextInput

@@ -10,13 +10,13 @@ import { NavigationIndependentTree } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import CustomHeader from "@/components/CustomHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
-import ProfileScreen from "../Screens/Profile";
-import HomeScreen from "../Screens/Home";
-import YourIssues from "../Screens/YourIssues";
-import YourProposals from "../Screens/YourProposals";
+import ProfileScreen from "../screens/Profile";
+import HomeScreen from "../screens/Home";
+import YourIssues from "../screens/YourIssues";
+import YourProposals from "../screens/YourProposals";
 import { Ionicons } from "@expo/vector-icons";
 import CustomDrawer from "@/components/Drawer";
-import Feedback from "../Screens/Feedback";
+import Feedback from "../screens/Feedback";
 import { useColorScheme } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { useRouter } from "expo-router";
@@ -26,9 +26,11 @@ import {
   DrawerItem,
   DrawerItemList,
 } from "@react-navigation/drawer";
-import Help from "../Screens/Help";
+import Help from "../screens/Help";
 import { clearStorage } from "@/hooks/useJwt";
 const Drawer = createDrawerNavigator();
+
+
 
 const MyDrawer = () => {
   const colorScheme = useColorScheme();
@@ -42,7 +44,7 @@ const MyDrawer = () => {
         drawerContent={(props) => <CustomDrawer {...props} />}
         screenOptions={{
           drawerType: "front",
-          drawerHideStatusBarOnOpen: true,
+          // drawerHideStatusBarOnOpen: true,
           drawerStyle: {
             backgroundColor: "#f5f5f5",
             width: 300,

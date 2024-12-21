@@ -25,6 +25,7 @@ import { generateJwt } from "../../hooks/useJwt";
 import loginLottie from "../../assets/images/welcome/login.json";
 import { useColorScheme } from "react-native";
 import { Colors } from "../../constants/Colors";
+import * as Animatable from "react-native-animatable";
 const Index = () => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
@@ -100,7 +101,11 @@ const Index = () => {
               styles.container,
               { backgroundColor: currentColors.background },
             ]}>
-            <Text className="text-3xl font-extrabold" style={[{color : currentColors.text}]}>Spotfix Login</Text>
+            <Text
+              className="text-3xl font-extrabold"
+              style={[{ color: currentColors.text }]}>
+              Spotfix Login
+            </Text>
 
             <Modal
               animationType="fade"
@@ -154,7 +159,10 @@ const Index = () => {
               }}
             />
 
-            <View style={styles.inputContainer}>
+            <Animatable.View
+              animation="fadeInUp"
+              duration={500}
+              style={styles.inputContainer}>
               <Ionicons name="at" size={20} color="gray" style={styles.icon} />
               <TextInput
                 style={styles.input}
@@ -162,9 +170,12 @@ const Index = () => {
                 value={email}
                 onChangeText={(text) => setEmail(text)}
               />
-            </View>
+            </Animatable.View>
 
-            <View style={styles.inputContainer}>
+            <Animatable.View
+              animation="fadeInUp"
+              duration={600}
+              style={styles.inputContainer}>
               <TouchableOpacity>
                 <Ionicons
                   name={passwordVisible ? "eye" : "eye-off"}
@@ -181,13 +192,19 @@ const Index = () => {
                 onChangeText={(text) => setPassword(text)}
                 secureTextEntry={passwordVisible ? true : false}
               />
-            </View>
+            </Animatable.View>
 
             <TouchableOpacity onPress={handleLogInPress} style={{ zIndex: 3 }}>
-              <Text style={styles.loginBtn}>Log in</Text>
+              <Animatable.Text
+                animation="fadeInUp"
+                duration={600}
+                style={styles.loginBtn}>
+                Log in
+              </Animatable.Text>
             </TouchableOpacity>
 
             <View
+           
               style={{
                 padding: 10,
                 paddingBottom: keyboardVisible ? 100 : 20,
@@ -196,11 +213,13 @@ const Index = () => {
                 justifyContent: "center",
                 alignItems: "center",
               }}>
-              <Text style={[{color : currentColors.text}]}>Not a user? </Text>
+              <Animatable.Text    animation="fadeInUp"
+              duration={800} style={[{ color: currentColors.text }]}>Not a user? </Animatable.Text>
               <TouchableOpacity
                 onPress={() => router.push("/auth/signup")}
-                style={{ zIndex: 2 }}>
-                <Text style={styles.signupText}>Sign Up</Text>
+                style={{ zIndex: 4 }}>
+                <Animatable.Text    animation="fadeInUp"
+              duration={800} style={styles.signupText}>Sign Up</Animatable.Text>
               </TouchableOpacity>
             </View>
 

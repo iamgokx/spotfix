@@ -7,18 +7,21 @@ import { useSignupContext } from "../../context/SignupContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import * as Animatable from "react-native-animatable";
 import { API_IP_ADDRESS } from "../../ipConfig.json";
 import { useRouter } from "expo-router";
 import { generateJwt, getStoredData, storeData } from "../../hooks/useJwt";
+import { useFonts, Poppins_500Medium } from "@expo-google-fonts/poppins";
 const finalVerification = () => {
-  const { details, clearDetails } = useSignupContext();
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [responseMessage, setResponseMessage] = useState("");
+  const [fontsLoaded] = useFonts({ Poppins_500Medium });
   const [userStatus, setUserStatus] = useState({
     aadharVerification: false,
     userExists: false,
   });
+  const { details, clearDetails } = useSignupContext();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [responseMessage, setResponseMessage] = useState("");
   const [aadharUserExists, setAadharUserExists] = useState(false);
   const handleVerifyUser = async () => {
     setLoading(true);
@@ -72,17 +75,23 @@ const finalVerification = () => {
   return (
     <SafeAreaView
       style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text
+      <Animatable.Text
+        animation="fadeInUp"
+        duration={500}
         style={{
           fontSize: 40,
-          fontWeight: 900,
           position: "absolute",
           top: 100,
+          fontFamily: "Poppins_500Medium",
+          width: 300,
+          textAlign: "center",
         }}>
-        SpotFix
-      </Text>
+        {`SpotFix`}
+      </Animatable.Text>
 
-      <View
+      <Animatable.View
+        animation="fadeInUp"
+        duration={500}
         style={{
           width: "100%",
           display: "flex",
@@ -99,22 +108,30 @@ const finalVerification = () => {
             height: 200,
           }}
         />
-      </View>
-      {loading && <Text>Verifying Details...</Text>}
-      <Text
+      </Animatable.View>
+      {loading && (
+        <Animatable.Text animation="fadeInUp" duration={500}>
+          Verifying Details...
+        </Animatable.Text>
+      )}
+      <Animatable.Text
+        animation="fadeInUp"
+        duration={700}
         style={{
           fontSize: 20,
           width: "90%",
           textAlign: "center",
         }}>
         {responseMessage}
-      </Text>
+      </Animatable.Text>
 
       {aadharUserExists && (
         <TouchableOpacity
           onPress={() => router.push("/auth")}
           style={{ margin: 20, postion: "absolute", bottom: -100 }}>
-          <Text
+          <Animatable.Text
+            animation="fadeInUp"
+            duration={800}
             style={{
               fontSize: 20,
               borderRadius: 30,
@@ -125,7 +142,7 @@ const finalVerification = () => {
               elevation: 10,
             }}>
             Log In
-          </Text>
+          </Animatable.Text>
         </TouchableOpacity>
       )}
     </SafeAreaView>

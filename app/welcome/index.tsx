@@ -14,6 +14,7 @@ import Blob2 from "../../assets/images/blobs/b2.svg";
 const { width, height } = Dimensions.get("window");
 import loginSignup from "../../assets/images/welcome/loginSignup.json";
 import LottieView from "lottie-react-native";
+import * as Animatable from "react-native-animatable";
 const index = () => {
   const router = useRouter();
 
@@ -36,32 +37,24 @@ const index = () => {
         source={require("../../assets/images/gradients/orangegradient.png")}
         style={styles.backgroundImage}
         resizeMode="cover">
-        {/* <Image
-          source={require("../../assets/images/blobs/Group.svg")}
-          style={styles.blob1}
-        /> */}
         <Blob1 style={styles.blob1} />
-        {/* <Image
-          source={require("../../assets/images/welcome/welcome5.png")}
-          style={[
-            styles.welcomeImage,
-            { width: width * 0.8, height: height * 0.4 },
-          ]}
-        /> */}
-         <LottieView
+
+        <Animatable.View animation='fadeInUp' duration={500}>
+          <LottieView
             source={loginSignup}
             autoPlay
             loop
             style={[styles.image, { width: width * 0.8, height: height * 0.4 }]}
           />
-       
+        </Animatable.View>
+
         <Blob2 style={styles.blob2} />
         <TouchableOpacity onPress={loginroute}>
-          <Text style={styles.loginBtn}>Log In</Text>
+          <Animatable.Text animation={'fadeInUp'} duration={700} style={styles.loginBtn}>Log In</Animatable.Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={signuproute}>
-          <Text style={styles.signupBtn}>Sign Up</Text>
+          <Animatable.Text animation={'fadeInUp'} duration={900} style={styles.signupBtn}>Sign Up</Animatable.Text>
         </TouchableOpacity>
       </ImageBackground>
     </View>

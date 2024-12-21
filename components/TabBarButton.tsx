@@ -41,8 +41,8 @@ const TabBarButton: React.FC<TabBarButtonProps> = ({
         },
       ]}>
       {iconFunction({
-        color:
-          isFocused && !noColorChange ? currentColors.text : currentColors.text,
+        isActive: isFocused,
+        color: isFocused ? currentColors.text : currentColors.text,
       })}
     </Pressable>
   );

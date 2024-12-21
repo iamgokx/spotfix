@@ -23,10 +23,15 @@ import { Pressable } from "react-native";
 import "../../global.css";
 import useSignup from "@/hooks/userSignup";
 import Blob from "../../assets/images/blobs/b7.svg";
+import * as Animatable from "react-native-animatable";
 import LottieView from "lottie-react-native";
 import loading from "../../assets/images/welcome/loading.json";
 import useValidation from "@/hooks/useValidate";
+import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "react-native";
 const password = () => {
+  const curretTheme = useColorScheme();
+  const currentColors = curretTheme == "dark" ? Colors.dark : Colors.light;
   const { validate, errors } = useValidation();
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
@@ -102,12 +107,9 @@ const password = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <StatusBar
-        barStyle="light-content"
-        translucent
-        backgroundColor="transparent"
-      />
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: currentColors.background }}>
+      <StatusBar barStyle="light-content" translucent />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}>
@@ -145,33 +147,38 @@ const password = () => {
                 </View>
               </View>
             </Modal>
-            <ImageBackground
-              style={styles.topContainer}
-              resizeMode="cover"
-              source={require("../../assets/images/blobs/b6.png")}>
-              <Text className="text-center text-white text-3xl font-extrabold">
-                Let's get Started
-              </Text>
-              <Text className="text-center text-white font-extralight">
-                Protect Your Profile
-              </Text>
-              <View style={styles.progressContainer}>
-                <Ionicons
-                  className="w-4"
-                  color="white"
-                  name="ellipse"></Ionicons>
-                <Ionicons
-                  className="w-4"
-                  color="white"
-                  name="ellipse"></Ionicons>
-                <Ionicons
-                  className="w-4"
-                  color="white"
-                  name="ellipse"></Ionicons>
-              </View>
-            </ImageBackground>
+            <Animatable.View animation="fadeInDown" duration={500}>
+              <ImageBackground
+                style={styles.topContainer}
+                resizeMode="cover"
+                source={require("../../assets/images/blobs/b6.png")}>
+                <Text className="text-center text-white text-3xl font-extrabold">
+                  Let's get Started
+                </Text>
+                <Text className="text-center text-white font-extralight">
+                  Protect Your Profile
+                </Text>
+                <View style={styles.progressContainer}>
+                  <Ionicons
+                    className="w-4"
+                    color="white"
+                    name="ellipse"></Ionicons>
+                  <Ionicons
+                    className="w-4"
+                    color="white"
+                    name="ellipse"></Ionicons>
+                  <Ionicons
+                    className="w-4"
+                    color="white"
+                    name="ellipse"></Ionicons>
+                </View>
+              </ImageBackground>
+            </Animatable.View>
 
-            <View style={styles.detailsContainer}>
+            <Animatable.View
+              animation="fadeInUp"
+              duration={700}
+              style={styles.detailsContainer}>
               <View style={[styles.inputContainer]}>
                 <TextInput
                   style={[styles.input]}
@@ -212,8 +219,11 @@ const password = () => {
                   <Text style={{ color: "red" }}>{errors.password}</Text>
                 </View>
               )}
-            </View>
-            <View style={styles.btnContainer}>
+            </Animatable.View>
+            <Animatable.View
+              animation="fadeInUp"
+              duration={700}
+              style={styles.btnContainer}>
               <TouchableOpacity
                 onPress={handleCreateAccoundPress}
                 style={{ paddingBottom: keyboardVisible ? 100 : 20 }}>
@@ -225,17 +235,19 @@ const password = () => {
                   backgroundColor: "#F4F2F2",
                   width: "70%",
                 }}></View>
-              <Text style={{ marginBottom: 6, textAlign: "center" }}>
+              <Text style={{ marginBottom: 6, textAlign: "center" , color : currentColors.text}}>
                 Already Have An Account?{" "}
                 <TouchableOpacity
                   onPress={() => router.push("/auth")}
                   style={{ padding: 0 }}>
-                  <Text style={styles.loginText}>Log In</Text>
+                  <Text style={[styles.loginText,{color : currentColors.secondary}]}>Log In</Text>
                 </TouchableOpacity>
               </Text>
-            </View>
+            </Animatable.View>
 
-            <Blob style={styles.bottomImg} />
+            <Animatable.View animation="fadeInUp" duration={500}>
+              <Blob style={styles.bottomImg} />
+            </Animatable.View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -253,7 +265,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     zIndex: 8,
-    backgroundColor: "rgb(239, 247, 255)",
   },
   topContainer: {
     width: "100%",
@@ -276,13 +287,12 @@ const styles = StyleSheet.create({
     marginBottom: -10,
   },
   detailsContainer: {
-    // backgroundColor: "#ffffff",
     width: "90%",
     padding: 10,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 20,
-    gap : 20
+    gap: 20,
   },
   inputContainer: {
     width: "90%",
@@ -291,7 +301,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 40,
     elevation: 20,
-  
+
     // marginBottom: 20,
   },
   disabledContainer: {

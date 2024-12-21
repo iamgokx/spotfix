@@ -12,6 +12,8 @@ import {
   ImageBackground,
   Pressable,
 } from "react-native";
+import socket from "@/hooks/useSocket";
+import * as Animatable from "react-native-animatable";
 import LottieView from "lottie-react-native";
 import welcomePageOne from "../assets/images/welcome/welcomePageOne.json";
 import welcomePageTwo from "../assets/images/welcome/welcomePageTwo.json";
@@ -26,6 +28,13 @@ const { width, height } = Dimensions.get("window");
 import { Colors } from "../constants/Colors";
 import { useColorScheme } from "react-native";
 import { useState } from "react";
+import {
+  Poppins_100Thin_Italic,
+  Poppins_600SemiBold,
+  Poppins_400Regular,
+  Poppins_300Light,
+  Poppins_800ExtraBold,
+} from "@expo-google-fonts/poppins";
 import {
   getStoredData,
   getStoredRawToken,
@@ -42,7 +51,11 @@ const Index = () => {
   const [isLoading, setisLoading] = useState(true);
   const [isPressed, setIsPressed] = useState(false);
   const [fontsLoaded] = useFonts({
-    Poppins_400Regular: require("../assets/fonts/Poppins-Regular.ttf"),
+    Poppins_100Thin_Italic,
+    Poppins_600SemiBold,
+    Poppins_400Regular,
+    Poppins_300Light,
+    Poppins_800ExtraBold,
   });
   useEffect(() => {
     if (Platform.OS === "android") {
@@ -105,6 +118,19 @@ const Index = () => {
     }
   };
 
+  useEffect(() => {
+    socket.on("hello", (data) => {
+      console.log("Data received from server:", data);
+    });
+
+    return () => {
+      socket.off("hello");
+    };
+  }, []);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const handleIndexChanged = (index: number) => {
+    setCurrentIndex(index);
+  };
   return (
     <>
       <StatusBar backgroundColor={currentColors.backgroundDarker} />
@@ -147,6 +173,7 @@ const Index = () => {
         </View>
       )}
       <Swiper
+        onIndexChanged={handleIndexChanged}
         style={[
           styles.wrapper,
           { backgroundColor: currentColors.backgroundDarker },
@@ -162,24 +189,43 @@ const Index = () => {
             { backgroundColor: currentColors.backgroundDarker },
           ]}
           className="p-10">
-          <Text style={[styles.slideOneText, { color: currentColors.link }]}>
-            Welcome To SpotFix!
-          </Text>
+          {currentIndex == 0 && (
+            <>
+              <Animatable.Text
+                animation="fadeInUp"
+                duration={400}
+                style={[
+                  styles.slideOneText,
+                  {
+                    color: currentColors.link,
+                  },
+                ]}>
+                Welcome To SpotFix
+              </Animatable.Text>
 
-          <LottieView
-            source={welcomePageOne}
-            autoPlay
-            loop
-            style={[styles.image, { width: width * 0.8, height: height * 0.4 }]}
-          />
-          <Text
-            className="text-black text-2xl text-center"
-            style={[{ color: currentColors.text }]}>
-            Effortlessly identify and report local issues to your government for
-            prompt resolution.
-          </Text>
+              <Animatable.View animation="fadeInUp" duration={600}>
+                <LottieView
+                  source={welcomePageOne}
+                  autoPlay
+                  loop
+                  style={[
+                    styles.image,
+                    { width: width * 0.8, height: height * 0.4 },
+                  ]}
+                />
+              </Animatable.View>
+              <Animatable.Text
+                animation="fadeInUp"
+                duration={1000}
+                className="text-black text-2xl text-center"
+                style={[styles.slideText, { color: currentColors.text }]}>
+                Effortlessly identify and report local issues to your government
+                for prompt resolution.
+              </Animatable.Text>
+            </>
+          )}
           <Pressable
-            onPressIn={() => router.push("/home")}
+            onPressIn={() => router.push("/auth/finalVerification")}
             style={styles.devBtn}>
             <Text className="text-xl text-yellow-400 bg-black p-5 rounded-full">
               Dev Skip{"  </>"}
@@ -193,18 +239,29 @@ const Index = () => {
             { backgroundColor: currentColors.backgroundDarker },
           ]}
           className="p-10 bg-gray-50">
-          <LottieView
-            source={welcomePageTwo}
-            autoPlay
-            loop
-            style={[styles.image, { width: width * 0.8, height: height * 0.4 }]}
-          />
-          <Text
-            className="text-black text-2xl text-center"
-            style={[{ color: currentColors.text }]}>
-            Participating in project voting, proposing new ideas, and sharing
-            your suggestions.
-          </Text>
+          {currentIndex == 1 && (
+            <View>
+              <Animatable.View animation="fadeInUp" duration={400}>
+                <LottieView
+                  source={welcomePageTwo}
+                  autoPlay
+                  loop
+                  style={[
+                    styles.image,
+                    { width: width * 0.8, height: height * 0.4 },
+                  ]}
+                />
+              </Animatable.View>
+              <Animatable.Text
+                animation="fadeInUp"
+                duration={700}
+                className="text-black text-2xl text-center"
+                style={[styles.slideText, { color: currentColors.text }]}>
+                Participating in project voting, proposing new ideas, and
+                sharing your suggestions.
+              </Animatable.Text>
+            </View>
+          )}
         </View>
 
         <View
@@ -213,22 +270,29 @@ const Index = () => {
             { backgroundColor: currentColors.backgroundDarker },
           ]}
           className="p-10">
-          {/* <Image
-            source={require("../assets/images/welcome/welcome3.png")}
-            style={[styles.image, { width: width * 0.8, height: height * 0.4 }]}
-          /> */}
-          <LottieView
-            source={welcomePageThree}
-            autoPlay
-            loop
-            style={[styles.image, { width: width * 0.8, height: height * 0.4 }]}
-          />
-          <Text
-            className="text-2xl text-center"
-            style={[{ color: currentColors.text }]}>
-            Stay informed with real-time updates, crucial alerts, and detailed
-            reports on local developments.
-          </Text>
+          {currentIndex == 2 && (
+            <>
+              <Animatable.View animation="fadeInUp" duration={400}>
+                <LottieView
+                  source={welcomePageThree}
+                  autoPlay
+                  loop
+                  style={[
+                    styles.image,
+                    { width: width * 0.8, height: height * 0.4 },
+                  ]}
+                />
+              </Animatable.View>
+              <Animatable.Text
+                animation="fadeInUp"
+                duration={600}
+                className="text-2xl text-center"
+                style={[styles.slideText, { color: currentColors.text }]}>
+                Stay informed with real-time updates, crucial alerts, and
+                detailed reports on local developments.
+              </Animatable.Text>
+            </>
+          )}
         </View>
 
         <ImageBackground
@@ -239,40 +303,50 @@ const Index = () => {
           <View
             style={[styles.slide, styles.slideFour]}
             className="p-10 flex-1">
-            <View style={styles.fourContainer}>
-              <Text style={styles.screenFoutTitle}>SpotFix</Text>
-              <Text className="text-2xl text-white text-center ">
-                Welcome aboard! We're excited to have you here. Ready to take
-                the first step?
-              </Text>
-            </View>
-            {/* <Image
-              // source={require("../assets/images/svg/welcome4svg.svg")}
-              source={require("../assets/images/welcome/welcome4.png")}
-              style={[
-                styles.image,
-                { width: width * 0.8, height: height * 0.4 },
-              ]}
-            /> */}
-            <LottieView
-              source={welcomePageFour}
-              autoPlay
-              loop
-              style={[
-                styles.image,
-                { width: width * 0.8, height: height * 0.4 },
-              ]}
-            />
-            <Pressable
-              onPressIn={handleGetStarted}
-              style={[isPressed && styles.buttonPressed]}
-              onPressOut={() => setIsPressed(false)}>
-              <Text
-                className="text-black bg-white"
-                style={styles.gettingStarted}>
-                Get Started
-              </Text>
-            </Pressable>
+            {currentIndex == 3 && (
+              <>
+                <View style={styles.fourContainer}>
+                  <Animatable.Text
+                    animation="fadeInUp"
+                    duration={400}
+                    style={styles.screenFoutTitle}>
+                    SpotFix
+                  </Animatable.Text>
+                  <Animatable.Text
+                    animation="fadeInUp"
+                    duration={600}
+                    className="text-2xl text-white text-center "
+                    style={styles.slideText}>
+                    Welcome aboard! We're excited to have you here. Ready to
+                    take the first step?
+                  </Animatable.Text>
+                </View>
+
+                <Animatable.View animation="fadeInUp" duration={700}>
+                  <LottieView
+                    source={welcomePageFour}
+                    autoPlay
+                    loop
+                    style={[
+                      styles.image,
+                      { width: width * 0.8, height: height * 0.4 },
+                    ]}
+                  />
+                </Animatable.View>
+                <Animatable.View animation="fadeInUp" duration={800}>
+                  <Pressable
+                    onPressIn={handleGetStarted}
+                    style={[isPressed && styles.buttonPressed]}
+                    onPressOut={() => setIsPressed(false)}>
+                    <Text
+                      className="text-black bg-white"
+                      style={styles.gettingStarted}>
+                      Get Started
+                    </Text>
+                  </Pressable>
+                </Animatable.View>
+              </>
+            )}
           </View>
         </ImageBackground>
       </Swiper>
@@ -280,7 +354,9 @@ const Index = () => {
   );
 };
 const styles = StyleSheet.create({
-  wrapper: {},
+  slideText: {
+    fontFamily: "Poppins_300Light",
+  },
   background: {
     flex: 1,
     justifyContent: "center",
@@ -295,11 +371,12 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   slideOneText: {
-    fontFamily: "Poppins-Bold",
+    width: "100%",
     color: "black",
     fontSize: 35,
-    fontWeight: "bold",
     marginBottom: 10,
+    fontFamily: "Poppins_600SemiBold",
+    textAlign: "center",
   },
   slideTwoText: {
     fontFamily: "Poppins",
@@ -350,7 +427,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     borderRadius: 60,
     elevation: 20,
-    fontWeight: 900,
+    fontFamily: "Poppins_600SemiBold",
   },
   slideFour: {
     display: "flex",

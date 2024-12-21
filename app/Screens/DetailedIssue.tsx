@@ -9,6 +9,8 @@ import {
   Keyboard,
   Platform,
 } from "react-native";
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import * as Animatable from "react-native-animatable";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, useLocalSearchParams } from "expo-router";
 import { API_IP_ADDRESS } from "../../ipConfig.json";
@@ -19,7 +21,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import Swiper from "react-native-swiper";
 import LottieView from "lottie-react-native";
-import lazyLoading from "../../assets/images/issues/lazyLoadingIssue.json";
+import lazyLoading from "../../assets/images/welcome/loading.json";
 import hero from "../../assets/images/hero.jpg";
 import { TextInput } from "react-native";
 import { format } from "date-fns";
@@ -29,6 +31,9 @@ import { useColorScheme } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { getStoredData } from "@/hooks/useJwt";
 import SuggestionsList from "@/components/SuggestionsList";
+import socket from "@/hooks/useSocket";
+import { FadeInUp } from "react-native-reanimated";
+
 const DetailedIssue = () => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
@@ -108,7 +113,7 @@ const DetailedIssue = () => {
       );
       if (response?.data) {
         setIssueDetails(response.data);
-        console.log("detailed issue : ", response.data);
+       
         setIsDataLoaded(true);
       }
     } catch (error) {
@@ -119,8 +124,8 @@ const DetailedIssue = () => {
   useEffect(() => {
     getIssueDetails();
 
-    if(suggestions){
-      setIsSuggestionsOpen(true)
+    if (suggestions) {
+      setIsSuggestionsOpen(true);
     }
   }, [issue_id]);
 
@@ -136,23 +141,16 @@ const DetailedIssue = () => {
       <SafeAreaView
         style={{
           flex: 1,
-          justifyContent: "flex-start",
+          justifyContent: "center",
           alignItems: "center",
-          backgroundColor: 'white'
+          backgroundColor: currentColors.background,
         }}>
         <StatusBar translucent hidden />
-
         <LottieView
-          source={lazyLoading2}
+          source={lazyLoading}
+          style={{ width: 100, height: 100 }}
           autoPlay
-          speed={1}
           loop
-          style={{
-            width: "90%",
-            height: "60%",
-            borderRadius: 80,
-
-          }}
         />
       </SafeAreaView>
     );
@@ -174,7 +172,7 @@ const DetailedIssue = () => {
         );
 
         if (response) {
-          console.log(response.data);
+         
           getIssueDetails();
           // refreshIssue(issue_id);
         }
@@ -187,17 +185,22 @@ const DetailedIssue = () => {
   };
 
   const openSuggestionBox = () => {
-    // Keyboard.addListener(
-    //   Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
-    //   (event) => {
-    //     setKeyboardHeight(event.endCoordinates.height);
-    //   }
-    // );
     setIsSuggestionsOpen((prev) => !prev);
   };
 
+  socket.on("newSuggestion", (data) => {
+    console.log(data);
+    getIssueDetails();
+  });
+
   return (
-    <View style={{ flex: 1, backgroundColor: currentColors.backgroundDarker }}>
+    <View
+      style={{
+        flex: 1,
+        width: "100%",
+        height: "100%",
+        backgroundColor: currentColors.backgroundDarker,
+      }}>
       <StatusBar translucent hidden />
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -220,9 +223,6 @@ const DetailedIssue = () => {
             onPress={() => router.back()}
           />
 
-          {/* <Text style={styles.headerText}>
-            {issueDetails.title || "Issue Details"}
-          </Text> */}
         </View>
 
         <Swiper
@@ -233,7 +233,8 @@ const DetailedIssue = () => {
           activeDot={<View style={styles.activeDot} />}>
           {mediaArray.length > 0 ? (
             mediaArray.map((media, index) => (
-              <Image
+              <Animatable.Image
+              animation='fadeInDown' duration={700} 
                 key={index}
                 style={styles.img}
                 source={{
@@ -247,7 +248,10 @@ const DetailedIssue = () => {
             </View>
           )}
         </Swiper>
-        <View style={[styles.iconsContainer]}>
+        <Animatable.View
+          animation="fadeInUp"
+          duration={400}
+          style={[styles.iconsContainer]}>
           <TouchableOpacity onPress={() => handelVoteClick("upvote")}>
             <View style={styles.reactions}>
               <Ionicons
@@ -284,12 +288,14 @@ const DetailedIssue = () => {
               </Text>
             </View>
           </TouchableOpacity>
-        </View>
+        </Animatable.View>
 
-        <View
+        <Animatable.View
+          animation="fadeInUp"
+          duration={500}
           style={[
             styles.issueCreatorContainer,
-            { backgroundColor: currentColors.secondary },
+            { backgroundColor: currentColors.secondaryShade },
           ]}>
           <Image
             source={hero}
@@ -298,9 +304,11 @@ const DetailedIssue = () => {
           <View>
             <Text
               style={{
-                fontWeight: 900,
+               
                 fontSize: 20,
-              }}>{issueDetails.full_name}</Text>
+              }}>
+              {issueDetails.full_name}
+            </Text>
             <Text>{getDateFormatted(issueDetails.date_time_created)}</Text>
           </View>
           <Text
@@ -315,8 +323,10 @@ const DetailedIssue = () => {
             }}>
             {issueDetails.issue_status}
           </Text>
-        </View>
-        <View
+        </Animatable.View>
+        <Animatable.View
+          animation="fadeInUp"
+          duration={600}
           style={{
             width: "90%",
 
@@ -331,8 +341,10 @@ const DetailedIssue = () => {
           <Text style={[styles.desc, { color: currentColors.text }]}>
             {issueDetails.issue_description || "No description available"}
           </Text>
-        </View>
-        <View
+        </Animatable.View>
+        <Animatable.View
+          animation="fadeInUp"
+          duration={700}
           style={{
             width: "90%",
             display: "flex",
@@ -347,10 +359,12 @@ const DetailedIssue = () => {
           <Text style={[styles.solution, { color: currentColors.text }]}>
             {issueDetails.solution || "No solution available"}
           </Text>
-        </View>
+        </Animatable.View>
 
         {geoCodedAddress ? (
-          <View
+          <Animatable.View
+            animation="fadeInUp"
+            duration={800}
             style={{
               width: "90%",
               height: "auto",
@@ -370,11 +384,12 @@ const DetailedIssue = () => {
               style={{ color: currentColors.link, width: "90%" }}
               editable={false}
               multiline></TextInput>
-          </View>
+          </Animatable.View>
         ) : (
           <Text style={{ color: "#0066ff" }}>Loading address...</Text>
         )}
       </ScrollView>
+
       {isSuggestionsOpen && <SuggestionsList issue_id={issue_id} />}
     </View>
   );

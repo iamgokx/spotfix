@@ -17,10 +17,15 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import * as Animatable from "react-native-animatable";
 import { useSignupContext } from "@/context/SignupContext";
 import useSignup from "@/hooks/userSignup";
+import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "react-native";
 const Otp = () => {
   const router = useRouter();
+  const colorScheme = useColorScheme();
+  const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
   const [modalVisible, setModalVisible] = useState(false);
   const { details } = useSignupContext();
   const [otpValue, setOtp] = useState(["", "", "", ""]);
@@ -29,7 +34,11 @@ const Otp = () => {
   const inputRefs = useRef<(TextInput | null)[]>([]);
   const [otpError, setotpError] = useState(false);
   const { VerfyOtp, error, isLoading, Signup } = useSignup();
+  const [timer, setTimer] = useState(300);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
   useEffect(() => {
+    startTimer();
+
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
       () => setKeyboardVisible(true)
@@ -40,14 +49,30 @@ const Otp = () => {
     );
 
     return () => {
+      clearInterval(timerRef.current!);
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
     };
   }, []);
 
+  useEffect(() => {
+    if (timer === 0) {
+      clearInterval(timerRef.current!);
+    }
+  }, [timer]);
+
+  const startTimer = () => {
+    clearInterval(timerRef.current);
+    setTimer(300);
+    timerRef.current = setInterval(() => {
+      setTimer((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+  };
+
   const handleChange = (text: string, index: number) => {
     const newOtp = [...otpValue];
     newOtp[index] = text;
+
     setOtp(newOtp);
 
     if (text && index < otpValue.length - 1) {
@@ -55,6 +80,15 @@ const Otp = () => {
     } else if (!text && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
+  };
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${String(minutes).padStart(2, "0")}:${String(secs).padStart(
+      2,
+      "0"
+    )}`;
   };
 
   const handleVerify = async () => {
@@ -71,9 +105,25 @@ const Otp = () => {
       setOtp(["", "", "", ""]);
     }
   };
+  const sendUserOtp = async () => {
+    if (timer > 0) {
+      alert(`Please wait ${formatTime(timer)} before resending.`);
+      return;
+    }
+    try {
+      const response = await Signup(details.email);
+      if (response) {
+        startTimer();
+        console.log("OTP sent successfully:", response);
+      }
+    } catch (error) {
+      console.error("Error in sendUserOtp:", error);
+    }
+  };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: currentColors.background }}>
       <StatusBar
         barStyle="light-content"
         translucent
@@ -104,22 +154,30 @@ const Otp = () => {
               </View>
             </Modal>
 
-            <ImageBackground
+            <Animatable.View
               style={styles.topContainer}
-              resizeMode="cover"
-              source={require("../../assets/images/blobs/b6.png")}>
-              <Text style={styles.headerText}>
-                An OTP Has Been Sent To Your Email Address
-              </Text>
-              <Text style={styles.timerText}>04:50</Text>
-              <View style={styles.progressContainer}>
-                <Ionicons name="ellipse" color="white" />
-                <Ionicons name="ellipse" color="white" />
-                <Ionicons name="ellipse" color="white" />
-              </View>
-            </ImageBackground>
+              animation="fadeInDown"
+              duration={700}>
+              <ImageBackground
+                style={styles.topContainer}
+                resizeMode="cover"
+                source={require("../../assets/images/blobs/b6.png")}>
+                <Text style={styles.headerText}>
+                  An OTP Has Been Sent To Your Email Address
+                </Text>
+                <Text style={styles.timerText}>{formatTime(timer)}</Text>
+                <View style={styles.progressContainer}>
+                  <Ionicons name="ellipse" color="white" />
+                  <Ionicons name="ellipse" color="white" />
+                  <Ionicons name="ellipse" color="white" />
+                </View>
+              </ImageBackground>
+            </Animatable.View>
 
-            <View style={styles.otpContainer}>
+            <Animatable.View
+              animation="fadeInUp"
+              duration={700}
+              style={styles.otpContainer}>
               {otpValue.map((value, index) => (
                 <TextInput
                   key={index}
@@ -127,6 +185,10 @@ const Otp = () => {
                   style={[
                     styles.input,
                     focusedIndex === index && styles.focused,
+                    {
+                      backgroundColor: currentColors.otpBox,
+                      color: currentColors.text,
+                    },
                   ]}
                   value={value}
                   maxLength={1}
@@ -136,34 +198,56 @@ const Otp = () => {
                   onBlur={() => setFocusedIndex(null)}
                 />
               ))}
-            </View>
+            </Animatable.View>
             {otpError && <Text style={{ color: "red" }}>OTP do not match</Text>}
 
-            <View style={styles.btnContainer}>
+            <Animatable.View
+              animation="fadeInUp"
+              duration={700}
+              style={styles.btnContainer}>
               <TouchableOpacity
                 onPress={handleVerify}
                 style={{ paddingBottom: keyboardVisible ? 100 : 20 }}>
                 <Text style={styles.otpVerifyBtn}>Verify</Text>
               </TouchableOpacity>
               <Pressable style={{ display: "flex", flexDirection: "row" }}>
-                <Text>Didn't receive an OTP ?</Text>
-                <Text className="text-blue-600"> Resend</Text>
+                <Text style={{ color: currentColors.text }}>
+                  Didn't receive an OTP ?
+                </Text>
+                <Text
+                  onPress={() => sendUserOtp()}
+                  style={{ color: currentColors.secondary }}
+                  className="text-blue-600">
+                  {" "}
+                  Resend
+                </Text>
               </Pressable>
               <View style={styles.separator} />
-              <Text style={styles.footerText}>
+              <Text style={[styles.footerText, { color: currentColors.text }]}>
                 Already Have An Account?{" "}
                 <TouchableOpacity
                   onPress={() => router.push("/auth")}
                   style={{ paddingTop: 7 }}>
-                  <Text style={styles.loginText}>Log In</Text>
+                  <Text
+                    style={[
+                      styles.loginText,
+                      { color: currentColors.secondary },
+                    ]}>
+                    Log In
+                  </Text>
                 </TouchableOpacity>
               </Text>
-            </View>
+            </Animatable.View>
 
-            <ImageBackground
+            <Animatable.View
               style={styles.bottomImg}
-              source={require("../../assets/images/blobs/b7.png")}
-            />
+              animation="fadeInUp"
+              duration={500}>
+              <ImageBackground
+                style={styles.bottomImg}
+                source={require("../../assets/images/blobs/b7.png")}
+              />
+            </Animatable.View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -180,7 +264,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     zIndex: 8,
-    backgroundColor: "white",
   },
   topContainer: {
     width: "100%",
@@ -224,7 +307,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   focused: {
-    borderColor: "blue",
+    borderColor: "white",
   },
   btnContainer: {
     width: "80%",

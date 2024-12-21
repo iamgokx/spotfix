@@ -7,9 +7,17 @@ import {
   ScrollView,
   useColorScheme,
 } from "react-native";
+import {
+  useFonts,
+  Poppins_300Light,
+  Poppins_400Regular,
+  Poppins_600SemiBold,
+  Poppins_200ExtraLight,
+} from "@expo-google-fonts/poppins";
 import CustomHeader from "@/components/CustomHeader";
 import { getStoredRawToken } from "../../hooks/useJwt";
 import Issue from "@/components/Issue";
+import socket from "@/hooks/useSocket";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -20,14 +28,29 @@ import { Colors } from "../../constants/Colors";
 import { ServerContainer } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import loading from "../../assets/images/welcome/loading.json";
+import * as Animatable from "react-native-animatable";
+import { RefreshControl } from "react-native-gesture-handler";
 const HomeScreen = ({ navigation }: any) => {
+  const [fontsLoaded] = useFonts({
+    Poppins_600SemiBold,
+    Poppins_400Regular,
+    Poppins_300Light,
+    Poppins_200ExtraLight,
+  });
   const colorScheme = useColorScheme();
   const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
   const [isLoading, setIsLoading] = useState(false);
   const [issuedata, setIssueData] = useState();
+  const [refreshing, setRefreshing] = useState(false);
   useEffect(() => {
     tokenF();
   }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    getIssueData();
+    setIsLoading(false);
+  };
 
   const tokenF = async () => {
     const token = await getStoredRawToken();
@@ -43,6 +66,8 @@ const HomeScreen = ({ navigation }: any) => {
 
       if (response) {
         setIssueData(response.data);
+
+        setRefreshing(false);
       }
     } catch (error) {
       console.log("error getting issues from backend : ", error);
@@ -54,7 +79,7 @@ const HomeScreen = ({ navigation }: any) => {
   }, []);
 
   const refreshIssue = async (issue_id: number) => {
-    // getIssueData();
+    console.log("refreshing issue");
     try {
       const response = await axios.post(
         `http://${API_IP_ADDRESS}:8000/api/issues/getDetailedIssue`,
@@ -62,7 +87,6 @@ const HomeScreen = ({ navigation }: any) => {
       );
 
       if (response && response.data) {
-        console.log("updated vote count nigga : ", response.data);
         setIssueData((prevData) =>
           prevData.map((issue) =>
             issue.issue_id === issue_id ? response.data : issue
@@ -73,6 +97,7 @@ const HomeScreen = ({ navigation }: any) => {
       console.error("Error refreshing issue data: ", error);
     }
   };
+
   return (
     <View
       style={[
@@ -80,10 +105,16 @@ const HomeScreen = ({ navigation }: any) => {
         { backgroundColor: currentColors.backgroundDarkest },
       ]}>
       <CustomHeader navigation={navigation} />
-      <StatusBar backgroundColor={currentColors.backgroundDarker} translucent />
+      <StatusBar translucent hidden />
 
       {!isLoading && (
         <FlatList
+          initialNumToRender={5}
+          maxToRenderPerBatch={10}
+          windowSize={7}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
           contentContainerStyle={{
             width: "100%",
             display: "flex",
@@ -93,7 +124,11 @@ const HomeScreen = ({ navigation }: any) => {
           showsVerticalScrollIndicator={false}
           ListFooterComponent={
             <View style={{ width: "100%", height: 100, margin: 30 }}>
-              <Text style={{ color: currentColors.text }}>
+              <Text
+                style={{
+                  color: currentColors.text,
+                  fontFamily: "Poppins_300Light",
+                }}>
                 Nothing more to view.
               </Text>
             </View>
@@ -138,7 +173,7 @@ const HomeScreen = ({ navigation }: any) => {
             source={loading}
             autoPlay
             loop
-            style={{ width: 200, height: 200 }}
+            style={{ width: 100, height: 100 }}
           />
         </View>
       )}

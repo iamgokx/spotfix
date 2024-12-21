@@ -1,8 +1,9 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import CustomHeader from "@/components/CustomHeader";
-
+import { useEffect } from "react";
 const ProfileScreen = ({ navigation }) => {
+  
   return (
     <View style={styles.container}>
       {/* Pass the navigation prop to CustomHeader */}

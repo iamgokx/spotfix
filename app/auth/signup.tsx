@@ -26,6 +26,7 @@ import Blob6 from "../../assets/images/blobs/b6.svg";
 import Blob7 from "../../assets/images/blobs/b7.svg";
 import useValidation from "@/hooks/useValidate";
 import axios from "axios";
+import * as Animatable from "react-native-animatable";
 import { API_IP_ADDRESS } from "../../ipConfig.json";
 const Signup = () => {
   const colorScheme = useColorScheme();
@@ -107,9 +108,9 @@ const Signup = () => {
         console.log(response.data.results[0].state);
         console.log(response.data.results[0].locality);
         console.log(response.data.results[0].pincode);
-        setTimeout(() => {
-          handleSubmit();
-        }, 2000);
+
+        handleSubmit();
+
         console.log(details);
       } else {
         setModalText(
@@ -166,31 +167,36 @@ const Signup = () => {
                 </View>
               </View>
             </Modal>
-            <ImageBackground
+            <Animatable.View
               style={styles.topContainer}
-              resizeMode="cover"
-              source={require("../../assets/images/blobs/b6.png")}>
-              <Text className="text-center text-white text-3xl font-extrabold">
-                Let's get Started
-              </Text>
-              <Text className="text-center text-white font-extralight">
-                Build Your Profile
-              </Text>
-              <View style={styles.progressContainer}>
-                <Ionicons
-                  className="w-4"
-                  color="white"
-                  name="ellipse"></Ionicons>
-                <Ionicons
-                  className="w-4"
-                  color="white"
-                  name="ellipse-outline"></Ionicons>
-                <Ionicons
-                  className="w-4"
-                  color="white"
-                  name="ellipse-outline"></Ionicons>
-              </View>
-            </ImageBackground>
+              animation="fadeInDown"
+              duration={500}>
+              <ImageBackground
+                style={styles.topContainer}
+                resizeMode="cover"
+                source={require("../../assets/images/blobs/b6.png")}>
+                <Text className="text-center text-white text-3xl font-extrabold">
+                  Let's get Started
+                </Text>
+                <Text className="text-center text-white font-extralight">
+                  Build Your Profile
+                </Text>
+                <View style={styles.progressContainer}>
+                  <Ionicons
+                    className="w-4"
+                    color="white"
+                    name="ellipse"></Ionicons>
+                  <Ionicons
+                    className="w-4"
+                    color="white"
+                    name="ellipse-outline"></Ionicons>
+                  <Ionicons
+                    className="w-4"
+                    color="white"
+                    name="ellipse-outline"></Ionicons>
+                </View>
+              </ImageBackground>
+            </Animatable.View>
             <View
               style={{
                 width: "100%",
@@ -199,7 +205,10 @@ const Signup = () => {
                 height: "50%",
                 position: "relative",
               }}>
-              <View style={styles.detailsContainer}>
+              <Animatable.View
+                animation="fadeInUp"
+                duration={700}
+                style={styles.detailsContainer}>
                 <View style={styles.inputContainer}>
                   <TextInput
                     style={styles.input}
@@ -217,7 +226,7 @@ const Signup = () => {
                     <Text
                       style={{
                         width: "90%",
-                        textAlign: "left",
+                        textAlign: "center",
                         color: "red",
                       }}>
                       {errors.phoneNumber}
@@ -239,14 +248,14 @@ const Signup = () => {
                     <Text
                       style={{
                         width: "90%",
-                        textAlign: "left",
+                        textAlign: "center",
                         color: "red",
                       }}>
                       {errors.email}
                     </Text>
                   </View>
                 )}
-
+                {/* 
                 {details.aadharCardNumber && (
                   <>
                     <Text style={{ color: currentColors.text }}>
@@ -270,9 +279,12 @@ const Signup = () => {
                       <Text>Address : {details.address}</Text>
                     </View>
                   </>
-                )}
-              </View>
-              <View style={styles.btnContainer}>
+                )} */}
+              </Animatable.View>
+              <Animatable.View
+                animation="fadeInUp"
+                duration={800}
+                style={styles.btnContainer}>
                 <TouchableOpacity
                   onPress={goToAddressScreen}
                   style={{ paddingBottom: keyboardVisible ? 20 : 20 }}>
@@ -314,9 +326,11 @@ const Signup = () => {
                     </Text>
                   </TouchableOpacity>
                 </View>
-              </View>
+              </Animatable.View>
             </View>
-            <Blob7 style={styles.bottomImg} />
+            <Animatable.View animation="fadeInUp" duration={500}>
+              <Blob7 style={styles.bottomImg} />
+            </Animatable.View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

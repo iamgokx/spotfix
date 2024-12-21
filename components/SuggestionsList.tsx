@@ -4,7 +4,9 @@ import { Colors } from "@/constants/Colors";
 import axios from "axios";
 import { API_IP_ADDRESS } from "../ipConfig.json";
 import hero from "../assets/images/hero.jpg";
+import socket from "@/hooks/useSocket";
 import { formatDistanceToNow } from "date-fns";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   View,
   Text,
@@ -16,29 +18,51 @@ import {
   FlatList,
   Image,
   Switch,
+  Animated,
 } from "react-native";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { formatDate, format } from "date-fns";
-import { withDecay } from "react-native-reanimated";
+import { formatDistanceToNowStrict } from "date-fns";
+import { FadeInUp, withDecay } from "react-native-reanimated";
 import { getStoredData } from "@/hooks/useJwt";
+import { io } from "socket.io-client";
+import * as Animatable from "react-native-animatable";
 const SuggestionsList = ({ issue_id }: any) => {
   const colorScheme = useColorScheme();
+  const insets = useSafeAreaInsets(); 
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
   const [suggestions, setSuggestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [userSuggestions, setUserSuggestions] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
+
   useEffect(() => {
     getIssueSuggestions();
   }, []);
 
   const getDateFormatted = (date: Date | string) => {
-    const formattedDate = formatDistanceToNow(new Date(date), {
-      addSuffix: true,
+    const distance = formatDistanceToNowStrict(new Date(date), {
+      addSuffix: false,
+      roundingMethod: "floor",
     });
-    return formattedDate;
+
+    return (
+      distance
+        .replace(" seconds", "s")
+        .replace(" second", "s")
+        .replace(" minutes", "m")
+        .replace(" minute", "m")
+        .replace(" hours", "h")
+        .replace(" hour", "h")
+        .replace(" days", "d")
+        .replace(" day", "d")
+        .replace(" months", "mo")
+        .replace(" month", "mo")
+        .replace(" years", "y")
+        .replace(" year", "y") + " ago"
+    );
   };
 
   const getIssueSuggestions = async () => {
@@ -66,22 +90,25 @@ const SuggestionsList = ({ issue_id }: any) => {
   useEffect(() => {
     const keyboardShowListener = Keyboard.addListener(
       Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
-      (event) => setKeyboardHeight(event.endCoordinates.height)
+      (event) => {
+        if (event && event.endCoordinates) {
+          setKeyboardHeight(event.endCoordinates.height); // Update keyboard height
+        } else {
+          setKeyboardHeight(0); // Fallback
+        }
+      }
     );
-
+  
     const keyboardHideListener = Keyboard.addListener(
       Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
       () => setKeyboardHeight(0)
     );
-
-    setKeyboardHeight(0);
-
+  
     return () => {
       keyboardShowListener.remove();
       keyboardHideListener.remove();
     };
   }, []);
-
   const getUserDetails = async () => {
     const user = await getStoredData();
     console.log("returned user email : ", user.email);
@@ -97,7 +124,7 @@ const SuggestionsList = ({ issue_id }: any) => {
         console.error("User details are missing or incomplete.");
         return;
       }
-      console.log("this is nigga", user, suggestion);
+
       const response = await axios.post(
         `http://${API_IP_ADDRESS}:8000/api/issues/submitSuggestion`,
         {
@@ -108,20 +135,35 @@ const SuggestionsList = ({ issue_id }: any) => {
         }
       );
       if (response) {
-        console.log(response.data);
-        setUserSuggestions("")
+        // console.log(response.data);
+        setUserSuggestions("");
       }
     } catch (error) {
       console.log("error submitting issue : ", error);
     }
   };
 
+  useEffect(() => {
+    const handleNewSuggestion = (data: any) => {
+      console.log("New suggestion received via socket:", data.message);
+      getIssueSuggestions();
+    };
+
+    socket.on("newSuggestion", handleNewSuggestion);
+
+    return () => {
+      socket.off("newSuggestion", handleNewSuggestion); // Cleanup
+    };
+  }, []);
+
   return (
-    <SafeAreaView
+    <Animatable.View
+      animation="fadeInUpBig"
+      duration={800}
       style={{
         width: "100%",
         height: 500,
-        backgroundColor: currentColors.background,
+        backgroundColor: currentColors.backgroundDarkest,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         overflow: "hidden",
@@ -131,66 +173,98 @@ const SuggestionsList = ({ issue_id }: any) => {
         <FlatList
           keyExtractor={(item, index) => index.toString()}
           data={suggestions}
-          renderItem={({ item }) => (
-            <View
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={
+            <Text
               style={{
-                margin: 10,
-                padding: 10,
-                display: "flex",
-                flexDirection: "row",
-                gap: 10,
-                alignItems: "flex-start",
-                justifyContent: "space-between",
+                color: currentColors.text,
+                textAlign: "center",
+                marginTop: 60,
               }}>
-              <Image
-                source={hero}
-                style={{ width: 40, height: 40, borderRadius: 500 }}
-              />
-              <View style={{ width: "90%" }}>
-                <View>
-                  <Text style={{ color: currentColors.text, padding: 10 }}>
-                    {item.full_name}
-                  </Text>
-                  <View
-                    style={{
-                      backgroundColor: currentColors.backgroundLighter,
-                      padding: 10,
-                      borderRadius: 20,
-                    }}>
-                    <Text style={{ width: "100%", color: currentColors.text }}>
-                      {item.content}
-                    </Text>
-                    <Text
-                      style={{
-                        color: currentColors.link,
-                        width: "100%",
-                        textAlign: "right",
-                      }}>
-                      {getDateFormatted(item.date_time_created)}
-                    </Text>
-                  </View>
-                </View>
+              No suggestions yet
+            </Text>
+          }
+          renderItem={({ item }) => (
+            <Animatable.View
+              style={{
+           
+                width: "100%",
+                marginTop: 10,
+                marginBottom: 10,
+                flex: 1,
+                flexDirection: "row",
+                padding: 10,
+              }}>
+              <View
+                style={{ width: "20%", height: "100%", alignItems: "center" }}>
+                <Image
+                  source={hero}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 500,
+                    marginBottom: 10,
+                  }}
+                />
+                <Text
+                  style={{
+                    width: 2,
+                    flexGrow: 1,
+                    backgroundColor: currentColors.textShade,
+                  }}></Text>
               </View>
-            </View>
+
+              <View style={{ width: "80%" }}>
+                <View
+                  style={{
+                    width: "100%",
+                    flexDirection: "row",
+                    marginTop: 10,
+                    marginBottom: 20,
+                  }}>
+                  <Text
+                    style={{
+                      color: currentColors.text,
+
+                      width: "60%",
+                    }}>
+                    {!item.is_anonymous ? item.full_name : "Spotfix User"}
+                  </Text>
+                  <Text
+                    style={{
+                      color: currentColors.link,
+                      textAlign: "right",
+                      width: "35%",
+                    }}>
+                    {getDateFormatted(item.date_time_created)}
+                  </Text>
+                </View>
+                <Text style={{ color: currentColors.text, width: "95%" }}>
+                  {item.content}
+                </Text>
+              </View>
+            </Animatable.View>
           )}
         />
       ) : (
         <Text>Loading...</Text>
       )}
 
-      <View
+      <KeyboardAvoidingView
+       onLayout={() => setKeyboardHeight((prev) => prev)}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{
           width: "100%",
-          backgroundColor: currentColors.backgroundDarkest,
+          backgroundColor: currentColors.background,
           maxHeight: 100,
           height: 60,
-          display: "flex",
           flexDirection: "row",
           justifyContent: "space-evenly",
-          alignItems: "flex-start",
+          alignItems: "center",
           position: "relative",
           bottom: keyboardHeight ? keyboardHeight : 0,
-          paddingTop: 5,
+          paddingHorizontal: 5,
+          marginBottom: insets.bottom,
         }}>
         <Switch
           trackColor={{
@@ -213,11 +287,11 @@ const SuggestionsList = ({ issue_id }: any) => {
         <Ionicons
           name="send"
           size={25}
-          color={"#0066ff"}
+          color={currentColors.secondary}
           onPress={() => handleSubmitSuggestion()}
         />
-      </View>
-    </SafeAreaView>
+      </KeyboardAvoidingView>
+    </Animatable.View>
   );
 };
 
