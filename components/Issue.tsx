@@ -170,7 +170,7 @@ const Issue = ({
               key={index}
               style={styles.img}
               source={{
-                uri: `http://${API_IP_ADDRESS}:8000/uploads/${media}`,
+                uri: `http://${API_IP_ADDRESS}:8000/uploads/issues/${media}`,
               }}
             />
           ))

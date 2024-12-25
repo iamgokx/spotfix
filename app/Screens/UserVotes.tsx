@@ -1,9 +1,9 @@
 import { View, Text } from "react-native";
-const YourIssues = () => {
+const UserVotes = () => {
   return (
     <View>
-      <Text>YourIssues</Text>
+      <Text>UserVotes</Text>
     </View>
   );
 };
-export default YourIssues;
+export default UserVotes;

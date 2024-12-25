@@ -75,12 +75,14 @@ const Index = () => {
     setIsPressed(true);
     router.push("/welcome");
   };
+
   useEffect(() => {
     setisLoading(true);
     fetchTokenData();
   }, []);
 
   const verifyUserToken = async (token: any) => {
+    setisLoading(true);
     const response = await axios.post(
       `http://${API_IP_ADDRESS}:8000/api/users/verifyJwt`,
       {
@@ -92,7 +94,6 @@ const Index = () => {
       console.log("jwt authenticated");
       console.log(response.data);
       router.push("/home");
-      setisLoading(false);
     } else {
       console.log("couldnt authenticate jwt");
       setisLoading(false);
@@ -107,8 +108,8 @@ const Index = () => {
       clearStorage();
       setisLoading(false);
     } else {
+      setisLoading(true);
       const rawToken = await getStoredRawToken();
-      setisLoading(false);
       verifyUserToken(rawToken);
       console.log(
         tokenFromStorage?.name,
@@ -225,7 +226,7 @@ const Index = () => {
             </>
           )}
           <Pressable
-            onPressIn={() => router.push("/auth/finalVerification")}
+            onPressIn={() => router.push("/screens/Profile")}
             style={styles.devBtn}>
             <Text className="text-xl text-yellow-400 bg-black p-5 rounded-full">
               Dev Skip{"  </>"}

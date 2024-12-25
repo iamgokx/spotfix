@@ -29,16 +29,35 @@ const ReportIssue = () => {
   const colorTheme = useColorScheme();
   const currentColors = colorTheme == "dark" ? Colors.dark : Colors.light;
   const router = useRouter();
-  const [user, setUser] = useState();
+  const [user, setUser] = useState("");
 
   const getUserDetails = async () => {
-    const rawToken = await getStoredData();
-    const fName = rawToken.name.split(" ");
-    setUser(fName[0]);
+    try {
+      const rawToken = await getStoredData();
+      if (!rawToken || !rawToken.name) {
+        console.error("Token data is missing or invalid");
+        setUser("User");
+        return;
+      }
+      const fName = rawToken.name.split(" ");
+      setUser(fName[0] || "User");
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+      setUser("User");
+    }
   };
+
   useEffect(() => {
     getUserDetails();
   }, []);
+
+  if (!fontsLoaded) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <IssueProvider>
@@ -78,7 +97,7 @@ const ReportIssue = () => {
           </Animatable.Text>
         </View>
         <Animatable.View
-          animation={isFocused ? "fadeInUp" : ""}
+          animation={isFocused ? "fadeInUp" : "undefined"}
           duration={600}
           style={{
             width: "90%",
@@ -132,7 +151,7 @@ const ReportIssue = () => {
           />
         </Animatable.View>
         <Animatable.View
-          animation={isFocused ? "fadeInUp" : ""}
+          animation={isFocused ? "fadeInUp" : "undefined"}
           duration={800}
           style={{
             width: "90%",

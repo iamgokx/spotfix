@@ -2,9 +2,10 @@ import React from "react";
 import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaFrame } from "react-native-safe-area-context";
 import { useColorScheme } from "react-native";
 import { Colors } from "@/constants/Colors";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 interface Props {
   navigation: DrawerNavigationProp<any>;
 }
@@ -12,16 +13,25 @@ interface Props {
 const CustomHeader: React.FC<Props> = ({ navigation }: any) => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
+  const insects = useSafeAreaInsets();
   return (
-    <SafeAreaView style={[styles.headerContainer,{backgroundColor : currentColors.backgroundDarker}]}>
+    <View
+      style={[
+        styles.headerContainer,
+        { backgroundColor: currentColors.backgroundDarker, paddingTop :insects.top == 0 ? 10 : insects.top * 1.2 },
+      ]}>
       <TouchableOpacity
         onPress={() => navigation.openDrawer()}
         style={[styles.iconButton]}>
-        <Ionicons name="menu" size={28} color={currentColors.secondary}/>
+        <Ionicons name="menu" size={28} color={currentColors.secondary} />
       </TouchableOpacity>
 
       <TextInput
-        style={[styles.searchInput,{backgroundColor : currentColors.background}, {color :  currentColors.text}]}
+        style={[
+          styles.searchInput,
+          { backgroundColor: currentColors.background },
+          { color: currentColors.text },
+        ]}
         placeholder="Search"
         placeholderTextColor={currentColors.textShade}
       />
@@ -29,9 +39,13 @@ const CustomHeader: React.FC<Props> = ({ navigation }: any) => {
       <TouchableOpacity
         onPress={() => alert("Notification Clicked")}
         style={styles.iconButton}>
-        <Ionicons name="notifications-circle" size={35} color={currentColors.secondary} />
+        <Ionicons
+          name="notifications-circle"
+          size={35}
+          color={currentColors.secondary}
+        />
       </TouchableOpacity>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -39,13 +53,15 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     paddingHorizontal: 15,
     paddingVertical: 10,
     backgroundColor: "#fff",
     elevation: 10,
     borderBottomLeftRadius: 35,
     borderBottomRightRadius: 35,
-    zIndex : 1
+    zIndex: 1,
+
   },
   iconButton: {
     padding: 5,

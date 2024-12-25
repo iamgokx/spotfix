@@ -66,6 +66,7 @@ const HomeScreen = ({ navigation }: any) => {
 
       if (response) {
         setIssueData(response.data);
+        console.log('response.data: ', response.data);
 
         setRefreshing(false);
       }

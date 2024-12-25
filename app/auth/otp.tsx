@@ -199,7 +199,9 @@ const Otp = () => {
                 />
               ))}
             </Animatable.View>
-            {otpError && <Text style={{ color: "red" }}>OTP do not match</Text>}
+            {otpError && (
+              <Text style={{ color: "red" }}>OTP does not match</Text>
+            )}
 
             <Animatable.View
               animation="fadeInUp"

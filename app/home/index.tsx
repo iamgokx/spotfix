@@ -12,8 +12,8 @@ import CustomHeader from "@/components/CustomHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ProfileScreen from "../screens/Profile";
 import HomeScreen from "../screens/Home";
-import YourIssues from "../screens/YourIssues";
-import YourProposals from "../screens/YourProposals";
+import UserIssues from "../screens/UserIssues";
+import UserProposals from "../screens/UserProposals";
 import { Ionicons } from "@expo/vector-icons";
 import CustomDrawer from "@/components/Drawer";
 import Feedback from "../screens/Feedback";
@@ -30,14 +30,11 @@ import Help from "../screens/Help";
 import { clearStorage } from "@/hooks/useJwt";
 const Drawer = createDrawerNavigator();
 
-
-
 const MyDrawer = () => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
   const router = useRouter();
 
- 
   return (
     <NavigationIndependentTree>
       <Drawer.Navigator
@@ -58,7 +55,6 @@ const MyDrawer = () => {
           headerShown: false,
           header: ({ navigation }) => <CustomHeader navigation={navigation} />,
         }}>
-       
         <Drawer.Screen
           name="Issues"
           component={HomeScreen}
@@ -70,30 +66,49 @@ const MyDrawer = () => {
         />
         <Drawer.Screen
           name="User Profile"
+          
           component={ProfileScreen}
           options={{
             drawerIcon: ({ size, color }) => (
               <Ionicons name="person-outline" size={size} color={color} />
             ),
           }}
+          listeners={({ navigation }) => ({
+            drawerItemPress: (e) => {
+              e.preventDefault();
+              router.push("/screens/Profile");
+            },
+          })}
         />
         <Drawer.Screen
           name="My Issues"
-          component={YourIssues}
+          component={UserIssues}
           options={{
             drawerIcon: ({ size, color }) => (
               <Ionicons name="create-outline" size={size} color={color} />
             ),
           }}
+          listeners={({ navigation }) => ({
+            drawerItemPress: (e) => {
+              e.preventDefault();
+              router.push("/screens/UserIssues");
+            },
+          })}
         />
         <Drawer.Screen
           name="My Proposals"
-          component={YourProposals}
+          component={UserProposals}
           options={{
             drawerIcon: ({ size, color }) => (
               <Ionicons name="newspaper-outline" size={size} color={color} />
             ),
           }}
+          listeners={({ navigation }) => ({
+            drawerItemPress: (e) => {
+              e.preventDefault();
+              router.push("/screens/UserProposals");
+            },
+          })}
         />
         <Drawer.Screen
           name="Feedback"
@@ -103,6 +118,12 @@ const MyDrawer = () => {
               <Ionicons name="reader-outline" size={size} color={color} />
             ),
           }}
+          listeners={({ navigation }) => ({
+            drawerItemPress: (e) => {
+              e.preventDefault();
+              router.push("/screens/Feedback");
+            },
+          })}
         />
 
         <Drawer.Screen
@@ -113,6 +134,12 @@ const MyDrawer = () => {
               <Ionicons name="code-slash-outline" size={size} color={color} />
             ),
           }}
+          listeners={({ navigation }) => ({
+            drawerItemPress: (e) => {
+              e.preventDefault();
+              router.push("/screens/Help");
+            },
+          })}
         />
       </Drawer.Navigator>
     </NavigationIndependentTree>

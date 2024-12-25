@@ -1,19 +1,7 @@
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-const Help = ({ navigation }) => {
-  useEffect(() => {
-    navigation.setOptions({
-      tabBarStyle: { display: "none" },
-    });
-
-    return () => {
-      navigation.setOptions({
-        tabBarStyle: undefined,
-      });
-    };
-  }, [navigation]);
-
+const Help = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Help and Support</Text>
