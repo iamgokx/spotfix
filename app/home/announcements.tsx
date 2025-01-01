@@ -1,10 +1,9 @@
-import React from "react";
-import LottieView from "lottie-react-native";
-import { Text } from "react-native";
-export default function announcements() {
+import { View, Text } from 'react-native'
+const announcements = () => {
   return (
-    <>
-      <Text>hiiiiiiiiiii</Text>
-    </>
-  );
+    <View>
+      <Text>announcements</Text>
+    </View>
+  )
 }
+export default announcements

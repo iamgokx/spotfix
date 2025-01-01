@@ -168,7 +168,9 @@ const SuggestionsList = ({ issue_id }: any) => {
         borderTopRightRadius: 20,
         overflow: "hidden",
         position: "relative",
+
       }}>
+        <Text style={{textAlign : 'center', color : currentColors.text, textDecorationLine : 'underline', padding : 5}}>Suggestions</Text>
       {!isLoading ? (
         <FlatList
           keyExtractor={(item, index) => index.toString()}

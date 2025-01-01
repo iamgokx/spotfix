@@ -75,7 +75,7 @@ const ReportIssue = () => {
             flexDirection: "column",
           }}>
           <Animatable.Text
-            animation={isFocused ? "fadeInLeft" : undefined}
+            animation={isFocused ? "slideInLeft" : undefined}
             duration={1000}
             style={{
               fontFamily: "Poppins_100Thin",
@@ -86,7 +86,7 @@ const ReportIssue = () => {
           </Animatable.Text>
 
           <Animatable.Text
-            animation={isFocused ? "fadeInLeft" : undefined}
+            animation={isFocused ? "slideInLeft" : undefined}
             duration={900}
             style={{
               fontFamily: "Poppins_500Medium",
@@ -97,7 +97,7 @@ const ReportIssue = () => {
           </Animatable.Text>
         </View>
         <Animatable.View
-          animation={isFocused ? "fadeInUp" : "undefined"}
+          animation={isFocused ? "slideInUp" : "undefined"}
           duration={600}
           style={{
             width: "90%",
@@ -151,8 +151,8 @@ const ReportIssue = () => {
           />
         </Animatable.View>
         <Animatable.View
-          animation={isFocused ? "fadeInUp" : "undefined"}
-          duration={800}
+          animation={isFocused ? "slideInUp" : "undefined"}
+          duration={700}
           style={{
             width: "90%",
             height: "20%",
@@ -184,7 +184,7 @@ const ReportIssue = () => {
             </Text>
             <TouchableOpacity
               style={styles.btnContainer}
-              onPress={() => router.push("/auth")}>
+              onPress={() => router.push("/proposals")}>
               <Text
                 style={[
                   styles.btn,

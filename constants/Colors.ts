@@ -1,8 +1,3 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
-
 export const Colors = {
   light: {
     text: "black",
@@ -21,6 +16,7 @@ export const Colors = {
     cardText: "white",
     cardButton: "white",
     cardButtonText: "black",
+    inputField: "white",
   },
   dark: {
     text: "white",
@@ -39,6 +35,7 @@ export const Colors = {
     cardText: "black",
     cardButton: "black",
     cardButtonText: "white",
-    otpBox:'orange'
+    otpBox: "orange",
+    inputField: "#373A40",
   },
 };

@@ -30,6 +30,7 @@ import LottieView from "lottie-react-native";
 import loading from "../../assets/images/welcome/loading.json";
 import * as Animatable from "react-native-animatable";
 import { RefreshControl } from "react-native-gesture-handler";
+
 const HomeScreen = ({ navigation }: any) => {
   const [fontsLoaded] = useFonts({
     Poppins_600SemiBold,
@@ -66,7 +67,6 @@ const HomeScreen = ({ navigation }: any) => {
 
       if (response) {
         setIssueData(response.data);
-        console.log('response.data: ', response.data);
 
         setRefreshing(false);
       }
@@ -162,6 +162,9 @@ const HomeScreen = ({ navigation }: any) => {
                 downvotes={item.downvote_count}
                 suggestions={item.total_suggestions}
                 refreshIssue={refreshIssue}
+                pfp={item.picture_name}
+                latitude={item.latitude}
+                longitude={item.longitude}
               />
             );
           }}></FlatList>

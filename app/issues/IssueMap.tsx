@@ -61,6 +61,10 @@ const IssueMap = ({ goToAddressScreen }: any) => {
           generatedAddress: data.display_name,
         }));
         setDetails((prev) => ({ ...prev, generatedLocality: locality }));
+        console.log(data.display_name);
+        console.log(postcode);
+        console.log(city);
+        console.log(state);
         setDetails((prev) => ({ ...prev, generatedState: state }));
         setDetails((prev) => ({ ...prev, generatedCity: city }));
         setDetails((prev) => ({ ...prev, generatedPincode: postcode }));

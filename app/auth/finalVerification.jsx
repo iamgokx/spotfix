@@ -26,6 +26,7 @@ const finalVerification = () => {
   const handleVerifyUser = async () => {
     setLoading(true);
     setResponseMessage("");
+
     try {
       const response = await axios.post(
         `http://${API_IP_ADDRESS}:8000/api/users/verifyUser`,
@@ -33,38 +34,51 @@ const finalVerification = () => {
       );
 
       if (response.data) {
+        const { aadharVerification, userExists, message, creationStatus } =
+          response.data;
+
         setUserStatus({
-          aadharVerification: response.data.aadharVerification || false,
-          userExists: response.data.userExists || false,
+          aadharVerification: aadharVerification || false,
+          userExists: userExists || false,
         });
-        setTimeout(() => {
-          setLoading(false);
-          if (response.data.aadharVerification && response.data.userExists) {
-            setResponseMessage(
-              "Aadhar Successfully Verified, User Already Exists Please Log In"
-            );
-            setAadharUserExists(true);
-          } else if (response.data.aadharVerification) {
-            setResponseMessage(
-              "Aadhar Successfully Verified \n Creating Account"
-            );
-            const jwtRes = generateJwt(details);
-            if (jwtRes) {
-              setTimeout(() => {
-                clearDetails();
-                router.push("/home");
-              }, 2000);
-            } else {
-              console.log("failed to create jwt token");
-            }
+
+        if (aadharVerification && userExists) {
+          // Case: Aadhar verified but user already exists
+          setResponseMessage(
+            "Aadhar Successfully Verified. User already exists, please log in."
+          );
+          setAadharUserExists(true);
+        } else if (aadharVerification && creationStatus) {
+          // Case: Aadhar verified and account successfully created
+          setResponseMessage(
+            "Aadhar Successfully Verified. Account created successfully. Redirecting to Home..."
+          );
+
+          const jwtRes = generateJwt(details);
+          if (jwtRes) {
+            setTimeout(() => {
+              clearDetails();
+              router.push("/home");
+            }, 2000);
           } else {
-            setResponseMessage("Aadhar verification failed.");
+            console.log("failed to create jwt token");
           }
-        }, 2000);
+        } else if (!aadharVerification) {
+          // Case: Aadhar verification failed
+          setResponseMessage(
+            "Aadhar verification failed. Please check your details and try again."
+          );
+        }
+      } else {
+        setResponseMessage(
+          "No response from the server. Please try again later."
+        );
       }
     } catch (error) {
       console.error("Error verifying user:", error);
-      setResponseMessage("An error occurred while verifying user details.");
+      setResponseMessage(
+        "An error occurred while verifying user details. Please try again later."
+      );
     }
   };
 

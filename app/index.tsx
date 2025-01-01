@@ -11,6 +11,7 @@ import {
   StatusBar as RNStatusBar,
   ImageBackground,
   Pressable,
+  TouchableOpacity,
 } from "react-native";
 import socket from "@/hooks/useSocket";
 import * as Animatable from "react-native-animatable";
@@ -42,7 +43,7 @@ import {
 } from "../hooks/useJwt";
 import axios from "axios";
 import { API_IP_ADDRESS } from "../ipConfig.json";
-
+import useLogin from "@/hooks/useLogin";
 import loading from "../assets/images/welcome/loading.json";
 const Index = () => {
   const colorScheme = useColorScheme();
@@ -83,6 +84,7 @@ const Index = () => {
 
   const verifyUserToken = async (token: any) => {
     setisLoading(true);
+
     const response = await axios.post(
       `http://${API_IP_ADDRESS}:8000/api/users/verifyJwt`,
       {
@@ -131,6 +133,11 @@ const Index = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const handleIndexChanged = (index: number) => {
     setCurrentIndex(index);
+  };
+
+  const { login } = useLogin();
+  const handleLogin = async () => {
+    router.push("/home");
   };
   return (
     <>
@@ -225,13 +232,13 @@ const Index = () => {
               </Animatable.Text>
             </>
           )}
-          <Pressable
-            onPressIn={() => router.push("/screens/Profile")}
+          {/* <TouchableOpacity
+            onPressIn={() => handleLogin()}
             style={styles.devBtn}>
             <Text className="text-xl text-yellow-400 bg-black p-5 rounded-full">
               Dev Skip{"  </>"}
             </Text>
-          </Pressable>
+          </TouchableOpacity> */}
         </View>
 
         <View

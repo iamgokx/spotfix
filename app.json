@@ -4,7 +4,7 @@
     "slug": "spotfix",
     "version": "1.0.0",
     "orientation": "default",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/appIcon.png",
     "scheme": "spotfix",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -15,14 +15,15 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": ["android.permission.RECORD_AUDIO"],
+      "package": "com.iamgokx.spotfix"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-
     "splash": {
       "image": "./assets/images/logo.png",
       "resizeMode": "contain",
@@ -30,14 +31,8 @@
     },
     "plugins": [
       "expo-router",
-
       "expo-splash-screen",
-      [
-        "expo-font",
-        {
-          "fonts": "./assets/fonts/Poppins-Bold.ttf"
-        }
-      ],
+
       [
         "expo-image-picker",
         {
@@ -50,10 +45,24 @@
           "supportsBackgroundPlayback": true,
           "supportsPictureInPicture": true
         }
+      ],
+      [
+        "expo-document-picker",
+        {
+          "iCloudContainerEnvironment": "Production"
+        }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "a206feb5-a391-4bc5-a91e-2056c923fe31"
+      }
     }
   }
 }

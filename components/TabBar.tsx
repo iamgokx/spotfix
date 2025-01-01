@@ -24,7 +24,10 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     <View
       style={[
         styles.tabbar,
-        { backgroundColor: currentColors.backgroundDarker, bottom : insectsBottom.bottom },
+        {
+          backgroundColor: currentColors.backgroundDarker,
+          bottom: insectsBottom.bottom,
+        },
       ]}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
@@ -75,7 +78,7 @@ const styles = StyleSheet.create({
   tabbar: {
     width: "100%",
     position: "absolute",
-   
+
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",

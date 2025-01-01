@@ -75,23 +75,35 @@ const IssueLocation = () => {
               <TextInput
                 style={styles.dataInput}
                 multiline={true}
-                editable={false}
+                editable={details.generatedAddress == undefined ? true : false}
                 value={details.generatedAddress}
+                onChangeText={(text) => {
+                  setDetails((prev) => ({ ...prev, generatedAddress: text }));
+                }}
                 placeholder="Address"></TextInput>
               <TextInput
                 style={styles.cityTown}
-                editable={false}
+                editable={details.generatedCity == undefined ? true : false}
+                onChangeText={(text) => {
+                  setDetails((prev) => ({ ...prev, generatedCity: text }));
+                }}
                 value={details.generatedCity}
                 placeholder="City / Town"></TextInput>
               <TextInput
                 style={styles.street}
-                editable={false}
+                editable={details.generatedPincode == undefined ? true : false}
+                onChangeText={(text) => {
+                  setDetails((prev) => ({ ...prev, generatedPincode: text }));
+                }}
                 value={details.generatedPincode}
                 placeholder="Pincode"></TextInput>
               <TextInput
                 style={styles.street}
-                editable={false}
+                editable={details.generatedState == undefined ? true : false}
                 value={details.generatedState}
+                onChangeText={(text) => {
+                  setDetails((prev) => ({ ...prev, generatedState: text }));
+                }}
                 placeholder="State"></TextInput>
             </View>
           )}

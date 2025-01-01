@@ -9,7 +9,7 @@ import {
   Keyboard,
   Platform,
 } from "react-native";
-import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+
 import * as Animatable from "react-native-animatable";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, useLocalSearchParams } from "expo-router";
@@ -113,7 +113,7 @@ const DetailedIssue = () => {
       );
       if (response?.data) {
         setIssueDetails(response.data);
-       
+        console.log(response.data);
         setIsDataLoaded(true);
       }
     } catch (error) {
@@ -172,7 +172,6 @@ const DetailedIssue = () => {
         );
 
         if (response) {
-         
           getIssueDetails();
           // refreshIssue(issue_id);
         }
@@ -222,7 +221,6 @@ const DetailedIssue = () => {
             }}
             onPress={() => router.back()}
           />
-
         </View>
 
         <Swiper
@@ -234,11 +232,12 @@ const DetailedIssue = () => {
           {mediaArray.length > 0 ? (
             mediaArray.map((media, index) => (
               <Animatable.Image
-              animation='fadeInDown' duration={700} 
+                animation="fadeInDown"
+                duration={700}
                 key={index}
                 style={styles.img}
                 source={{
-                  uri: `http://${API_IP_ADDRESS}:8000/uploads/${media}`,
+                  uri: `http://${API_IP_ADDRESS}:8000/uploads/issues/${media}`,
                 }}
               />
             ))
@@ -252,7 +251,9 @@ const DetailedIssue = () => {
           animation="fadeInUp"
           duration={400}
           style={[styles.iconsContainer]}>
-          <TouchableOpacity onPress={() => handelVoteClick("upvote")}>
+          <TouchableOpacity
+            onPress={() => handelVoteClick("upvote")}
+            style={{ width: "30%" }}>
             <View style={styles.reactions}>
               <Ionicons
                 style={styles.reactionsIcon}
@@ -264,7 +265,9 @@ const DetailedIssue = () => {
               </Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => handelVoteClick("downvote")}>
+          <TouchableOpacity
+            onPress={() => handelVoteClick("downvote")}
+            style={{ width: "30%" }}>
             <View style={styles.reactions}>
               <Ionicons
                 style={styles.reactionsIcon}
@@ -276,7 +279,9 @@ const DetailedIssue = () => {
               </Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => openSuggestionBox()}>
+          <TouchableOpacity
+            onPress={() => openSuggestionBox()}
+            style={{ width: "30%" }}>
             <View style={styles.reactions}>
               <Ionicons
                 style={styles.reactionsIcon}
@@ -298,13 +303,18 @@ const DetailedIssue = () => {
             { backgroundColor: currentColors.secondaryShade },
           ]}>
           <Image
-            source={hero}
-            style={{ width: 50, height: 50, borderRadius: 100 }}
+            source={
+              issueDetails.picture_name
+                ? {
+                    uri: `http://${API_IP_ADDRESS}:8000/uploads/profile/${issueDetails.picture_name}`,
+                  }
+                : require("../../assets/images/profile/defaultProfile.jpeg")
+            }
+            style={{ borderRadius: 50, width: 40, height: 40 }}
           />
           <View>
             <Text
               style={{
-               
                 fontSize: 20,
               }}>
               {issueDetails.full_name}
@@ -492,7 +502,7 @@ const styles = StyleSheet.create({
   reactions: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-evenly",
+    justifyContent: "center",
     alignItems: "center",
     gap: 5,
     // backgroundColor: "rgba(182, 231, 255, 0.8)",

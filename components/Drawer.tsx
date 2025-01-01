@@ -19,6 +19,8 @@ import { jwtDecode } from "jwt-decode";
 import { router } from "expo-router";
 import { useColorScheme } from "react-native";
 import { Colors } from "@/constants/Colors";
+import { API_IP_ADDRESS } from "../ipConfig.json";
+import axios from "axios";
 const CustomDrawer = (props: any) => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
@@ -26,9 +28,7 @@ const CustomDrawer = (props: any) => {
     name: "",
     email: "",
   });
-  useEffect(() => {
-    fetchUserData();
-  }, []);
+  const [pfpimage, setImage] = useState();
   const fetchUserData = async () => {
     const tokenFromStorage = await getStoredRawToken();
     const dToken = jwtDecode(tokenFromStorage);
@@ -38,11 +38,34 @@ const CustomDrawer = (props: any) => {
       email: dToken?.email,
     });
   };
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  useEffect(() => {
+    if (!user.email) return;
+
+    const getUserDetails = async () => {
+      try {
+        const response = await axios.post(
+          `http://${API_IP_ADDRESS}:8000/api/users/getProfilePicture`,
+          { email: user.email }
+        );
+        console.log("pfp img response : ", response.data[0].picture_name);
+        setImage(response.data[0].picture_name);
+      } catch (error) {
+        console.error("Error getting user details from backend: ", error);
+      }
+    };
+
+    getUserDetails();
+  }, [user.email, pfpimage]);
 
   const handleLogOutButtonPress = () => {
     clearStorage();
     router.push("/");
   };
+  // fetchUserData();
 
   return (
     <View
@@ -61,8 +84,17 @@ const CustomDrawer = (props: any) => {
             justifyContent: "flex-end",
             alignItems: "center",
           }}>
-          <View style={{ width: "90%", marginBottom: 10,}}>
-            <Image source={hero} style={styles.profileImage} />
+          <View style={{ width: "90%", marginBottom: 10 }}>
+            <Image
+              source={
+                pfpimage
+                  ? {
+                      uri: `http://${API_IP_ADDRESS}:8000/uploads/profile/${pfpimage}`,
+                    }
+                  : require("../assets/images/profile/defaultProfile.jpeg")
+              }
+              style={styles.profileImage}
+            />
             <Text
               className="text-white text-2xl font-extrabold"
               style={{ textTransform: "capitalize" }}>
@@ -128,7 +160,7 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     resizeMode: "cover",
-    marginBottom : 6
+    marginBottom: 6,
   },
   footer: {
     padding: 10,

@@ -37,6 +37,9 @@ const Issue = ({
   downvotes,
   suggestions,
   refreshIssue,
+  pfp,
+  latitude,
+  longitude,
 }: any) => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
@@ -46,6 +49,33 @@ const Issue = ({
     Poppins_300Light,
     Poppins_200ExtraLight,
   });
+  const [geoCodedAddress, setGeoCodedAddress] = useState("");
+  const [isAddressLoading, setIsAddressLoading] = useState(true);
+  const getAddress = async () => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`,
+        {
+          headers: {
+            "User-Agent": "spotfix/1.0 (lekhwargokul84.com)",
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP Error: ${response.status}`);
+      }
+      const data = await response.json();
+      setGeoCodedAddress(data.display_name);
+    } catch (error) {
+      console.log("Error geocoding address: ", error);
+    } finally {
+      setIsAddressLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getAddress();
+  }, []);
 
   const splitDescription =
     description.split(" ").slice(0, 15).join(" ") + "...";
@@ -119,16 +149,28 @@ const Issue = ({
   };
 
   return (
-    <Animatable.View
-      animation="fadeInUp"
-      duration={1400}
-      style={[styles.container]}>
+    
+    <Animatable.View animation="fadeIn" duration={1000} style={[styles.container]}>
+   
       <View style={styles.nameContainer}>
-        <Ionicons
-          name="person"
-          color={"black"}
-          size={25}
-          style={styles.userPfp}></Ionicons>
+        {is_anonymous ? (
+          <Ionicons
+            name="person"
+            color={"black"}
+            size={25}
+            style={styles.userPfp}></Ionicons>
+        ) : (
+          <Image
+            source={
+              pfp
+                ? {
+                    uri: `http://${API_IP_ADDRESS}:8000/uploads/profile/${pfp}`,
+                  }
+                : require("../assets/images/profile/defaultProfile.jpeg")
+            }
+            style={{ borderRadius: 50, width: 40, height: 40 }}
+          />
+        )}
         <View style={styles.subContainer}>
           <Text style={[styles.userName, { color: currentColors.text }]}>
             {is_anonymous == 1 ? "Spotfix User" : username}
@@ -141,6 +183,7 @@ const Issue = ({
           </Text>
         </View>
       </View>
+     
       <View style={styles.titleContainer}>
         <Text style={[styles.title, { color: currentColors.text }]}>
           {title}
@@ -164,9 +207,10 @@ const Issue = ({
         activeDotColor="blue"
         dot={<View style={styles.dot} />}
         activeDot={<View style={styles.activeDot} />}>
-        {mediaArray.length > 0 ? (
+
+        {mediaArray.length  > 0 ? (
           mediaArray.map((media, index) => (
-            <Image
+         <Image
               key={index}
               style={styles.img}
               source={{
@@ -177,6 +221,9 @@ const Issue = ({
         ) : (
           <Text>No media available</Text>
         )}
+        
+
+        
       </Swiper>
 
       <Text
@@ -193,8 +240,15 @@ const Issue = ({
           View more
         </Text>
       </Text>
+      <View style={{ marginVertical: 4 }}>
+        <Text style={{ color: currentColors.link }}>
+          {isAddressLoading ? "Loading address details" : geoCodedAddress}
+        </Text>
+      </View>
       <View style={styles.iconsContainer}>
-        <TouchableOpacity onPress={() => handelVoteClick("upvote")}>
+        <TouchableOpacity
+          onPress={() => handelVoteClick("upvote")}
+          style={{ width: "30%" }}>
           <View style={styles.reactions}>
             <Ionicons
               style={styles.reactionsIcon}
@@ -206,7 +260,9 @@ const Issue = ({
             </Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => handelVoteClick("downvote")}>
+        <TouchableOpacity
+          onPress={() => handelVoteClick("downvote")}
+          style={{ width: "30%" }}>
           <View style={styles.reactions}>
             <Ionicons
               style={styles.reactionsIcon}
@@ -223,7 +279,8 @@ const Issue = ({
             router.push(
               `/screens/DetailedIssue?issue_id=${issue_id}&suggestions=${true}`
             )
-          }>
+          }
+          style={{ width: "30%" }}>
           <View style={styles.reactions}>
             <Ionicons
               style={styles.reactionsIcon}
@@ -236,6 +293,7 @@ const Issue = ({
           </View>
         </TouchableOpacity>
       </View>
+   
     </Animatable.View>
   );
 };
@@ -356,7 +414,7 @@ const styles = StyleSheet.create({
   reactions: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-evenly",
+    justifyContent: "center",
     alignItems: "center",
     gap: 5,
     // backgroundColor: "rgba(182, 231, 255, 0.8)",
