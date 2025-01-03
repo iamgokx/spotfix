@@ -13,15 +13,18 @@ import {
 import { useRouter } from "expo-router";
 import { useIssueContext } from "@/context/IssueContext";
 import { Ionicons } from "@expo/vector-icons";
-
+import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "react-native";
 import LottieView from "lottie-react-native";
 import deopPinOnMap from "../../assets/images/issues/selectLocationOnMap.json";
-
+import * as Animatable from 'react-native-animatable'
 const IssueLocation = () => {
   const { details, setDetails } = useIssueContext();
+  const colorScheme = useColorScheme();
+  const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
   const router = useRouter();
   return (
-    <View style={styles.container}>
+    <View style={[styles.container,{backgroundColor : currentColors.backgroundDarker}]}>
       <StatusBar
         barStyle={"light-content"}
         backgroundColor="transparent"
@@ -32,20 +35,20 @@ const IssueLocation = () => {
           resizeMode="cover"
           source={require("../../assets/images/blobs/b8.png")}
           style={styles.imgBack}>
-          <Text style={styles.title}>Create your report</Text>
-          <Text style={styles.subTitle}>
+          <Animatable.Text animation='fadeInDown' style={styles.title}>Create your report</Animatable.Text>
+          <Animatable.Text animation='fadeInDown' style={styles.subTitle}>
             Fill in with the details to get your report registered
-          </Text>
-          <View style={styles.progressContainer}>
+          </Animatable.Text>
+          <Animatable.View animation='fadeInDown' style={styles.progressContainer}>
             <Text style={styles.progressBarOne}></Text>
             <Text style={styles.progressBarTwo}></Text>
             <Text style={styles.progressBarThree}></Text>
-          </View>
+          </Animatable.View>
         </ImageBackground>
       </View>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <View style={styles.dataContainer}>
-          <TouchableOpacity
+        <Animatable.View animation='fadeInUp' style={styles.dataContainer}>
+         {!details.generatedAddress &&  <TouchableOpacity
             onPress={() => router.push("/issues/IssueMap")}
             style={styles.mapContainer}>
             <Text className="text-white text-xl" style={styles.mapText}>
@@ -56,7 +59,7 @@ const IssueLocation = () => {
               color="orange"
               size={32}
               style={{ marginRight: 10 }}></Ionicons>
-          </TouchableOpacity>
+          </TouchableOpacity>}
 
           {!details.generatedAddress && (
             <View style={styles.imgContainer}>
@@ -71,9 +74,9 @@ const IssueLocation = () => {
 
           {details.generatedAddress != "" && (
             <View style={styles.subContainer}>
-              <Text style={styles.inputTitles}>Location Details</Text>
+              <Text style={[styles.inputTitles,{color : currentColors.text}]}>Location Details</Text>
               <TextInput
-                style={styles.dataInput}
+                style={[styles.dataInput,{backgroundColor : currentColors.inputField, color : currentColors.text}]}
                 multiline={true}
                 editable={details.generatedAddress == undefined ? true : false}
                 value={details.generatedAddress}
@@ -82,7 +85,7 @@ const IssueLocation = () => {
                 }}
                 placeholder="Address"></TextInput>
               <TextInput
-                style={styles.cityTown}
+                style={[styles.cityTown,{backgroundColor : currentColors.inputField, color : currentColors.text}]}
                 editable={details.generatedCity == undefined ? true : false}
                 onChangeText={(text) => {
                   setDetails((prev) => ({ ...prev, generatedCity: text }));
@@ -90,7 +93,7 @@ const IssueLocation = () => {
                 value={details.generatedCity}
                 placeholder="City / Town"></TextInput>
               <TextInput
-                style={styles.street}
+                style={[styles.street,{backgroundColor : currentColors.inputField, color : currentColors.text}]}
                 editable={details.generatedPincode == undefined ? true : false}
                 onChangeText={(text) => {
                   setDetails((prev) => ({ ...prev, generatedPincode: text }));
@@ -98,7 +101,7 @@ const IssueLocation = () => {
                 value={details.generatedPincode}
                 placeholder="Pincode"></TextInput>
               <TextInput
-                style={styles.street}
+                style={[styles.street,{backgroundColor : currentColors.inputField, color : currentColors.text}]}
                 editable={details.generatedState == undefined ? true : false}
                 value={details.generatedState}
                 onChangeText={(text) => {
@@ -110,17 +113,17 @@ const IssueLocation = () => {
 
           <View style={styles.btnMainContainer}>
             <TouchableOpacity
-              style={styles.backBtnContainer}
+              style={[styles.backBtnContainer,{borderColor : currentColors.secondary}]}
               onPress={() => router.back()}>
-              <Text style={styles.backButton}>Back</Text>
+              <Text style={[styles.backButton, {color : currentColors.secondary}]}>Back</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.btnContainer}
+              style={[styles.btnContainer, {backgroundColor : currentColors.secondary}]}
               onPress={() => router.push("/issues/IssueMedia")}>
               <Text style={styles.nextButton}>Next</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </Animatable.View>
       </TouchableWithoutFeedback>
     </View>
   );

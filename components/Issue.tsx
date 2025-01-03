@@ -149,9 +149,10 @@ const Issue = ({
   };
 
   return (
-    
-    <Animatable.View animation="fadeIn" duration={1000} style={[styles.container]}>
-   
+    <Animatable.View
+      animation="fadeIn"
+      duration={1000}
+      style={[styles.container]}>
       <View style={styles.nameContainer}>
         {is_anonymous ? (
           <Ionicons
@@ -183,7 +184,7 @@ const Issue = ({
           </Text>
         </View>
       </View>
-     
+
       <View style={styles.titleContainer}>
         <Text style={[styles.title, { color: currentColors.text }]}>
           {title}
@@ -207,10 +208,9 @@ const Issue = ({
         activeDotColor="blue"
         dot={<View style={styles.dot} />}
         activeDot={<View style={styles.activeDot} />}>
-
-        {mediaArray.length  > 0 ? (
+        {mediaArray.length > 0 ? (
           mediaArray.map((media, index) => (
-         <Image
+            <Image
               key={index}
               style={styles.img}
               source={{
@@ -221,9 +221,6 @@ const Issue = ({
         ) : (
           <Text>No media available</Text>
         )}
-        
-
-        
       </Swiper>
 
       <Text
@@ -293,7 +290,6 @@ const Issue = ({
           </View>
         </TouchableOpacity>
       </View>
-   
     </Animatable.View>
   );
 };

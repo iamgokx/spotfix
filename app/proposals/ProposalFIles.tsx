@@ -22,6 +22,7 @@ import axios from "axios";
 import { useColorScheme } from "react-native";
 import { Colors } from "@/constants/Colors";
 import * as DocumentPicker from "expo-document-picker";
+import * as Animatable from "react-native-animatable";
 import { getStoredRawToken, getStoredData } from "../../hooks/useJwt";
 import docIcon from "../../assets/images/proposals/docs.png";
 import pdfIcon from "../../assets/images/proposals/pdf.png";
@@ -102,7 +103,7 @@ export default function ProposalFiles() {
             ? details.media[0].uri
             : `file://${details.media[0].uri}`,
           type: "image/jpeg",
-          name: "issue.jpg",
+          name: "proposal.jpg",
         });
       }
       if (details.media[1]) {
@@ -111,7 +112,7 @@ export default function ProposalFiles() {
             ? details.media[1].uri
             : `file://${details.media[1].uri}`,
           type: "image/jpeg",
-          name: "issue.jpg",
+          name: "proposal.jpg",
         });
       }
       if (details.media[2]) {
@@ -120,7 +121,7 @@ export default function ProposalFiles() {
             ? details.media[2].uri
             : `file://${details.media[2].uri}`,
           type: "image/jpeg",
-          name: "issue.jpg",
+          name: "proposal.jpg",
         });
       }
       if (details.media[3]) {
@@ -129,7 +130,7 @@ export default function ProposalFiles() {
             ? details.media[3].uri
             : `file://${details.media[3].uri}`,
           type: "image/jpeg",
-          name: "issue.jpg",
+          name: "proposal.jpg",
         });
       }
       if (details.media[4]) {
@@ -138,7 +139,7 @@ export default function ProposalFiles() {
             ? details.media[4].uri
             : `file://${details.media[4].uri}`,
           type: "image/jpeg",
-          name: "issue.jpg",
+          name: "proposal.jpg",
         });
       }
 
@@ -160,7 +161,10 @@ export default function ProposalFiles() {
       );
 
       console.log("Response from server:", response.data);
-      // router.push("/proposals/SaveProposal");
+      if (response) {
+        console.log(response);
+        router.push('/proposals/SaveProposal')
+      }
     } catch (error) {
       console.error("Error uploading files:", error);
     }
@@ -184,7 +188,7 @@ export default function ProposalFiles() {
         backgroundColor="transparent"
         translucent
       />
-      <View style={styles.headerContainer}>
+      <Animatable.View animation="fadeInDown" style={styles.headerContainer}>
         <ImageBackground
           resizeMode="cover"
           source={require("../../assets/images/blobs/b8.png")}
@@ -200,9 +204,9 @@ export default function ProposalFiles() {
             <Text style={styles.progressBarFour}></Text>
           </View>
         </ImageBackground>
-      </View>
+      </Animatable.View>
 
-      <View style={styles.dataContainer}>
+      <Animatable.View animation="fadeInUp" style={styles.dataContainer}>
         <TouchableOpacity style={styles.dropContainer} onPress={pickDocuments}>
           <LottieView
             source={uploadMedia}
@@ -270,7 +274,7 @@ export default function ProposalFiles() {
             <Text style={styles.nextButton}>Submit</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </Animatable.View>
     </View>
   );
 }

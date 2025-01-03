@@ -20,6 +20,7 @@ import { Calendar } from "react-native-calendars";
 import { useProposalContext } from "@/context/ProposalContext";
 import { useColorScheme } from "react-native";
 import { Colors } from "@/constants/Colors";
+import * as Animatable from 'react-native-animatable'
 const index = () => {
   const router = useRouter();
 
@@ -43,7 +44,7 @@ const index = () => {
         backgroundColor="transparent"
         translucent
       />
-      <View style={styles.headerContainer}>
+      <Animatable.View animation='fadeInDown' style={styles.headerContainer}>
         <ImageBackground
           resizeMode="cover"
           source={require("../../assets/images/blobs/b8.png")}
@@ -59,9 +60,9 @@ const index = () => {
             <Text style={styles.progressBarThree}></Text>
           </View>
         </ImageBackground>
-      </View>
+      </Animatable.View>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <View style={styles.dataContainer}>
+        <Animatable.View animation='fadeInUp' style={styles.dataContainer}>
           <View style={styles.subContainer}>
             <Text style={[styles.inputTitles, { color: currentColors.text }]}>
               Proposal Title
@@ -126,7 +127,7 @@ const index = () => {
               <Text style={styles.nextButton}>Next</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </Animatable.View>
       </TouchableWithoutFeedback>
       <View style={{ width: "100%", height: 500 }}></View>
     </ScrollView>

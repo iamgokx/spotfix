@@ -13,7 +13,7 @@ import {
 import { useRouter } from "expo-router";
 import { useProposalContext } from "@/context/ProposalContext";
 import { Ionicons } from "@expo/vector-icons";
-
+import * as Animatable from 'react-native-animatable'
 import LottieView from "lottie-react-native";
 import deopPinOnMap from "../../assets/images/issues/selectLocationOnMap.json";
 import { useColorScheme } from "react-native";
@@ -34,7 +34,7 @@ const ProposalLocation = () => {
         backgroundColor="transparent"
         translucent
       />
-      <View style={styles.headerContainer}>
+      <Animatable.View animation='fadeInDown' style={styles.headerContainer}>
         <ImageBackground
           resizeMode="cover"
           source={require("../../assets/images/blobs/b8.png")}
@@ -50,9 +50,9 @@ const ProposalLocation = () => {
             <Text style={styles.progressBarFour}></Text>
           </View>
         </ImageBackground>
-      </View>
+      </Animatable.View>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <View style={styles.dataContainer}>
+        <Animatable.View animation='fadeInUp' style={styles.dataContainer}>
           {!details.generatedAddress && (
             <TouchableOpacity
               onPress={() => router.push("/proposals/Map")}
@@ -165,7 +165,7 @@ const ProposalLocation = () => {
               <Text style={styles.nextButton}>Next</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </Animatable.View>
       </TouchableWithoutFeedback>
     </View>
   );

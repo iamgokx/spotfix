@@ -10,8 +10,11 @@ import { API_IP_ADDRESS } from "../../ipConfig.json";
 import axios from "axios";
 import { useState } from "react";
 import { useRouter } from "expo-router";
-
+import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "react-native";
 const SaveIssue = () => {
+  const colorScheme = useColorScheme();
+  const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
   const animationRef = useRef(null);
   const router = useRouter();
   const handlePress = () => {
@@ -25,18 +28,18 @@ const SaveIssue = () => {
     setisloading(true);
     setTimeout(() => {
       setisloading(false);
-      router.push('/home')
+      router.push("/home");
     }, 2000);
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container,{backgroundColor : currentColors.backgroundDarker}]}>
       <Blob9 style={styles.blob1} />
-      <Text style={styles.text}>Saving Your Report</Text>
+      <Text style={[styles.text,{}]}>Saving Your Report</Text>
       <TouchableOpacity onPress={handlePress}>
         <LottieView autoPlay source={loading} style={styles.lottie} loop />
       </TouchableOpacity>
-      {isloading && <Text>Loading</Text>}
+      {isloading && <Text style={{color : currentColors.text}}>Loading</Text>}
       <Blob10 style={styles.blob2} />
     </View>
   );

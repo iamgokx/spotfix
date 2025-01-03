@@ -19,6 +19,7 @@ import LottieView from "lottie-react-native";
 import { useRouter } from "expo-router";
 import uploadMedia from "../../assets/images/issues/uploadMedia.json";
 import axios from "axios";
+import * as Animatable from 'react-native-animatable'
 import { getStoredRawToken, getStoredData } from "../../hooks/useJwt";
 import { useColorScheme } from "react-native";
 import { Colors } from "@/constants/Colors";
@@ -69,7 +70,7 @@ export default function ProposalMedia() {
         backgroundColor="transparent"
         translucent
       />
-      <View style={styles.headerContainer}>
+      <Animatable.View animation='fadeInDown' style={styles.headerContainer}>
         <ImageBackground
           resizeMode="cover"
           source={require("../../assets/images/blobs/b8.png")}
@@ -85,9 +86,9 @@ export default function ProposalMedia() {
             <Text style={styles.progressBarFour}></Text>
           </View>
         </ImageBackground>
-      </View>
+      </Animatable.View>
 
-      <View style={styles.dataContainer}>
+      <Animatable.View animation='fadeInUp' style={styles.dataContainer}>
         <TouchableOpacity
           style={[styles.dropContainer, { }]}
           onPress={pickMedia}>
@@ -139,7 +140,7 @@ export default function ProposalMedia() {
             <Text style={styles.nextButton}>Next</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </Animatable.View>
     </View>
   );
 }

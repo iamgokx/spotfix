@@ -16,12 +16,14 @@ import { ScrollView } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import { useIssueContext } from "@/context/IssueContext";
-
-import { Picker } from "@react-native-picker/picker";
+import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "react-native";
+import * as Animatable from 'react-native-animatable'
 const Issue = ({ goToAddressScreen }: any) => {
   const router = useRouter();
   const { details, setDetails, clearDetails } = useIssueContext();
-
+  const colorScheme = useColorScheme();
+  const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
   const [isEnabled, setIsEnabled] = useState(false);
 
   const toggleSwitch = () => setDetails((previousState) => !previousState);
@@ -53,7 +55,12 @@ const Issue = ({ goToAddressScreen }: any) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container} scrollEnabled={true}>
+    <ScrollView
+      contentContainerStyle={[
+        styles.container,
+        { backgroundColor: currentColors.backgroundDarker },
+      ]}
+      scrollEnabled={true}>
       <StatusBar
         barStyle={"light-content"}
         backgroundColor="transparent"
@@ -64,19 +71,19 @@ const Issue = ({ goToAddressScreen }: any) => {
           resizeMode="cover"
           source={require("../../assets/images/blobs/b8.png")}
           style={styles.imgBack}>
-          <Text style={styles.title}>Create your report</Text>
-          <Text style={styles.subTitle}>
+          <Animatable.Text animation='fadeInDown' style={styles.title}>Create your report</Animatable.Text>
+          <Animatable.Text animation='fadeInDown' style={styles.subTitle}>
             Fill in with the details to get your report registered
-          </Text>
-          <View style={styles.progressContainer}>
+          </Animatable.Text>
+          <Animatable.View animation='fadeInDown' style={styles.progressContainer}>
             <Text style={styles.progressBarOne}></Text>
             <Text style={styles.progressBarTwo}></Text>
             <Text style={styles.progressBarThree}></Text>
-          </View>
+          </Animatable.View>
         </ImageBackground>
       </View>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <View style={styles.dataContainer}>
+        <Animatable.View animation='fadeInUp' style={styles.dataContainer}>
           <ImageBackground
             source={require("../../assets/images/blobs/b8.png")}
             style={{
@@ -104,43 +111,61 @@ const Issue = ({ goToAddressScreen }: any) => {
             />
           </ImageBackground>
           <View style={styles.subContainer}>
-            <Text style={styles.inputTitles}>Report Title</Text>
+            <Text style={[styles.inputTitles, { color: currentColors.text }]}>
+              Report Title
+            </Text>
             <TextInput
-              style={styles.dataInput}
+              style={[
+                styles.dataInput,
+                { backgroundColor: currentColors.inputField,color:currentColors.text },
+              ]}
               value={details.title}
               onChangeText={(text) =>
                 setDetails((prev) => ({ ...prev, title: text }))
               }
+              placeholderTextColor={currentColors.textShade}
               placeholder="eg. Broke Street Light"></TextInput>
           </View>
           <View style={styles.subContainer}>
-            <Text style={styles.inputTitles}>Description</Text>
+            <Text style={[styles.inputTitles, { color: currentColors.text }]}>
+              Description
+            </Text>
             <TextInput
-              style={styles.textInput}
+              style={[
+                styles.textInput,
+                { backgroundColor: currentColors.inputField,color:currentColors.text },
+              ]}
               multiline={true}
               value={details.description}
               onChangeText={(text) =>
                 setDetails((prev) => ({ ...prev, description: text }))
               }
-              placeholder="Briefly describe your issue"></TextInput>
+              placeholder="Briefly describe your issue"
+              placeholderTextColor={currentColors.textShade}></TextInput>
           </View>
           <View style={styles.subContainer}>
-            <Text style={styles.inputTitles}>Suggestions</Text>
+            <Text style={[styles.inputTitles, { color: currentColors.text }]}>
+              Suggestions
+            </Text>
             <TextInput
-              style={styles.textInput}
+              style={[
+                styles.textInput,
+                { backgroundColor: currentColors.inputField,color:currentColors.text },
+              ]}
               multiline={true}
               value={details.suggestions}
               onChangeText={(text) =>
                 setDetails((prev) => ({ ...prev, suggestions: text }))
               }
+              placeholderTextColor={currentColors.textShade}
               placeholder="Tell us about your solutions and suggestions to fix this issue"></TextInput>
           </View>
           <View style={styles.subContainer}>
-            <Text style={styles.inputTitles}>Select Department</Text>
+            <Text style={[styles.inputTitles, {color : currentColors.text}]}>Select Department</Text>
             <TouchableOpacity
-              style={styles.dropdownButton}
+              style={[styles.dropdownButton, {backgroundColor : currentColors.secondary}]}
               onPress={() => setIsModalVisible(true)}>
-              <Text style={styles.dropdownText}>
+              <Text style={[styles.dropdownText, {color : 'white'}]}>
                 {details.department || "Choose a department"}
               </Text>
             </TouchableOpacity>
@@ -153,14 +178,14 @@ const Issue = ({ goToAddressScreen }: any) => {
               <TouchableOpacity
                 style={styles.modalOverlay}
                 onPress={() => setIsModalVisible(false)}>
-                <View style={styles.modalContent}>
+                <View style={[styles.modalContent,{backgroundColor : currentColors.background}]}>
                   <FlatList
                     data={departments}
                     renderItem={({ item }) => (
                       <TouchableOpacity
                         style={styles.item}
                         onPress={() => handleSelect(item)}>
-                        <Text style={styles.itemText}>{item}</Text>
+                        <Text style={[styles.itemText, {color : currentColors.text}]}>{item}</Text>
                       </TouchableOpacity>
                     )}
                     keyExtractor={(item, index) => index.toString()}
@@ -172,17 +197,17 @@ const Issue = ({ goToAddressScreen }: any) => {
 
           <View style={styles.btnMainContainer}>
             <TouchableOpacity
-              style={styles.backBtnContainer}
+              style={[styles.backBtnContainer, {borderColor : currentColors.secondary}]}
               onPress={() => handleClearButtonPress()}>
-              <Text style={styles.backButton}>Close</Text>
+              <Text style={[styles.backButton,{color : currentColors.secondary}]}>Close</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.btnContainer}
+              style={[styles.btnContainer, {backgroundColor : currentColors.secondary}]}
               onPress={() => router.push("/issues/issueLocation")}>
               <Text style={styles.nextButton}>Next</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </Animatable.View>
       </TouchableWithoutFeedback>
       <View style={{ width: "100%", height: 500 }}></View>
     </ScrollView>

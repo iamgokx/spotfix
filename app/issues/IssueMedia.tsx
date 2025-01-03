@@ -20,7 +20,12 @@ import { useRouter } from "expo-router";
 import uploadMedia from "../../assets/images/issues/uploadMedia.json";
 import axios from "axios";
 import { getStoredRawToken, getStoredData } from "../../hooks/useJwt";
+import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "react-native";
+import * as Animatable from 'react-native-animatable'
 export default function IssueMedia() {
+  const colorScheme = useColorScheme();
+  const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
   const { details, setDetails, addMedia, removeMedia } = useIssueContext();
   const [user, setuser] = useState("");
   const router = useRouter();
@@ -144,7 +149,7 @@ export default function IssueMedia() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container,{backgroundColor : currentColors.backgroundDarker}]}>
       <StatusBar
         barStyle={"light-content"}
         backgroundColor="transparent"
@@ -155,14 +160,19 @@ export default function IssueMedia() {
           resizeMode="cover"
           source={require("../../assets/images/blobs/b8.png")}
           style={styles.imgBack}>
-          <Text style={styles.title}>Create your report</Text>
-          <Text style={styles.subTitle}>
-            Fill in with the details to get your report registered
-          </Text>
+          <Animatable.Text animation='fadeInDown' style={styles.title}>Create your report</Animatable.Text>
+          <Animatable.Text animation='fadeInDown' style={styles.subTitle}>
+            Add relevant images for your issue
+          </Animatable.Text>
+          <Animatable.View animation='fadeInDown' style={styles.progressContainer}>
+            <Text style={styles.progressBarOne}></Text>
+            <Text style={styles.progressBarTwo}></Text>
+            <Text style={styles.progressBarThree}></Text>
+          </Animatable.View>
         </ImageBackground>
       </View>
 
-      <View style={styles.dataContainer}>
+      <Animatable.View animation='fadeInUp' style={styles.dataContainer}>
         <TouchableOpacity style={styles.dropContainer} onPress={pickMedia}>
           <LottieView
             source={uploadMedia}
@@ -170,7 +180,7 @@ export default function IssueMedia() {
             loop
             style={{ width: 200, height: 200, marginBottom: -30 }}
           />
-          <Text>Upload Media</Text>
+          <Text style={{color : currentColors.text}}>Upload Media</Text>
         </TouchableOpacity>
 
         <View style={styles.mediaContainer}>
@@ -196,18 +206,19 @@ export default function IssueMedia() {
 
         <View style={styles.btnMainContainer}>
           <TouchableOpacity
-            style={styles.backBtnContainer}
+            style={[styles.backBtnContainer,{borderColor : currentColors.secondary}]}
             onPress={() => router.back()}>
-            <Text style={styles.backButton}>Back</Text>
+            <Text style={[styles.backButton,{color:currentColors.secondary
+            }]}>Back</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.btnContainer}
+            style={[styles.btnContainer,{backgroundColor : currentColors.secondary}]}
             onPress={() => submitIssue()}>
             {/* onPress={() => router.push("/issues/SaveIssue")}> */}
             <Text style={styles.nextButton}>Next</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </Animatable.View>
     </View>
   );
 }
@@ -378,4 +389,33 @@ const styles = StyleSheet.create({
     color: "#0066ff",
     fontSize: 20,
   },
+  progressContainer: {
+    width: "70%",
+
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+
+    alignItems: "center",
+  },
+  progressBarOne: {
+    backgroundColor: "#0066ff",
+    width: "33%",
+    height: "30%",
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
+  },
+  progressBarTwo: {
+    backgroundColor: "#0066ff",
+    width: "33%",
+    height: "30%",
+  },
+  progressBarThree: {
+    backgroundColor: "#0066ff",
+    width: "33%",
+    height: "30%",
+    borderTopRightRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+ 
 });

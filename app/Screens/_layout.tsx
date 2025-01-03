@@ -29,6 +29,7 @@ const DrawerLayout = () => {
         <Stack.Screen name="UserSuggestions" />
         <Stack.Screen name="UserVotes" />
         <Stack.Screen name="UserSubscriptions" />
+        <Stack.Screen name="DetailedUserProposal" />
       </Stack>
     </ProfileProvider>
   );

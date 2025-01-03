@@ -14,7 +14,9 @@ const HomeLayout = () => {
     <IssueProvider>
       <Tabs
         screenOptions={{ headerShown: false }}
-        tabBar={(props) => <TabBar {...props} />}>
+        tabBar={(props) => <TabBar {...props} />}
+        
+        >
         <Tabs.Screen
           name="index"
           options={{
@@ -110,6 +112,7 @@ const HomeLayout = () => {
               borderTopRightRadius: 20,
               borderTopLeftRadius: 20,
             },
+          
             tabBarIcon: (focused) => (
               <Ionicons
                 name="newspaper"

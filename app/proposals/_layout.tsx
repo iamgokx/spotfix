@@ -8,6 +8,7 @@ const ProposalLayout = () => {
         
         screenOptions={{
           headerShown: false,
+          animation:'fade'
         }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="ProposalLocation" />
