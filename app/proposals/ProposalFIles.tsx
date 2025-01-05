@@ -97,51 +97,62 @@ export default function ProposalFiles() {
       formData.append("generatedLocality", details.generatedLocality);
       formData.append("generatedState", details.generatedState);
 
-      if (details.media[0]) {
-        formData.append("media", {
-          uri: details.media[0].uri.startsWith("file://")
-            ? details.media[0].uri
-            : `file://${details.media[0].uri}`,
-          type: "image/jpeg",
-          name: "proposal.jpg",
-        });
-      }
-      if (details.media[1]) {
-        formData.append("media", {
-          uri: details.media[1].uri.startsWith("file://")
-            ? details.media[1].uri
-            : `file://${details.media[1].uri}`,
-          type: "image/jpeg",
-          name: "proposal.jpg",
-        });
-      }
-      if (details.media[2]) {
-        formData.append("media", {
-          uri: details.media[2].uri.startsWith("file://")
-            ? details.media[2].uri
-            : `file://${details.media[2].uri}`,
-          type: "image/jpeg",
-          name: "proposal.jpg",
-        });
-      }
-      if (details.media[3]) {
-        formData.append("media", {
-          uri: details.media[3].uri.startsWith("file://")
-            ? details.media[3].uri
-            : `file://${details.media[3].uri}`,
-          type: "image/jpeg",
-          name: "proposal.jpg",
-        });
-      }
-      if (details.media[4]) {
-        formData.append("media", {
-          uri: details.media[4].uri.startsWith("file://")
-            ? details.media[4].uri
-            : `file://${details.media[4].uri}`,
-          type: "image/jpeg",
-          name: "proposal.jpg",
-        });
-      }
+      // if (details.media[0]) {
+      //   formData.append("media", {
+      //     uri: details.media[0].uri.startsWith("file://")
+      //       ? details.media[0].uri
+      //       : `file://${details.media[0].uri}`,
+      //     type: "image/jpeg",
+      //     name: "proposal.jpg",
+      //   });
+      // }
+      // if (details.media[1]) {
+      //   formData.append("media", {
+      //     uri: details.media[1].uri.startsWith("file://")
+      //       ? details.media[1].uri
+      //       : `file://${details.media[1].uri}`,
+      //     type: "image/jpeg",
+      //     name: "proposal.jpg",
+      //   });
+      // }
+      // if (details.media[2]) {
+      //   formData.append("media", {
+      //     uri: details.media[2].uri.startsWith("file://")
+      //       ? details.media[2].uri
+      //       : `file://${details.media[2].uri}`,
+      //     type: "image/jpeg",
+      //     name: "proposal.jpg",
+      //   });
+      // }
+      // if (details.media[3]) {
+      //   formData.append("media", {
+      //     uri: details.media[3].uri.startsWith("file://")
+      //       ? details.media[3].uri
+      //       : `file://${details.media[3].uri}`,
+      //     type: "image/jpeg",
+      //     name: "proposal.jpg",
+      //   });
+      // }
+      // if (details.media[4]) {
+      //   formData.append("media", {
+      //     uri: details.media[4].uri.startsWith("file://")
+      //       ? details.media[4].uri
+      //       : `file://${details.media[4].uri}`,
+      //     type: "image/jpeg",
+      //     name: "proposal.jpg",
+      //   });
+      // }
+      details.media.forEach((media, index) => {
+        if (media && media.uri) {
+          formData.append("media", {
+            uri: media.uri.startsWith("file://")
+              ? media.uri
+              : `file://${media.uri}`,
+            type: "image/jpeg",
+            name: "proposal.jpg",
+          });
+        }
+      });
 
       details.documents.forEach((doc, index) => {
         formData.append(`documents`, {
@@ -163,7 +174,7 @@ export default function ProposalFiles() {
       console.log("Response from server:", response.data);
       if (response) {
         console.log(response);
-        router.push('/proposals/SaveProposal')
+        router.push("/proposals/SaveProposal");
       }
     } catch (error) {
       console.error("Error uploading files:", error);

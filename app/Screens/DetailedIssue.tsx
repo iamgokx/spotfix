@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Keyboard,
   Platform,
+  Linking,
 } from "react-native";
 
 import * as Animatable from "react-native-animatable";
@@ -192,6 +193,16 @@ const DetailedIssue = () => {
     getIssueDetails();
   });
 
+  const handleMapAddressPress = () => {
+   
+    const url = `https://www.google.com/maps?q=${issueDetails.latitude},${
+      issueDetails.longitude
+    }&z=${20}`;
+    Linking.openURL(url).catch((err) =>
+      console.error("Error opening Google Maps:", err)
+    );
+  };
+
   return (
     <View
       style={{
@@ -334,6 +345,8 @@ const DetailedIssue = () => {
             {issueDetails.issue_status}
           </Text>
         </Animatable.View>
+
+
         <Animatable.View
           animation="fadeInUp"
           duration={600}
@@ -349,6 +362,7 @@ const DetailedIssue = () => {
           }}>
           {/* <Text style={{ fontWeight: 900, fontSize: 17 }}>Description</Text> */}
           <Text style={[styles.desc, { color: currentColors.text }]}>
+          <Text style={{fontWeight : 900,color : currentColors.link}}>Description : </Text>
             {issueDetails.issue_description || "No description available"}
           </Text>
         </Animatable.View>
@@ -367,7 +381,7 @@ const DetailedIssue = () => {
           }}>
           {/* <Text style={{ fontWeight: 900, fontSize: 17 }}>Suggestions</Text> */}
           <Text style={[styles.solution, { color: currentColors.text }]}>
-            {issueDetails.solution || "No solution available"}
+           <Text style={{fontWeight : 900,color : currentColors.link}}>Proposed Solution : </Text>{issueDetails.solution || "No solution available"}
           </Text>
         </Animatable.View>
 
@@ -389,11 +403,11 @@ const DetailedIssue = () => {
               borderRadius: 20,
             }}>
             <Ionicons name="location" size={25} color={currentColors.link} />
-            <TextInput
-              value={geoCodedAddress}
-              style={{ color: currentColors.link, width: "90%" }}
-              editable={false}
-              multiline></TextInput>
+            <Text
+                onPress={handleMapAddressPress}
+                style={{ color: currentColors.link, width: "90%" }}>
+                {geoCodedAddress}
+              </Text>
           </Animatable.View>
         ) : (
           <Text style={{ color: "#0066ff" }}>Loading address...</Text>

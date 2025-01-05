@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { StyleSheet } from "react-native";
 import Swiper from "react-native-swiper";
 import { Image } from "react-native";
@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import { useRouter } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
+
 const CitizenProposalCard = ({
   username,
   dateTimeCreated,
@@ -69,10 +70,21 @@ const CitizenProposalCard = ({
   return (
     <View
       style={{
-        width: "90%",
+        width: "95%",
+        height: "auto",
         borderRadius: 20,
+        // backgroundColor: currentColors.backgroundDarker,
+        paddingVertical: 20,
+        paddingHorizontal: 10,
+        gap: 10,
+        
       }}>
-      <View style={{ flexDirection: "row", gap: 10, padding: 10 }}>
+      <View
+        style={{
+          flexDirection: "row",
+          gap: 10,
+          padding: 10,
+        }}>
         <Image
           source={{
             uri: `http://${API_IP_ADDRESS}:8000/uploads/profile/${profilePicture}`,
@@ -85,31 +97,56 @@ const CitizenProposalCard = ({
           </Text>
         </View>
       </View>
-      <ImageBackground
-        source={{
-          uri: `http://${API_IP_ADDRESS}:8000/uploads/userProposalsMedia/${proposalMedia[0]}`,
-        }}
-        style={{ width: "100%", height: 200, }}></ImageBackground>
-      <Text style={{ color: currentColors.text }}>{title}</Text>
-      <Text style={{ color: currentColors.text }}>
-        {isAddressLoading ? "Loading address ..." : geoCodedAddress}
-      </Text>
-      <Text style={{ color: currentColors.text }}>
-        {splitDescription}
-        <Text
-          style={{ color: currentColors.link }}
+      <View
+        style={{
+          backgroundColor: currentColors.backgroundDarker,
+          borderRadius: 20,
+          overflow: "hidden",paddingBottom : 20, elevation : 18
+        }}>
+        <TouchableOpacity
           onPress={() =>
             router.push(
               `/screens/DetailedUserProposal?proposalId=${proposalId}`
             )
           }>
-          View more
+          <ImageBackground
+            source={{
+              uri: `http://${API_IP_ADDRESS}:8000/uploads/userProposalsMedia/${proposalMedia[0]}`,
+            }}
+            style={{ width: "100%", height: 200, borderRadius: 60 }}>
+            <View
+              style={{
+                backgroundColor: "rgba(0,0,0,0.6)",
+                position: "absolute",
+                width: "100%",
+                height: "100%",
+                alignItems: "flex-start",
+                justifyContent: "flex-end",
+                padding: 10,
+              }}>
+              <Text style={{ color: "white", fontSize: 17 }}>{title}</Text>
+              <Text style={{ color: "yellow" }}>
+                {isAddressLoading ? "Loading address ..." : geoCodedAddress}
+              </Text>
+            </View>
+          </ImageBackground>
+        </TouchableOpacity>
+
+        <Text style={{ color: currentColors.text, padding : 10 }}>
+          {splitDescription}
+          <Text
+            style={{ color: currentColors.link }}
+            onPress={() =>
+              router.push(
+                `/screens/DetailedUserProposal?proposalId=${proposalId}`
+              )
+            }>
+            View more
+          </Text>
         </Text>
-      </Text>
+      </View>
     </View>
   );
 };
-
-
 
 export default CitizenProposalCard;

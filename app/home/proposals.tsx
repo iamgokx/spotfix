@@ -9,30 +9,47 @@ import HomeUserProposals from "../screens/HomeUserProposals";
 import HomeDepartmentProposals from "../screens/HomeDepartmentProposals";
 const Tab = createMaterialTopTabNavigator();
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "react-native";
 export default function App() {
+  const colorScheme = useColorScheme();
+  const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
   const insets = useSafeAreaInsets();
+
   return (
-    <Tab.Navigator
-      screenOptions={{
-        tabBarStyle: {
-          backgroundColor: "#6200ea",
-          paddingTop: insets.top, // Add padding to the top of the tabs
-          // height: 60, // Increase the height of the tab bar
-        },
-        tabBarLabelStyle: {
-          fontSize: 16, // Increase font size
-          fontWeight: "bold",
-          paddingBottom: 5, // Add padding to the text inside the tab
-        },
-        tabBarActiveTintColor: "#fff",
-        tabBarInactiveTintColor: "#ccc",
-        tabBarIndicatorStyle: {
-          backgroundColor: "#fff",
-          height: 3,
-        },
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: currentColors.backgroundDarkest,
       }}>
-      <Tab.Screen name="Public" component={HomeUserProposals} />
-      <Tab.Screen name="Departments" component={HomeDepartmentProposals} />
-    </Tab.Navigator>
+      <Tab.Navigator
+        screenOptions={{
+          tabBarStyle: {
+            backgroundColor: currentColors.backgroundDarker,
+            paddingTop: insets.top,
+            borderBottomLeftRadius: 30,
+            borderBottomRightRadius: 30,
+            overflow: "hidden",
+          },
+          tabBarLabelStyle: {
+            fontSize: 16,
+            fontWeight: "bold",
+            paddingBottom: 5,
+            color: currentColors.text,
+          },
+          tabBarActiveTintColor: "orange",
+          tabBarInactiveTintColor: 'blue',
+          tabBarIndicatorStyle: {
+            backgroundColor: "orange",
+            height: 3,
+            borderBottomLeftRadius: 50,
+            borderBottomRightRadius: 50,
+            width: "50%",
+          },
+        }}>
+        <Tab.Screen name="Public" component={HomeUserProposals} />
+        <Tab.Screen name="Departments" component={HomeDepartmentProposals} />
+      </Tab.Navigator>
+    </View>
   );
 }

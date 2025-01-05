@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   container: {
-    width: "95%",
+    width: "97%",
     height: "auto",
     alignSelf: "auto",
     borderRadius: 20,

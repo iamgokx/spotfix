@@ -28,6 +28,7 @@ import {
 } from "@react-navigation/drawer";
 import Help from "../screens/Help";
 import { clearStorage } from "@/hooks/useJwt";
+import IssueMapView from "../screens/IssueMapView";
 const Drawer = createDrawerNavigator();
 
 const MyDrawer = () => {
@@ -66,7 +67,6 @@ const MyDrawer = () => {
         />
         <Drawer.Screen
           name="User Profile"
-          
           component={ProfileScreen}
           options={{
             drawerIcon: ({ size, color }) => (
@@ -107,6 +107,25 @@ const MyDrawer = () => {
             drawerItemPress: (e) => {
               e.preventDefault();
               router.push("/screens/UserProposals");
+            },
+          })}
+        />
+        <Drawer.Screen
+          name="Map Issue View"
+          component={IssueMapView}
+          options={{
+            drawerIcon: ({ size, color }) => (
+              <Ionicons
+                name="navigate-circle-outline"
+                size={size}
+                color={color}
+              />
+            ),
+          }}
+          listeners={({ navigation }) => ({
+            drawerItemPress: (e) => {
+              e.preventDefault();
+              router.push("/screens/IssueMapView");
             },
           })}
         />

@@ -6,6 +6,7 @@ export const Colors = {
     link: "rgba(0, 167, 255, 1)",
     background: "#F8FAFC",
     backgroundSecondary: "black",
+
     backgroundDarker: "white",
     backgroundLighter: "#F2F9FF",
     backgroundDarkest: "#F8FAFC",
