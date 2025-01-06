@@ -54,7 +54,7 @@ const UserIssues = () => {
       const response = await axios.post(
         `http://${API_IP_ADDRESS}:8000/api/users/getUserIssues`,
         {
-          email: "lekhwargokul84@gmail.com",
+          email: user.email,
         }
       );
 

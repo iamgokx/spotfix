@@ -82,6 +82,7 @@ const IssueMap = ({ goToAddressScreen }: any) => {
     goToAddressScreen();
     console.log(details);
   };
+  
   return (
     <View style={styles.container}>
       {isloading && (

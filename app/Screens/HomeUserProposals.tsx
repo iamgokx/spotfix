@@ -8,6 +8,7 @@ import { FlatList } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
 import CitizenProposalCard from "@/components/CitizenProposalCard";
+import * as Animatable from 'react-native-animatable'
 const HomeUserProposals = ({ navigation }: any) => {
   const currentTheme = useColorScheme();
   const currentColors = currentTheme == "dark" ? Colors.dark : Colors.light;

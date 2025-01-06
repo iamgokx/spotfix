@@ -10,7 +10,7 @@ import { useEffect } from "react";
 import { useRouter } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
-
+import * as Animatable from 'react-native-animatable'
 const CitizenProposalCard = ({
   username,
   dateTimeCreated,
@@ -68,7 +68,8 @@ const CitizenProposalCard = ({
   const splitDescription =
     description.split(" ").slice(0, 15).join(" ") + "...";
   return (
-    <View
+    <Animatable.View
+    animation='fadeInUp'
       style={{
         width: "95%",
         height: "auto",
@@ -145,7 +146,7 @@ const CitizenProposalCard = ({
           </Text>
         </Text>
       </View>
-    </View>
+    </Animatable.View>
   );
 };
 

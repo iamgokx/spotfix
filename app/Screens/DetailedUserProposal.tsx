@@ -33,7 +33,7 @@ const DetailedUserProposal = () => {
   const [mediaFiles, setmediaFiles] = useState();
   const [docFiles, setdocFiles] = useState();
   const [fileToOpen, setFileToOpen] = useState<string | null>(null);
-  const [isLoading, setisLoading] = useState(true)
+  const [isLoading, setisLoading] = useState(true);
 
   const router = useRouter();
   const getDateFormatted = (date: any) => {
@@ -95,7 +95,7 @@ const DetailedUserProposal = () => {
       console.log("Error geocoding address: ", error);
     } finally {
       setIsAddressLoading(false);
-      setisLoading(false)
+      setisLoading(false);
     }
   };
 
@@ -111,8 +111,6 @@ const DetailedUserProposal = () => {
     );
   };
 
-
-
   const openPdfExternally = (fileName: any) => {
     const fileUri = `http://${API_IP_ADDRESS}:8000/uploads/userProposalsFiles/${fileName}`;
 
@@ -121,24 +119,24 @@ const DetailedUserProposal = () => {
     );
   };
 
-  if(isLoading){
-    return(
+  if (isLoading) {
+    return (
       <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: currentColors.background,
-      }}>
-      <StatusBar translucent hidden />
-      <LottieView
-        source={lazyLoading}
-        style={{ width: 100, height: 100 }}
-        autoPlay
-        loop
-      />
-    </View>
-    )
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: currentColors.background,
+        }}>
+        <StatusBar translucent hidden />
+        <LottieView
+          source={lazyLoading}
+          style={{ width: 100, height: 100 }}
+          autoPlay
+          loop
+        />
+      </View>
+    );
   }
 
   return (
@@ -288,7 +286,9 @@ const DetailedUserProposal = () => {
             </Animatable.Text>
           )}
 
-          <Animatable.View animation='fadeInUp' style={{ width: "90%", gap: 10 }}>
+          <Animatable.View
+            animation="fadeInUp"
+            style={{ width: "90%", gap: 10 }}>
             {docFiles.map((file, index) => {
               const isPdf = file.endsWith(".pdf");
               return (
@@ -309,7 +309,7 @@ const DetailedUserProposal = () => {
                     source={isPdf ? pdfIcon : docIcon}
                     style={{ width: 40, height: 40 }}
                   />
-                  <Text  style={{ color: currentColors.secondary }}>
+                  <Text style={{ color: currentColors.secondary }}>
                     Download {file}
                   </Text>
                 </TouchableOpacity>

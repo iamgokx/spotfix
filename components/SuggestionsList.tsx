@@ -4,6 +4,8 @@ import { Colors } from "@/constants/Colors";
 import axios from "axios";
 import { API_IP_ADDRESS } from "../ipConfig.json";
 import hero from "../assets/images/hero.jpg";
+
+//TODO fetch proper user image from backend 
 import socket from "@/hooks/useSocket";
 import { formatDistanceToNow } from "date-fns";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -119,6 +121,7 @@ const SuggestionsList = ({ issue_id }: any) => {
     try {
       const user = await getUserDetails();
       const suggestion = userSuggestions;
+      
 
       if (!user || !suggestion) {
         console.error("User details are missing or incomplete.");
@@ -135,7 +138,39 @@ const SuggestionsList = ({ issue_id }: any) => {
         }
       );
       if (response) {
-        // console.log(response.data);
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log();
+        console.log(response.data);
         setUserSuggestions("");
       }
     } catch (error) {
@@ -200,7 +235,7 @@ const SuggestionsList = ({ issue_id }: any) => {
               <View
                 style={{ width: "20%", height: "100%", alignItems: "center" }}>
                 <Image
-                  source={hero}
+                  source={{uri : `http://${API_IP_ADDRESS}:8000/uploads/profile/${item.profile_picture_name}`}}
                   style={{
                     width: 40,
                     height: 40,

@@ -114,7 +114,7 @@ const DetailedIssue = () => {
       );
       if (response?.data) {
         setIssueDetails(response.data);
-        console.log(response.data);
+       
         setIsDataLoaded(true);
       }
     } catch (error) {

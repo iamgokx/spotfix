@@ -7,7 +7,7 @@ import { useRouter } from "expo-router";
 import { FlatList } from "react-native";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { API_IP_ADDRESS } from "../../ipConfig.json";
+import { API_IP_ADDRESS } from "../ipConfig.json";
 import Swiper from "react-native-swiper";
 import { Image } from "react-native-animatable";
 import { StyleSheet } from "react-native";
@@ -16,9 +16,15 @@ import { jwtDecode } from "jwt-decode";
 import { useFonts, Poppins_600SemiBold } from "@expo-google-fonts/poppins";
 import * as Animatable from "react-native-animatable";
 import { format, formatDate } from "date-fns";
-import UserIssueCard from "@/components/UserIssueCard";
-import UserProposalCard from "@/components/UserProposalCard";
-const UserProposals = () => {
+const UserProposalCard = ({
+  mediaLinks,
+  title,
+
+  latitude,
+  longitude,
+  dateTime,
+  proposalId,
+}: any) => {
   const [fontsLoaded] = useFonts({
     Poppins_600SemiBold,
   });
@@ -27,150 +33,130 @@ const UserProposals = () => {
   const colorTheme = useColorScheme();
   const currentColors = colorTheme == "dark" ? Colors.dark : Colors.light;
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [proposalData, setproposalData] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
-  const [user, setUser] = useState({ name: "", email: "" });
-  const [mediaFiles, setMediaFiles] = useState();
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const tokenFromStorage = await getStoredRawToken();
-        const decodedToken = jwtDecode(tokenFromStorage);
-        setUser({
-          name: decodedToken?.name || "",
-          email: decodedToken?.email || "",
-        });
-      } catch (error) {
-        console.error("Error decoding token: ", error);
-      }
-    };
+  const mediaArray = mediaLinks ? mediaLinks.split(",") : [];
+  const getDateFormatted = (date: any) => {
+    const formattedDate = format(new Date(date), "d MMMM yyyy, h:mm a");
+    return formattedDate;
+  };
 
-    fetchUserData();
-  }, []);
-
-  const getPersonalUserProposal = async () => {
-    setIsLoading(true);
-    console.log("user email : ", user.email);
+  const [geoCodedAddress, setGeoCodedAddress] = useState("");
+  const [isAddressLoading, setIsAddressLoading] = useState(true);
+  const [addresses, setAddresses] = useState({});
+  const [mediaFiles, setmediaFiles] = useState();
+  const [isLoading, setisLoading] = useState(true);
+  const getAddress = async () => {
+    setIsAddressLoading(true);
     try {
-      const response = await axios.post(
-        `http://${API_IP_ADDRESS}:8000/api/proposals/getUserPersonalProposals`,
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`,
         {
-          email: user.email,
+          headers: {
+            "User-Agent": "spotfix/1.0 (lekhwargokul84.com)",
+          },
         }
       );
 
-      if (response?.data) {
-        setproposalData(response.data);
+      if (!response.ok) {
+        throw new Error(`HTTP Error: ${response.status}`);
       }
+
+      const data = await response.json();
+      const fetchedAddress = data?.display_name || "Address not found";
+      setGeoCodedAddress(fetchedAddress);
     } catch (error) {
-      console.log("Error getting issues from backend:", error);
+      console.log("Error geocoding address: ", error);
     } finally {
-      setRefreshing(false);
-      setIsLoading(false);
+      setIsAddressLoading(false);
     }
   };
 
   useEffect(() => {
-    getPersonalUserProposal();
-  }, [user.email]);
+    getAddress();
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await getPersonalUserProposal();
-  };
+    const mediaArrayImg = mediaLinks.split(", ").map((file) => file.trim());
+
+    const proposalMedia = mediaArrayImg.filter((file) =>
+      file.includes("proposal")
+    );
+    setmediaFiles(proposalMedia);
+    setisLoading(false);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text style={{ color: "white" }}>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
-    <View
+    <Animatable.View
+      animation="fadeIn"
       style={{
-        backgroundColor: currentColors.background,
-        flex: 1,
-        paddingTop: insets.top + 5,
+        width: "90%",
+        borderRadius: 30,
+        backgroundColor: currentColors.backgroundDarkest,
+        overflow: "hidden",
+        paddingBottom: 15,
+        gap: 5,
       }}>
-      <Animatable.View
-        animation="fadeInDown"
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
-        }}>
-        <Ionicons
-          name="chevron-back"
-          size={24}
-          color={currentColors.secondary}
-          style={{ position: "absolute", left: 15 }}
-          onPress={() => router.back()}
-        />
+      <Swiper
+        style={styles.wrapper}
+        showsButtons={false}
+        // autoplay={true}
+        // loop={true}
+        // autoplayTimeout={4.0}
+        activeDotColor="blue"
+        dot={<View style={styles.dot} />}
+        activeDot={<View style={styles.activeDot} />}>
+        {mediaArray.length > 0 ? (
+          mediaFiles.map((media, index) => (
+            <Image
+              key={index}
+              style={styles.img}
+              source={{
+                uri: `http://${API_IP_ADDRESS}:8000/uploads/userProposalsMedia/${media}`,
+              }}
+            />
+          ))
+        ) : (
+          <Text>No media available</Text>
+        )}
+      </Swiper>
+      <TouchableOpacity
+        style={{ width: "100%", gap: 7 }}
+        onPress={() =>
+          router.push(`/screens/DetailedUserProposal?proposalId=${proposalId}`)
+          // router.push(`/screens/DetailedIssue?proposalId=${issue_id}`)
+        }>
+        <View
+          style={{
+            flexDirection: "row",
+            width: "100%",
+            padding: 10,
+            alignItems: "center",
+          }}>
+          <Text style={{ width: "74%", color: currentColors.text }}>
+            {title}
+          </Text>
+        </View>
         <Text
           style={{
-            color: currentColors.secondary,
-            fontFamily: "Poppins_600SemiBold",
-            fontSize: 20,
+            paddingHorizontal: 10,
+            color: currentColors.link,
           }}>
-          Proposal History
+          {isAddressLoading ? "Loading address details..." : geoCodedAddress}
         </Text>
-      </Animatable.View>
-
-      <Animatable.View
-        animation="fadeIn"
-        style={{
-          backgroundColor: currentColors.backgroundDarker,
-          borderTopRightRadius: 30,
-          borderTopLeftRadius: 30,
-          marginTop: 30,
-          flex: 1,
-          paddingTop: 15,
-          elevation: 123,
-        }}>
-        <FlatList
-          initialNumToRender={5}
-          maxToRenderPerBatch={10}
-          windowSize={7}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          contentContainerStyle={{
-            width: "100%",
-            flexGrow: 1,
-            display: "flex",
-            alignItems: "center",
-          }}
-          data={proposalData}
-          showsVerticalScrollIndicator={false}
-          ListFooterComponent={
-            <View style={{ width: "100%", height: 100, margin: 30 }}>
-              <Text
-                style={{
-                  color: currentColors.text,
-                  fontFamily: "Poppins_300Light",
-                }}>
-                Nothing more to view.
-              </Text>
-            </View>
-          }
-          ItemSeparatorComponent={() => (
-            <Text
-              style={{
-                height: 1,
-                margin: 10,
-              }}></Text>
-          )}
-          ListHeaderComponent={() => <Text style={{ marginTop: 10 }}></Text>}
-          renderItem={({ item }) => {
-            return (
-              <UserProposalCard
-                mediaLinks={item.media_files}
-                title={item.title}
-                latitude={item.latitude}
-                longitude={item.longitude}
-                dateTime={item.date_time_created}
-                proposalId={item.citizen_proposal_id}
-              />
-            );
-          }}
-        />
-      </Animatable.View>
-    </View>
+        <Text
+          style={{
+            color: currentColors.text,
+            paddingHorizontal: 10,
+          }}>
+          {getDateFormatted(dateTime)}
+        </Text>
+      </TouchableOpacity>
+    </Animatable.View>
   );
 };
 
@@ -332,4 +318,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserProposals;
+export default UserProposalCard;

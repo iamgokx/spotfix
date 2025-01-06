@@ -233,7 +233,7 @@ const Index = () => {
             </>
           )}
           <TouchableOpacity
-            onPressIn={() => router.push('/issues/SaveIssue')}
+            onPressIn={() => router.push("/issues/SaveIssue")}
             // onPressIn={() => handleLogin()}
             style={styles.devBtn}>
             <Text className="text-xl text-yellow-400 bg-black p-5 rounded-full">
