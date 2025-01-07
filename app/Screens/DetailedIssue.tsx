@@ -418,6 +418,7 @@ const DetailedIssue = () => {
     </View>
   );
 };
+// TODO fix the user anonymous thing here 
 
 const styles = StyleSheet.create({
   header: {

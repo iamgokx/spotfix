@@ -58,6 +58,7 @@ const ProfileScreen = () => {
   const [user, setUser] = useState({ name: "", email: "" });
   const [isModalActive, setModalActive] = useState(false);
   const [pfpimage, setImage] = useState();
+  const [isPfploaded, setisPfploaded] = useState(false);
   const { addMedia, details, clearDetails } = useProfileContext();
   const [statusBarVisible, setStatusBarVisible] = useState(true);
 
@@ -87,8 +88,9 @@ const ProfileScreen = () => {
           `http://${API_IP_ADDRESS}:8000/api/users/getProfilePicture`,
           { email: user.email }
         );
-
+        console.log("pfp profile : ", response.data[0].picture_name);
         setImage(response.data[0].picture_name);
+        setisPfploaded(true);
       } catch (error) {
         console.error("Error getting user details from backend: ", error);
       }
@@ -206,7 +208,7 @@ const ProfileScreen = () => {
       ]}>
       <StatusBar hidden={true} style={"dark"} backgroundColor="black" />
 
-      {pfpimage && (
+      {isPfploaded && (
         <>
           <ImageBackground
             source={scales}

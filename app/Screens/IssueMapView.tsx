@@ -13,6 +13,7 @@ import { Modal } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
+import * as Animatable from "react-native-animatable";
 const IssueMapView = () => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
@@ -55,19 +56,18 @@ const IssueMapView = () => {
     );
   }
 
-  const handleMarkerPress = (id: any, title: string, description : string) => {
-    console.log("Marker : ", id);
+  const handleMarkerPress = (id: any, title: string, description: string) => {
     const splitDescription =
-    description.split(" ").slice(0, 15).join(" ") + "...";
+      description.split(" ").slice(0, 15).join(" ") + "...";
     setmodalContent(title);
     setissueId(id);
-    setissueDescription(splitDescription)
+    setissueDescription(splitDescription);
     setisModalActive(true);
   };
 
   const handleViewIssuePress = () => {
     setmodalContent("");
-    setissueDescription('')
+    setissueDescription("");
     setisModalActive(false);
     router.push(`/screens/DetailedIssue?issue_id=${issueId}`);
   };
@@ -106,7 +106,13 @@ const IssueMapView = () => {
               latitude: parseFloat(marker.latitude),
               longitude: parseFloat(marker.longitude),
             }}
-            onPress={() => handleMarkerPress(marker.issue_id, marker.title,marker.issue_description)}
+            onPress={() =>
+              handleMarkerPress(
+                marker.issue_id,
+                marker.title,
+                marker.issue_description
+              )
+            }
             title={`Marker ID ${marker.issue_id}`}
             description={`${marker.title}`}
             pinColor="black"></Marker>
@@ -117,7 +123,8 @@ const IssueMapView = () => {
         visible={isModalActive}
         transparent={true}
         style={{ backgroundColor: "rgba(0,0,0,0)" }}>
-        <View
+        <Animatable.View
+          animation="fadeInUp"
           style={{
             flex: 1,
             height: "100%",
@@ -148,15 +155,30 @@ const IssueMapView = () => {
               />
             </View>
 
-            <Text style={{ padding: 10, fontWeight: 600, fontSize: 18 , color: currentColors.text}}>
-              <Text style={{color : currentColors.secondary}}>Issue Title :</Text> {modalContent}
-        
+            <Text
+              style={{
+                padding: 10,
+                fontWeight: 600,
+                fontSize: 18,
+                color: currentColors.text,
+              }}>
+              <Text style={{ color: currentColors.secondary }}>
+                Issue Title :
+              </Text>{" "}
+              {modalContent}
             </Text>
-            <Text style={{ padding: 10, fontWeight: 600, fontSize: 18 , color: currentColors.text}}>
-              <Text style={{color : currentColors.secondary}}>Issue Description :</Text> {issueDescription}
-        
+            <Text
+              style={{
+                padding: 10,
+                fontWeight: 600,
+                fontSize: 18,
+                color: currentColors.text,
+              }}>
+              <Text style={{ color: currentColors.secondary }}>
+                Issue Description :
+              </Text>{" "}
+              {issueDescription}
             </Text>
-            
 
             <TouchableOpacity
               onPress={handleViewIssuePress}
@@ -169,13 +191,13 @@ const IssueMapView = () => {
                   padding: 10,
                   color: "white",
                   borderRadius: 20,
-                  fontSize : 18
+                  fontSize: 18,
                 }}>
                 View Issue
               </Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </Animatable.View>
       </Modal>
     </View>
   );

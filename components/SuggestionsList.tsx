@@ -3,9 +3,9 @@ import { KeyboardAvoidingView, useColorScheme } from "react-native";
 import { Colors } from "@/constants/Colors";
 import axios from "axios";
 import { API_IP_ADDRESS } from "../ipConfig.json";
-import hero from "../assets/images/hero.jpg";
+import defaultPfp from "../assets/images/profile/defaultProfile.jpeg";
 
-//TODO fetch proper user image from backend 
+//TODO fetch proper user image from backend
 import socket from "@/hooks/useSocket";
 import { formatDistanceToNow } from "date-fns";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -32,7 +32,7 @@ import { io } from "socket.io-client";
 import * as Animatable from "react-native-animatable";
 const SuggestionsList = ({ issue_id }: any) => {
   const colorScheme = useColorScheme();
-  const insets = useSafeAreaInsets(); 
+  const insets = useSafeAreaInsets();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
   const [suggestions, setSuggestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -77,7 +77,7 @@ const SuggestionsList = ({ issue_id }: any) => {
         }
       );
       if (response.data) {
-        console.log("Response Data:", response.data);
+        console.log(response.data[0].profile_picture_name);
         setSuggestions(response.data);
       } else {
         console.log("No suggestions available");
@@ -96,16 +96,18 @@ const SuggestionsList = ({ issue_id }: any) => {
         if (event && event.endCoordinates) {
           setKeyboardHeight(event.endCoordinates.height); // Update keyboard height
         } else {
-          setKeyboardHeight(0); // Fallback
+          setKeyboardHeight(0);
         }
       }
     );
-  
+
+    //TODO fix issue status styles
+    // TODO fix the my proposals
     const keyboardHideListener = Keyboard.addListener(
       Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
       () => setKeyboardHeight(0)
     );
-  
+
     return () => {
       keyboardShowListener.remove();
       keyboardHideListener.remove();
@@ -121,7 +123,6 @@ const SuggestionsList = ({ issue_id }: any) => {
     try {
       const user = await getUserDetails();
       const suggestion = userSuggestions;
-      
 
       if (!user || !suggestion) {
         console.error("User details are missing or incomplete.");
@@ -138,39 +139,6 @@ const SuggestionsList = ({ issue_id }: any) => {
         }
       );
       if (response) {
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log(response.data);
         setUserSuggestions("");
       }
     } catch (error) {
@@ -187,7 +155,7 @@ const SuggestionsList = ({ issue_id }: any) => {
     socket.on("newSuggestion", handleNewSuggestion);
 
     return () => {
-      socket.off("newSuggestion", handleNewSuggestion); // Cleanup
+      socket.off("newSuggestion", handleNewSuggestion);
     };
   }, []);
 
@@ -203,9 +171,16 @@ const SuggestionsList = ({ issue_id }: any) => {
         borderTopRightRadius: 20,
         overflow: "hidden",
         position: "relative",
-
       }}>
-        <Text style={{textAlign : 'center', color : currentColors.text, textDecorationLine : 'underline', padding : 5}}>Suggestions</Text>
+      <Text
+        style={{
+          textAlign: "center",
+          color: currentColors.text,
+          textDecorationLine: "underline",
+          padding: 5,
+        }}>
+        Suggestions
+      </Text>
       {!isLoading ? (
         <FlatList
           keyExtractor={(item, index) => index.toString()}
@@ -224,7 +199,6 @@ const SuggestionsList = ({ issue_id }: any) => {
           renderItem={({ item }) => (
             <Animatable.View
               style={{
-           
                 width: "100%",
                 marginTop: 10,
                 marginBottom: 10,
@@ -234,15 +208,33 @@ const SuggestionsList = ({ issue_id }: any) => {
               }}>
               <View
                 style={{ width: "20%", height: "100%", alignItems: "center" }}>
-                <Image
-                  source={{uri : `http://${API_IP_ADDRESS}:8000/uploads/profile/${item.profile_picture_name}`}}
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 500,
-                    marginBottom: 10,
-                  }}
-                />
+                {item.is_anonymous == "0" ? (
+                  <Image
+                    source={
+                      item.profile_picture_name != "null"
+                        ? {
+                            uri: `http://${API_IP_ADDRESS}:8000/uploads/profile/${item.profile_picture_name}`,
+                          }
+                        : defaultPfp
+                    }
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 500,
+                      marginBottom: 10,
+                    }}
+                  />
+                ) : (
+                  <Image
+                    source={defaultPfp}
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 500,
+                      marginBottom: 10,
+                    }}
+                  />
+                )}
                 <Text
                   style={{
                     width: 2,
@@ -288,7 +280,7 @@ const SuggestionsList = ({ issue_id }: any) => {
       )}
 
       <KeyboardAvoidingView
-       onLayout={() => setKeyboardHeight((prev) => prev)}
+        onLayout={() => setKeyboardHeight((prev) => prev)}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{
           width: "100%",

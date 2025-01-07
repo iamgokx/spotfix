@@ -13,6 +13,7 @@ import { useRouter } from "expo-router";
 import { generateJwt, getStoredData, storeData } from "../../hooks/useJwt";
 import { useFonts, Poppins_500Medium } from "@expo-google-fonts/poppins";
 const finalVerification = () => {
+  // TODO need to fix signup cases, like when the email is duplicate, and is getting user again in some other account
   const [fontsLoaded] = useFonts({ Poppins_500Medium });
   const [userStatus, setUserStatus] = useState({
     aadharVerification: false,
