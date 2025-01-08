@@ -107,7 +107,7 @@ const UserProposals = () => {
             fontFamily: "Poppins_600SemiBold",
             fontSize: 20,
           }}>
-          Proposal History
+          Project Ideas History
         </Text>
       </Animatable.View>
 

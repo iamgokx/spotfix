@@ -5,7 +5,7 @@ import axios from "axios";
 import { API_IP_ADDRESS } from "../ipConfig.json";
 import defaultPfp from "../assets/images/profile/defaultProfile.jpeg";
 
-//TODO fetch proper user image from backend
+
 import socket from "@/hooks/useSocket";
 import { formatDistanceToNow } from "date-fns";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -101,8 +101,8 @@ const SuggestionsList = ({ issue_id }: any) => {
       }
     );
 
-    //TODO fix issue status styles
-    // TODO fix the my proposals
+   
+    
     const keyboardHideListener = Keyboard.addListener(
       Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
       () => setKeyboardHeight(0)
@@ -113,6 +113,7 @@ const SuggestionsList = ({ issue_id }: any) => {
       keyboardHideListener.remove();
     };
   }, []);
+  
   const getUserDetails = async () => {
     const user = await getStoredData();
     console.log("returned user email : ", user.email);

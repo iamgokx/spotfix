@@ -193,7 +193,7 @@ const ReportIssue = () => {
                     color: currentColors.cardButtonText,
                   },
                 ]}>
-                New Proposal
+                New Project Idea
               </Text>
             </TouchableOpacity>
           </View>

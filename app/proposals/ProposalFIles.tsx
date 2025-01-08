@@ -204,7 +204,7 @@ export default function ProposalFiles() {
           resizeMode="cover"
           source={require("../../assets/images/blobs/b8.png")}
           style={styles.imgBack}>
-          <Text style={styles.title}>Create your Proposal</Text>
+          <Text style={styles.title}>Submit Your Idea</Text>
           <Text style={styles.subTitle}>
             Attach relevant files to your proposals
           </Text>

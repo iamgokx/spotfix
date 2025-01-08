@@ -79,6 +79,8 @@ const ProfileScreen = () => {
     fetchUserData();
   }, []);
 
+  // TODO have to make my votes and my suggestion pages, and aldo the department subscriptions
+
   useEffect(() => {
     if (!user.email) return;
 

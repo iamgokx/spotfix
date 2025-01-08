@@ -114,7 +114,7 @@ const DetailedIssue = () => {
       );
       if (response?.data) {
         setIssueDetails(response.data);
-       
+
         setIsDataLoaded(true);
       }
     } catch (error) {
@@ -194,7 +194,6 @@ const DetailedIssue = () => {
   });
 
   const handleMapAddressPress = () => {
-   
     const url = `https://www.google.com/maps?q=${issueDetails.latitude},${
       issueDetails.longitude
     }&z=${20}`;
@@ -313,22 +312,29 @@ const DetailedIssue = () => {
             styles.issueCreatorContainer,
             { backgroundColor: currentColors.secondaryShade },
           ]}>
-          <Image
-            source={
-              issueDetails.picture_name
-                ? {
-                    uri: `http://${API_IP_ADDRESS}:8000/uploads/profile/${issueDetails.picture_name}`,
-                  }
-                : require("../../assets/images/profile/defaultProfile.jpeg")
-            }
-            style={{ borderRadius: 50, width: 40, height: 40 }}
-          />
+          {issueDetails.is_anonymous == 0 ? (
+            <Image
+              source={
+                issueDetails.picture_name
+                  ? {
+                      uri: `http://${API_IP_ADDRESS}:8000/uploads/profile/${issueDetails.picture_name}`,
+                    }
+                  : require("../../assets/images/profile/defaultProfile.jpeg")
+              }
+              style={{ borderRadius: 50, width: 40, height: 40 }}
+            />
+          ) : (
+            <Image
+              source={require("../../assets/images/profile/defaultProfile.jpeg")}
+              style={{ borderRadius: 50, width: 40, height: 40 }}
+            />
+          )}
           <View>
             <Text
               style={{
                 fontSize: 20,
               }}>
-              {issueDetails.full_name}
+              {issueDetails.is_anonymous == 0 ? issueDetails.full_name : 'Spotfix User'}
             </Text>
             <Text>{getDateFormatted(issueDetails.date_time_created)}</Text>
           </View>
@@ -346,7 +352,6 @@ const DetailedIssue = () => {
           </Text>
         </Animatable.View>
 
-
         <Animatable.View
           animation="fadeInUp"
           duration={600}
@@ -362,7 +367,9 @@ const DetailedIssue = () => {
           }}>
           {/* <Text style={{ fontWeight: 900, fontSize: 17 }}>Description</Text> */}
           <Text style={[styles.desc, { color: currentColors.text }]}>
-          <Text style={{fontWeight : 900,color : currentColors.link}}>Description : </Text>
+            <Text style={{ fontWeight: 900, color: currentColors.link }}>
+              Description :{" "}
+            </Text>
             {issueDetails.issue_description || "No description available"}
           </Text>
         </Animatable.View>
@@ -381,7 +388,10 @@ const DetailedIssue = () => {
           }}>
           {/* <Text style={{ fontWeight: 900, fontSize: 17 }}>Suggestions</Text> */}
           <Text style={[styles.solution, { color: currentColors.text }]}>
-           <Text style={{fontWeight : 900,color : currentColors.link}}>Proposed Solution : </Text>{issueDetails.solution || "No solution available"}
+            <Text style={{ fontWeight: 900, color: currentColors.link }}>
+              Proposed Solution :{" "}
+            </Text>
+            {issueDetails.solution || "No solution available"}
           </Text>
         </Animatable.View>
 
@@ -404,10 +414,10 @@ const DetailedIssue = () => {
             }}>
             <Ionicons name="location" size={25} color={currentColors.link} />
             <Text
-                onPress={handleMapAddressPress}
-                style={{ color: currentColors.link, width: "90%" }}>
-                {geoCodedAddress}
-              </Text>
+              onPress={handleMapAddressPress}
+              style={{ color: currentColors.link, width: "90%" }}>
+              {geoCodedAddress}
+            </Text>
           </Animatable.View>
         ) : (
           <Text style={{ color: "#0066ff" }}>Loading address...</Text>
@@ -418,7 +428,6 @@ const DetailedIssue = () => {
     </View>
   );
 };
-// TODO fix the user anonymous thing here 
 
 const styles = StyleSheet.create({
   header: {

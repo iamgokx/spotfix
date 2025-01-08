@@ -10,7 +10,8 @@ import { useEffect } from "react";
 import { useRouter } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
-import * as Animatable from 'react-native-animatable'
+import * as Animatable from "react-native-animatable";
+import { Ionicons } from "@expo/vector-icons";
 const CitizenProposalCard = ({
   username,
   dateTimeCreated,
@@ -21,6 +22,7 @@ const CitizenProposalCard = ({
   description,
   mediaFiles,
   proposalId,
+  suggestionCount,
 }: any) => {
   const currentTheme = useColorScheme();
   const currentColors = currentTheme == "dark" ? Colors.dark : Colors.light;
@@ -67,18 +69,18 @@ const CitizenProposalCard = ({
 
   const splitDescription =
     description.split(" ").slice(0, 15).join(" ") + "...";
+
   return (
     <Animatable.View
-    animation='fadeInUp'
+      animation="fadeInUp"
       style={{
         width: "95%",
         height: "auto",
         borderRadius: 20,
-        // backgroundColor: currentColors.backgroundDarker,
+        
         paddingVertical: 20,
         paddingHorizontal: 10,
         gap: 10,
-        
       }}>
       <View
         style={{
@@ -102,7 +104,9 @@ const CitizenProposalCard = ({
         style={{
           backgroundColor: currentColors.backgroundDarker,
           borderRadius: 20,
-          overflow: "hidden",paddingBottom : 20, elevation : 18
+          overflow: "hidden",
+          paddingBottom: 20,
+          elevation: 18,
         }}>
         <TouchableOpacity
           onPress={() =>
@@ -133,8 +137,9 @@ const CitizenProposalCard = ({
           </ImageBackground>
         </TouchableOpacity>
 
-        <Text style={{ color: currentColors.text, padding : 10 }}>
+        <Text style={{ color: currentColors.text, padding: 10 }}>
           {splitDescription}
+
           <Text
             style={{ color: currentColors.link }}
             onPress={() =>
@@ -145,6 +150,26 @@ const CitizenProposalCard = ({
             View more
           </Text>
         </Text>
+        <View
+          style={{
+            width: "95%",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "flex-end",
+          }}>
+          <Ionicons
+            name="chatbubbles"
+            size={25}
+            color={currentColors.secondary}
+            style={{ width: "8%" }}
+            onPress={() =>
+              router.push(
+                `/screens/DetailedUserProposal?proposalId=${proposalId}&suggestions=${true}`
+              )
+            }
+          />
+          <Text style={{ color: currentColors.link }}>{suggestionCount}</Text>
+        </View>
       </View>
     </Animatable.View>
   );

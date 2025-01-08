@@ -193,7 +193,7 @@ const Issue = ({
           style={[
             styles.progress,
             { backgroundColor: colors.background },
-            { color: colors.color },
+            { color: colors.color, alignSelf: "flex-start" },
           ]}>
           {status}
         </Text>
@@ -413,7 +413,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 5,
-    // backgroundColor: "rgba(182, 231, 255, 0.8)",
     borderRadius: 20,
     padding: 15,
     paddingVertical: 1,

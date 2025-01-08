@@ -8,7 +8,7 @@ import { FlatList } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
 import CitizenProposalCard from "@/components/CitizenProposalCard";
-import * as Animatable from 'react-native-animatable'
+import * as Animatable from "react-native-animatable";
 const HomeUserProposals = ({ navigation }: any) => {
   const currentTheme = useColorScheme();
   const currentColors = currentTheme == "dark" ? Colors.dark : Colors.light;
@@ -17,13 +17,11 @@ const HomeUserProposals = ({ navigation }: any) => {
   const getUserProposals = async () => {
     try {
       const response = await axios.post(
-        `http://${API_IP_ADDRESS}:8000/api/proposals/getCitizenProposals`,
-        {
-          email: "gokul lekhwar",
-        }
+        `http://${API_IP_ADDRESS}:8000/api/proposals/getCitizenProposals`
       );
 
       if (response) {
+       
         setCitizenProposalData(response.data);
       }
     } catch (error) {
@@ -92,6 +90,7 @@ const HomeUserProposals = ({ navigation }: any) => {
               description={item.proposal_description}
               mediaFiles={item.media_files}
               profilePicture={item.citizen_picture_name}
+              suggestionCount={item.suggestion_count}
             />
           );
         }}></FlatList>

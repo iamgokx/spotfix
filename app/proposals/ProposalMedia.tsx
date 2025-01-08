@@ -19,7 +19,7 @@ import LottieView from "lottie-react-native";
 import { useRouter } from "expo-router";
 import uploadMedia from "../../assets/images/issues/uploadMedia.json";
 import axios from "axios";
-import * as Animatable from 'react-native-animatable'
+import * as Animatable from "react-native-animatable";
 import { getStoredRawToken, getStoredData } from "../../hooks/useJwt";
 import { useColorScheme } from "react-native";
 import { Colors } from "@/constants/Colors";
@@ -70,14 +70,14 @@ export default function ProposalMedia() {
         backgroundColor="transparent"
         translucent
       />
-      <Animatable.View animation='fadeInDown' style={styles.headerContainer}>
+      <Animatable.View animation="fadeInDown" style={styles.headerContainer}>
         <ImageBackground
           resizeMode="cover"
           source={require("../../assets/images/blobs/b8.png")}
           style={styles.imgBack}>
-          <Text style={styles.title}>Create your Proposal</Text>
+          <Text style={styles.title}>Submit Your Idea</Text>
           <Text style={styles.subTitle}>
-          Attach relevant images to your proposals
+            Attach relevant images to your proposals
           </Text>
           <View style={styles.progressContainer}>
             <Text style={styles.progressBarOne}></Text>
@@ -88,9 +88,9 @@ export default function ProposalMedia() {
         </ImageBackground>
       </Animatable.View>
 
-      <Animatable.View animation='fadeInUp' style={styles.dataContainer}>
+      <Animatable.View animation="fadeInUp" style={styles.dataContainer}>
         <TouchableOpacity
-          style={[styles.dropContainer, { }]}
+          style={[styles.dropContainer, {}]}
           onPress={pickMedia}>
           <LottieView
             source={uploadMedia}
@@ -135,7 +135,10 @@ export default function ProposalMedia() {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-           style={[styles.btnContainer,{ backgroundColor: currentColors.secondary },]}
+            style={[
+              styles.btnContainer,
+              { backgroundColor: currentColors.secondary },
+            ]}
             onPress={() => router.push("/proposals/ProposalFIles")}>
             <Text style={styles.nextButton}>Next</Text>
           </TouchableOpacity>
@@ -337,7 +340,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#0066ff",
     width: "20%",
     height: "30%",
-
   },
   progressBarFour: {
     backgroundColor: "white",

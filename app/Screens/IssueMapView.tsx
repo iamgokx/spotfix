@@ -25,8 +25,6 @@ const IssueMapView = () => {
   const [issueDescription, setissueDescription] = useState("");
   const router = useRouter();
 
-  // TODO need to fix the marker position on map,
-
   const getIssue = async () => {
     const response = await axios.post(
       `http://${API_IP_ADDRESS}:8000/api/issues/getIssuesMapView`
@@ -113,9 +111,8 @@ const IssueMapView = () => {
                 marker.issue_description
               )
             }
-            title={`Marker ID ${marker.issue_id}`}
-            description={`${marker.title}`}
-            pinColor="black"></Marker>
+            title={`${marker.title}`}
+            pinColor={"orange"}></Marker>
         ))}
       </MapView>
 

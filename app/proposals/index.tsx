@@ -20,7 +20,7 @@ import { Calendar } from "react-native-calendars";
 import { useProposalContext } from "@/context/ProposalContext";
 import { useColorScheme } from "react-native";
 import { Colors } from "@/constants/Colors";
-import * as Animatable from 'react-native-animatable'
+import * as Animatable from "react-native-animatable";
 const index = () => {
   const router = useRouter();
 
@@ -44,12 +44,12 @@ const index = () => {
         backgroundColor="transparent"
         translucent
       />
-      <Animatable.View animation='fadeInDown' style={styles.headerContainer}>
+      <Animatable.View animation="fadeInDown" style={styles.headerContainer}>
         <ImageBackground
           resizeMode="cover"
           source={require("../../assets/images/blobs/b8.png")}
           style={styles.imgBack}>
-          <Text style={styles.title}>Create Your Proposal</Text>
+          <Text style={styles.title}>Submit Your Idea</Text>
           <Text style={styles.subTitle}>
             Fill in the details to make your proposal
           </Text>
@@ -62,7 +62,7 @@ const index = () => {
         </ImageBackground>
       </Animatable.View>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <Animatable.View animation='fadeInUp' style={styles.dataContainer}>
+        <Animatable.View animation="fadeInUp" style={styles.dataContainer}>
           <View style={styles.subContainer}>
             <Text style={[styles.inputTitles, { color: currentColors.text }]}>
               Proposal Title
@@ -195,7 +195,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     width: "20%",
     height: "30%",
-  
   },
   progressBarFour: {
     backgroundColor: "white",

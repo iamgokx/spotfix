@@ -13,7 +13,7 @@ import {
 import { useRouter } from "expo-router";
 import { useProposalContext } from "@/context/ProposalContext";
 import { Ionicons } from "@expo/vector-icons";
-import * as Animatable from 'react-native-animatable'
+import * as Animatable from "react-native-animatable";
 import LottieView from "lottie-react-native";
 import deopPinOnMap from "../../assets/images/issues/selectLocationOnMap.json";
 import { useColorScheme } from "react-native";
@@ -34,15 +34,13 @@ const ProposalLocation = () => {
         backgroundColor="transparent"
         translucent
       />
-      <Animatable.View animation='fadeInDown' style={styles.headerContainer}>
+      <Animatable.View animation="fadeInDown" style={styles.headerContainer}>
         <ImageBackground
           resizeMode="cover"
           source={require("../../assets/images/blobs/b8.png")}
           style={styles.imgBack}>
-          <Text style={styles.title}>Create your Proposal</Text>
-          <Text style={styles.subTitle}>
-            Fill in the location details
-          </Text>
+          <Text style={styles.title}>Submit Your Idea</Text>
+          <Text style={styles.subTitle}>Fill in the location details</Text>
           <View style={styles.progressContainer}>
             <Text style={styles.progressBarOne}></Text>
             <Text style={styles.progressBarTwo}></Text>
@@ -52,7 +50,7 @@ const ProposalLocation = () => {
         </ImageBackground>
       </Animatable.View>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <Animatable.View animation='fadeInUp' style={styles.dataContainer}>
+        <Animatable.View animation="fadeInUp" style={styles.dataContainer}>
           {!details.generatedAddress && (
             <TouchableOpacity
               onPress={() => router.push("/proposals/Map")}
@@ -114,25 +112,22 @@ const ProposalLocation = () => {
                 }}
                 value={details.generatedCity}
                 placeholder="Enter City / Town"
-                placeholderTextColor={currentColors.textShade}
-                ></TextInput>
+                placeholderTextColor={currentColors.textShade}></TextInput>
               <TextInput
-               style={[
-                styles.dataInput,
-                {
-                  backgroundColor: currentColors.inputField,
-                  color: currentColors.text,
-                },
-              ]}
+                style={[
+                  styles.dataInput,
+                  {
+                    backgroundColor: currentColors.inputField,
+                    color: currentColors.text,
+                  },
+                ]}
                 editable={details.generatedPincode == undefined ? true : false}
                 onChangeText={(text) => {
                   setDetails((prev) => ({ ...prev, generatedPincode: text }));
                 }}
                 value={details.generatedPincode}
                 placeholder="Enter Pincode"
-                placeholderTextColor={currentColors.textShade}
-                
-                ></TextInput>
+                placeholderTextColor={currentColors.textShade}></TextInput>
               <TextInput
                 style={[
                   styles.dataInput,
@@ -147,20 +142,27 @@ const ProposalLocation = () => {
                   setDetails((prev) => ({ ...prev, generatedState: text }));
                 }}
                 placeholder="Enter State"
-                placeholderTextColor={currentColors.textShade}
-                
-                ></TextInput>
+                placeholderTextColor={currentColors.textShade}></TextInput>
             </View>
           )}
 
           <View style={styles.btnMainContainer}>
             <TouchableOpacity
-              style={[styles.backBtnContainer,{borderColor: currentColors.secondary,}]}
+              style={[
+                styles.backBtnContainer,
+                { borderColor: currentColors.secondary },
+              ]}
               onPress={() => router.push("/proposals")}>
-              <Text style={[styles.backButton,{color: currentColors.secondary}]}>Back</Text>
+              <Text
+                style={[styles.backButton, { color: currentColors.secondary }]}>
+                Back
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.btnContainer,{ backgroundColor: currentColors.secondary },]}
+              style={[
+                styles.btnContainer,
+                { backgroundColor: currentColors.secondary },
+              ]}
               onPress={() => router.push("/proposals/ProposalMedia")}>
               <Text style={styles.nextButton}>Next</Text>
             </TouchableOpacity>
@@ -246,7 +248,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     width: "20%",
     height: "30%",
-
   },
   progressBarFour: {
     backgroundColor: "white",

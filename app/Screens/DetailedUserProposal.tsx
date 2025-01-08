@@ -23,19 +23,25 @@ import docIcon from "../../assets/images/proposals/docs.png";
 import pdfIcon from "../../assets/images/proposals/pdf.png";
 import lazyLoading from "../../assets/images/welcome/loading.json";
 import LottieView from "lottie-react-native";
-//TODO add pdf view here, and also comment section
+import CitizenProposalSuggestionsList from "@/components/CitizenProposalSuggestionsList";
 
 const DetailedUserProposal = () => {
   const currentTheme = useColorScheme();
   const currentColors = currentTheme == "dark" ? Colors.dark : Colors.light;
-  const { proposalId } = useLocalSearchParams();
+  const { proposalId, suggestions } = useLocalSearchParams();
   const [proposalDetails, setProposalDetails] = useState();
   const [mediaFiles, setmediaFiles] = useState();
   const [docFiles, setdocFiles] = useState();
   const [fileToOpen, setFileToOpen] = useState<string | null>(null);
   const [isLoading, setisLoading] = useState(true);
-
+  const [isSuggestionsOpen, setisSuggestionsOpen] = useState(false);
   const router = useRouter();
+
+
+  const handleSuggestionClick = () => {
+    setisSuggestionsOpen((prev) => !prev);
+  };
+
   const getDateFormatted = (date: any) => {
     const formattedDate = format(new Date(date), "eeee d MMMM yyyy");
     return formattedDate;
@@ -61,7 +67,7 @@ const DetailedUserProposal = () => {
         const otherFiles = mediaArray.filter(
           (file) => !file.includes("proposal")
         );
-        console.log(otherFiles);
+        console.log(mediaArray);
         setdocFiles(otherFiles);
         getAddress(response.data[0].latitude, response.data[0].longitude);
         setProposalDetails(response.data[0]);
@@ -101,6 +107,10 @@ const DetailedUserProposal = () => {
 
   useEffect(() => {
     getDetailedUserProposal();
+
+    if(suggestions){
+      setisSuggestionsOpen(true);
+    }
   }, []);
 
   const handleMapAddressPress = () => {
@@ -146,7 +156,6 @@ const DetailedUserProposal = () => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             alignItems: "center",
-            paddingBottom: 100,
           }}>
           <View style={[styles.header]}>
             <Ionicons
@@ -240,6 +249,7 @@ const DetailedUserProposal = () => {
                 width: "90%",
                 textAlign: "justify",
               }}>
+              <Text style={{ color: currentColors.link }}>Description : </Text>
               {proposalDetails.proposal_description}
             </Text>
           </Animatable.View>
@@ -317,29 +327,36 @@ const DetailedUserProposal = () => {
             })}
           </Animatable.View>
 
-          {/* <View style={styles.iconsContainer}>
-            <TouchableOpacity
-              onPress={() =>
-                router.push(
-                  `/screens/DetailedIssue?issue_id=${issue_id}&suggestions=${true}`
-                )
-              }
-              style={{ width: "30%" }}>
-              <View style={styles.reactions}>
-                <Ionicons
-                  style={styles.reactionsIcon}
-                  name="chatbubbles"
-                  size={24}
-                  color={currentColors.secondary}></Ionicons>
-                <Text style={[{ fontSize: 15 }, { color: currentColors.link }]}>
-                  {proposalDetails.suggestion_count}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          </View> */}
+          <TouchableOpacity
+            onPress={() => handleSuggestionClick()}
+            style={{
+              width: "100%",
+              marginTop: 20,
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
 
-          {/* TODO add suggestions and suggestion box*/}
+              flexGrow: 1,
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "row",
+              padding: 20,
+              gap: 10,
+            }}>
+            <Ionicons
+              name="chatbubbles"
+              size={30}
+              color={currentColors.secondary}
+            />
+            <Text style={{ color: currentColors.text }}>View Suggestions</Text>
+          </TouchableOpacity>
         </ScrollView>
+      )}
+
+      {isSuggestionsOpen && (
+        <CitizenProposalSuggestionsList
+          handleSuggestionClick={handleSuggestionClick}
+          proposalId={proposalId}
+        />
       )}
     </View>
   );

@@ -96,7 +96,7 @@ const MyDrawer = () => {
           })}
         />
         <Drawer.Screen
-          name="My Proposals"
+          name="My Project Ideas"
           component={UserProposals}
           options={{
             drawerIcon: ({ size, color }) => (
@@ -111,7 +111,7 @@ const MyDrawer = () => {
           })}
         />
         <Drawer.Screen
-          name="Map Issue View"
+          name="Issues Map View"
           component={IssueMapView}
           options={{
             drawerIcon: ({ size, color }) => (
