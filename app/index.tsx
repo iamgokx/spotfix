@@ -93,9 +93,15 @@ const Index = () => {
     );
 
     if (response.data.jwtStatus) {
-      console.log("jwt authenticated");
-      console.log(response.data);
-      router.push("/home");
+      if (response.data.user_type == "super_admin") {
+        console.log("jwt authenticated");
+        console.log(response.data);
+        router.push("/admin/home");
+      } else if (response.data.user_type == "citizen") {
+        console.log("jwt authenticated");
+        console.log(response.data);
+        router.push("/home");
+      }
     } else {
       console.log("couldnt authenticate jwt");
       setisLoading(false);

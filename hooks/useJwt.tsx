@@ -1,4 +1,3 @@
-// useJwt.tsx
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
@@ -12,10 +11,11 @@ export const generateJwt = async (details: any) => {
     );
 
     if (response.data.token) {
+      console.log(response.data.userType);
       const rawToken = response.data.token;
       storeData(rawToken);
       console.log("JWT token stored successfully: ", rawToken);
-      return true;
+      return response.data.userType;
     } else {
       return false;
     }

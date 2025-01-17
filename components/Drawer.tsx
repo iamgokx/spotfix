@@ -114,7 +114,7 @@ const CustomDrawer = (props: any) => {
         <DrawerItem
           label="Logout"
           labelStyle={{
-            color: currentColors.secondary, // Adjust color if needed
+            color: currentColors.secondary, 
             fontWeight: "bold",
           }}
           icon={({ color, size }) => (

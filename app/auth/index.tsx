@@ -72,9 +72,15 @@ const Index = () => {
         };
         console.log("converted details : ", details);
         const jwtRes = await generateJwt(details);
+
+        console.log(jwtRes);
         if (jwtRes) {
           console.log("Login Token Set");
-          router.push("/home");
+          if (jwtRes == "super_admin") {
+            router.push("/admin/home");
+          } else if (jwtRes == "citizen") {
+            router.push("/home");
+          }
         }
       } else {
         setloginModal(true);
@@ -204,7 +210,6 @@ const Index = () => {
             </TouchableOpacity>
 
             <View
-           
               style={{
                 padding: 10,
                 paddingBottom: keyboardVisible ? 100 : 20,
@@ -213,13 +218,21 @@ const Index = () => {
                 justifyContent: "center",
                 alignItems: "center",
               }}>
-              <Animatable.Text    animation="fadeInUp"
-              duration={800} style={[{ color: currentColors.text }]}>Not a user? </Animatable.Text>
+              <Animatable.Text
+                animation="fadeInUp"
+                duration={800}
+                style={[{ color: currentColors.text }]}>
+                Not a user?{" "}
+              </Animatable.Text>
               <TouchableOpacity
                 onPress={() => router.push("/auth/signup")}
                 style={{ zIndex: 4 }}>
-                <Animatable.Text    animation="fadeInUp"
-              duration={800} style={styles.signupText}>Sign Up</Animatable.Text>
+                <Animatable.Text
+                  animation="fadeInUp"
+                  duration={800}
+                  style={styles.signupText}>
+                  Sign Up
+                </Animatable.Text>
               </TouchableOpacity>
             </View>
 
