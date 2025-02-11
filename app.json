@@ -3,6 +3,7 @@
     "name": "spotfix",
     "slug": "spotfix",
     "version": "1.0.0",
+    "sdkVersion": "52.0.0",
     "orientation": "default",
     "icon": "./assets/images/appIcon.png",
     "scheme": "spotfix",

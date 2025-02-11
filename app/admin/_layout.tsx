@@ -13,8 +13,13 @@ const RootLayout = () => {
 
   const router = useRouter();
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack initialRouteName="ManageDepartments" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="home" />
+      <Stack.Screen name="dashboard" />
+      <Stack.Screen name="ManageCitizens" />
+      <Stack.Screen name="ManageDepartmentCoordinators" />
+      <Stack.Screen name="ManageDepartments" />
+      <Stack.Screen name="ManageSubDepCoordinators" />
     </Stack>
   );
 };

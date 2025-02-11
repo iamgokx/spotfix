@@ -170,6 +170,7 @@ const ProfileScreen = () => {
           : `file://${details.media[0].uri}`,
         type: "image/jpeg",
         name: "profile.jpg",
+        //TODO update the profile picture name 
       });
       formData.append("email", user.email);
 
