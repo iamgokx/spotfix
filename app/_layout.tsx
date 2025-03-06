@@ -3,9 +3,9 @@ import { Stack } from "expo-router";
 import "../global.css";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useRouter } from "expo-router";
-
+import { SearchProvider } from "@/context/adminSearchContext";
 const RootLayout = () => {
   useEffect(() => {
     SplashScreen.hideAsync();
@@ -13,14 +13,18 @@ const RootLayout = () => {
 
   const router = useRouter();
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="auth" />
-      <Stack.Screen name="home" />
-      <Stack.Screen name="welcome" />
-      <Stack.Screen name="screens" />
-      <Stack.Screen name="proposals" />
-      <Stack.Screen name="admin" />
-    </Stack>
+    <SearchProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="auth" />
+          <Stack.Screen name="home" />
+          <Stack.Screen name="welcome" />
+          <Stack.Screen name="screens" />
+          <Stack.Screen name="proposals" />
+          <Stack.Screen name="admin" />
+        </Stack>
+      </GestureHandlerRootView>
+    </SearchProvider>
   );
 };
 

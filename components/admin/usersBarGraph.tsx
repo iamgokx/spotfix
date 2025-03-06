@@ -33,10 +33,10 @@ const UsersBarGraph = () => {
   }, {});
 
   const labelMap = {
-    super_admin: "Admins",
+   
     citizen: "Citizens",
-    sub_branch_coordinator: "Coordinators",
-    department_coordinator: "Departments",
+    sub_branch_coordinator: "Branch Coordinators",
+    department_coordinator: "Coordinators",
   };
 
   const labels = Object.keys(userCounts).map((key) => labelMap[key] || key);
@@ -60,6 +60,7 @@ const UsersBarGraph = () => {
             backgroundGradientFrom: currentColors.backgroundDarker,
             backgroundGradientTo: currentColors.backgroundDarker,
             decimalPlaces: 0,
+            wordWrapEnabled: true,
             color: (opacity = 1) => `rgba(5, 214, 250, ${opacity})`,
             barPercentage: 0.6,
             labelColor: () => currentColors.text,

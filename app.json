@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "sdkVersion": "52.0.0",
     "orientation": "default",
-    "icon": "./assets/images/appIcon.png",
+    "icon": "./assets/images/icon.png",
     "scheme": "spotfix",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,

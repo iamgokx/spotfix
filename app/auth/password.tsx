@@ -147,7 +147,10 @@ const password = () => {
                 </View>
               </View>
             </Modal>
-            <Animatable.View animation="fadeInDown" duration={500}>
+            <Animatable.View
+              animation="fadeInDown"
+              duration={500}
+              style={{ width: "100%" }}>
               <ImageBackground
                 style={styles.topContainer}
                 resizeMode="cover"
@@ -235,12 +238,23 @@ const password = () => {
                   backgroundColor: "#F4F2F2",
                   width: "70%",
                 }}></View>
-              <Text style={{ marginBottom: 6, textAlign: "center" , color : currentColors.text}}>
+              <Text
+                style={{
+                  marginBottom: 6,
+                  textAlign: "center",
+                  color: currentColors.text,
+                }}>
                 Already Have An Account?{" "}
                 <TouchableOpacity
                   onPress={() => router.push("/auth")}
                   style={{ padding: 0 }}>
-                  <Text style={[styles.loginText,{color : currentColors.secondary}]}>Log In</Text>
+                  <Text
+                    style={[
+                      styles.loginText,
+                      { color: currentColors.secondary },
+                    ]}>
+                    Log In
+                  </Text>
                 </TouchableOpacity>
               </Text>
             </Animatable.View>

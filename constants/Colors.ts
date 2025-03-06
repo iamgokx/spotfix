@@ -19,6 +19,7 @@ export const Colors = {
     cardButtonText: "black",
     // inputField: "#F8FAFC",
     inputField: "#F4F6FF",
+   
   },
   dark: {
     text: "white",

@@ -10,10 +10,23 @@ const UserRegistrationTrends = () => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
   const [User, SetUser] = useState([]);
-  const [chartDataLive, setChartData] = useState({
-    labels: [],
+  const [chartDatag, setChartData] = useState({
+    labels: [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ],
     approvedData: [],
-    registeredData: [],
+    pendingData: [],
     rejectedData: [],
   });
   const getUserGraph = async () => {
@@ -23,34 +36,40 @@ const UserRegistrationTrends = () => {
         `http://${API_IP_ADDRESS}:8000/api/admin/userGraphData`
       );
 
-      console.log("API Response:", response.data);
+      console.log("API Response Data:", JSON.stringify(response.data, null, 2));
+
       SetUser(response.data);
     } catch (error) {
       console.log("Error fetching data:", error);
     }
   };
-
   const processData = (data) => {
     let groupedData = {};
 
     data.forEach((item) => {
-      const month = moment(item.registration_date_time).format("MMM");
+      const monthYear = moment(item.registration_date_time).format("MMM YYYY");
 
-      if (!groupedData[month]) {
-        groupedData[month] = { approved: 0, registered: 0, rejected: 0 };
+      if (!groupedData[monthYear]) {
+        groupedData[monthYear] = { approved: 0, pending: 0, rejected: 0 };
       }
 
-      if (["approved", "registered", "rejected"].includes(item.status)) {
-        groupedData[month][item.status]++;
+      if (["approved", "pending", "rejected"].includes(item.status)) {
+        groupedData[monthYear][item.status] += 1;
       }
     });
 
-    return groupedData;
-  };
+  
+    const sortedKeys = Object.keys(groupedData).sort((a, b) =>
+      moment(a, "MMM YYYY").isBefore(moment(b, "MMM YYYY")) ? -1 : 1
+    );
 
-  useEffect(() => {
-    getUserGraph();
-  }, []);
+    const labels = sortedKeys;
+    const approvedData = labels.map((key) => groupedData[key].approved);
+    const pendingData = labels.map((key) => groupedData[key].pending);
+    const rejectedData = labels.map((key) => groupedData[key].rejected);
+
+    return { labels, approvedData, pendingData, rejectedData };
+  };
 
   useEffect(() => {
     if (User.length > 0) {
@@ -58,49 +77,42 @@ const UserRegistrationTrends = () => {
       const groupedData = processData(User);
       console.log("Grouped Data:", groupedData);
 
-      const labels = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ];
-
-      const approvedData = labels.map(
-        (month) => groupedData[month]?.approved || 0
-      );
-      const registeredData = labels.map(
-        (month) => groupedData[month]?.registered || 0
-      );
-      const rejectedData = labels.map(
-        (month) => groupedData[month]?.rejected || 0
-      );
-
-      console.log("Approved Data:", approvedData);
-      console.log("Registered Data:", registeredData);
-      console.log("Rejected Data:", rejectedData);
-
-      setChartData({ labels, approvedData, registeredData, rejectedData });
+      setChartData(groupedData);
     }
   }, [User]);
 
-  const chartData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-    approvedData: [5, 10, 15, 20, 25, 30],
-    registeredData: [8, 12, 18, 22, 28, 35],
-    rejectedData: [2, 5, 7, 10, 12, 15],
-  };
+  const chartData =
+    chartDatag.approvedData.length > 0
+      ? chartDatag
+      : {
+          labels: [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ],
+          approvedData: Array(12).fill(0),
+          pendingData: Array(12).fill(0),
+          rejectedData: Array(12).fill(0),
+        };
+
+  useEffect(() => {
+    getUserGraph();
+  }, []);
+
   return (
     <>
-      <Text style={[styles.title, {color : currentColors.text}
-      ]}>User Registration Trends</Text>
+      <Text style={[styles.title, { color: currentColors.text }]}>
+        User Registration Trends
+      </Text>
       <LineChart
         data={{
           labels: chartData.labels,
@@ -111,7 +123,7 @@ const UserRegistrationTrends = () => {
               strokeWidth: 2,
             },
             {
-              data: chartData.registeredData,
+              data: chartData.pendingData,
               color: (opacity = 1) => `rgba(229, 245, 5, ${opacity})`,
               strokeWidth: 2,
             },
@@ -121,7 +133,7 @@ const UserRegistrationTrends = () => {
               strokeWidth: 2,
             },
           ],
-          legend: ["Approved", "Registered", "Rejected"],
+          legend: ["Approved", "Pending", "Rejected"],
         }}
         width={Dimensions.get("window").width - 30}
         height={300}
@@ -131,23 +143,50 @@ const UserRegistrationTrends = () => {
           color: (opacity = 1) => `rgba(255,255, 255, ${opacity})`,
           strokeWidth: 9,
           decimalPlaces: 0,
+
           labelColor: (opacity = 1) => currentColors.text,
         }}
         style={styles.chart}
       />
 
       <View style={styles.statsContainer}>
-        <View style={[styles.statsBox,{backgroundColor  : currentColors.backgroundDarker}]}>
-          <Text style={styles.statsNumber}>245</Text>
-          <Text style={[styles.statsHeading, {color : currentColors.text}]}>Citizens</Text>
+        <View
+          style={[
+            styles.statsBox,
+            { backgroundColor: currentColors.backgroundDarker },
+          ]}>
+          <Text style={styles.statsNumber}>
+            {chartDatag.approvedData.reduce((total, curr) => total + curr, 0)}
+          </Text>
+          <Text style={[styles.statsHeading, { color: currentColors.text }]}>
+            Approved Users
+          </Text>
         </View>
-        <View style={[styles.statsBox,{backgroundColor  : currentColors.backgroundDarker}, styles.statsDepartment]}>
-          <Text style={[styles.statsNumber, styles.statsNumDep]}>45</Text>
-          <Text style={[styles.statsHeading, {color : currentColors.text}]}>Department Coordinators</Text>
+        <View
+          style={[
+            styles.statsBox,
+            { backgroundColor: currentColors.backgroundDarker },
+            styles.statsDepartment,
+          ]}>
+          <Text style={[styles.statsNumber, styles.statsNumDep]}>
+            {chartDatag.pendingData.reduce((total, curr) => total + curr, 0)}
+          </Text>
+          <Text style={[styles.statsHeading, { color: currentColors.text }]}>
+            Pending Users
+          </Text>
         </View>
-        <View style={[styles.statsBox,{backgroundColor  : currentColors.backgroundDarker}, styles.statsSubDep]}>
-          <Text style={[styles.statsNumber, styles.statsNumSubDep]}>25</Text>
-          <Text style={[styles.statsHeading, {color : currentColors.text}]}>Sub Branch Coordinators</Text>
+        <View
+          style={[
+            styles.statsBox,
+            { backgroundColor: currentColors.backgroundDarker },
+            styles.statsSubDep,
+          ]}>
+          <Text style={[styles.statsNumber, styles.statsNumSubDep]}>
+            {chartDatag.rejectedData.reduce((total, curr) => total + curr, 0)}
+          </Text>
+          <Text style={[styles.statsHeading, { color: currentColors.text }]}>
+            Rejected Users
+          </Text>
         </View>
       </View>
     </>
@@ -171,7 +210,6 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     borderRadius: 20,
     elevation: 10,
-    
   },
   statsContainer: {
     flexDirection: "row",
@@ -191,18 +229,18 @@ const styles = StyleSheet.create({
   statsNumber: {
     fontWeight: "600",
     fontSize: 20,
-    color: "#1f78b4",
+    color: "rgba(115, 214, 250 , 1)",
   },
   statsNumSubDep: {
-    color: "#65b8e3",
+    color: "rgba(255, 0, 0,1)",
   },
   statsNumDep: {
-    color: "#57ba01",
+    color: "rgba(229, 245, 5,1)",
   },
   statsHeading: {
     fontWeight: "400",
     marginTop: 10,
-    textAlign : 'center'
+    textAlign: "center",
   },
 });
 

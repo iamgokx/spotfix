@@ -12,7 +12,7 @@ const ChartScreen = () => {
       showsVerticalScrollIndicator={false}>
       <UserRegistrationTrends />
       <UsersBarGraph />
-      <UserRegistrationTrends />
+ 
     </ScrollView>
   );
 };
@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     justifyContent: "flex-start",
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: "black",
     paddingBottom: 20,
   },
 });

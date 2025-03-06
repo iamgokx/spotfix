@@ -23,6 +23,7 @@ import { useColorScheme } from "react-native";
 import { Colors } from "@/constants/Colors";
 import gradient from "../../assets/images/gradients/profileGradient.png";
 import { StatusBar } from "expo-status-bar";
+import AdminSearchBarHeader from "@/components/admin/AdminSearchBarHeader";
 const CustomDrawerContent = (props: any) => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
@@ -32,7 +33,7 @@ const CustomDrawerContent = (props: any) => {
   const router = useRouter();
   const handleLogOutButtonPress = () => {
     clearStorage();
-    router.push("/");
+    router.push("/welcome");
   };
 
   return (
@@ -52,19 +53,18 @@ const CustomDrawerContent = (props: any) => {
           backgroundColor: "#f5f5f5",
           height: 150,
         }}>
-        <Text style={styles.greeting}>Hello</Text>
         <Text style={styles.adminName}>{adminName}</Text>
+        <Text style={[styles.designation]}>Super Admin</Text>
       </ImageBackground>
 
       <View style={styles.drawerItems}>
         <DrawerItemList {...props} />
         <DrawerItem
           label="Log Out"
-          labelStyle={{color : 'orange'
-          }}
+          labelStyle={{ color: "orange" }}
           onPress={handleLogOutButtonPress}
           icon={({ color, size }) => (
-            <Ionicons name="log-out-outline" size={size} color={'orange'} />
+            <Ionicons name="log-out-outline" size={size} color={"orange"} />
           )}
         />
       </View>
@@ -81,29 +81,28 @@ const AdminDrawer = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationIndependentTree>
-      <Drawer.Navigator
-      
-           screenOptions={{
-            drawerActiveTintColor: currentColors.secondary, 
-            drawerInactiveTintColor: currentColors.text, 
-            drawerLabelStyle: { fontSize: 16 },
-            drawerActiveBackgroundColor: currentColors.backgroundDarker, 
-
-            
-            headerStyle: {
-              backgroundColor: currentColors.backgroundDarker, 
+        <Drawer.Navigator
+          screenOptions={{
+            drawerActiveTintColor: currentColors.secondary,
+            drawerInactiveTintColor: currentColors.text,
+            drawerLabelStyle: {
+              fontSize: 16,
             },
-            headerTintColor: currentColors.text, 
+            sceneStyle: { backgroundColor: currentColors.backgroundDarkest },
+            drawerActiveBackgroundColor: currentColors.backgroundDarker,
+
+            headerStyle: {
+              backgroundColor: currentColors.backgroundDarker,
+            },
+            headerTintColor: currentColors.text,
+            headerTitleAlign: "center",
             headerTitleStyle: {
-              fontSize: 18,
+              fontSize: 20,
               fontWeight: "bold",
             },
           }}
-          initialRouteName="Admin Dashboard"
-          drawerContent={(props) => <CustomDrawerContent {...props} />}
-
-          
-        >
+          initialRouteName="Manage Citizens"
+          drawerContent={(props) => <CustomDrawerContent {...props} />}>
           <Drawer.Screen
             name="Admin Dashboard"
             component={Dashboard}
@@ -115,6 +114,7 @@ const AdminDrawer = () => {
                   color={focused ? currentColors.secondary : currentColors.text}
                 />
               ),
+              header: () => <AdminSearchBarHeader title={"Admin Dashboard"} />,
             }}
           />
           <Drawer.Screen
@@ -128,6 +128,7 @@ const AdminDrawer = () => {
                   color={focused ? currentColors.secondary : currentColors.text}
                 />
               ),
+              header: () => <AdminSearchBarHeader title={"Manage Citizens"} />,
             }}
           />
           <Drawer.Screen
@@ -141,6 +142,9 @@ const AdminDrawer = () => {
                   color={focused ? currentColors.secondary : currentColors.text}
                 />
               ),
+              header: () => (
+                <AdminSearchBarHeader title={"Manage Departments"} />
+              ),
             }}
           />
           <Drawer.Screen
@@ -149,13 +153,19 @@ const AdminDrawer = () => {
             options={{
               drawerIcon: ({ focused, size }) => (
                 <Ionicons
-                  name="people-outline"
+                  name="person-circle-outline"
                   size={size}
                   color={focused ? currentColors.secondary : currentColors.text}
                 />
               ),
+              header: () => (
+                <AdminSearchBarHeader
+                  title={"Manage Department Coordinators"}
+                />
+              ),
             }}
           />
+
           <Drawer.Screen
             name="Manage Sub Department Coordinators"
             component={ManageSubDepCoordinators}
@@ -165,6 +175,11 @@ const AdminDrawer = () => {
                   name="people-circle-outline"
                   size={size}
                   color={focused ? currentColors.secondary : currentColors.text}
+                />
+              ),
+              header: () => (
+                <AdminSearchBarHeader
+                  title={"Manage Sub Department Coordinators"}
                 />
               ),
             }}
@@ -196,25 +211,28 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
     height: 150,
   },
-  greeting: {
-    fontSize: 25,
-    fontWeight: "600",
+  designation: {
+    fontSize: 20,
+    marginLeft: 10,
+    marginBottom: 10,
     color: "white",
     paddingLeft: 10,
   },
   adminName: {
-    fontSize: 25,
-    marginTop: 10,
+    fontSize: 36,
+    fontWeight: "600",
     color: "white",
+    marginLeft: 10,
+
     paddingLeft: 10,
   },
   drawerItems: {
     flex: 1,
     marginTop: 20,
     padding: 10,
+
     display: "flex",
     gap: 5,
-    
   },
   logOutButtonContianer: {
     display: "flex",
