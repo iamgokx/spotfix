@@ -102,6 +102,11 @@ const Index = () => {
         console.log(response.data);
         router.push("/home");
       }
+       else if (response.data.user_type == "department_coordinator") {
+        console.log("jwt authenticated");
+        console.log(response.data);
+        router.push("/branchCoordinators");
+      }
     } else {
       console.log("couldnt authenticate jwt");
       setisLoading(false);

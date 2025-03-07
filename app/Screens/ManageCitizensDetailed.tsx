@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Image
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import axios from "axios";
@@ -97,6 +98,18 @@ const ManageCitizensDetailed = () => {
           contentContainerStyle={{
             flexGrow: 1,
           }}>
+          <View style={{ padding : 20, display : 'flex', alignItems : 'center', justifyContent : 'center'}}>
+            <Image
+              source={{
+                uri: `http://${API_IP_ADDRESS}:8000/uploads/profile/${user[0].picture_name}`,
+              }}
+              style={{
+                width: 150,
+                height: 150,
+                borderRadius: 500,
+              }}
+            />
+          </View>
           <View style={styles.inputContainer}>
             <Text
               style={{ color: currentColors.textShade, paddingHorizontal: 15 }}>

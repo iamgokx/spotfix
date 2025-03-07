@@ -80,6 +80,8 @@ const Index = () => {
             router.push("/admin/home");
           } else if (jwtRes == "citizen") {
             router.push("/home");
+          } else if (jwtRes == "department_coordinator") {
+            router.push("/branchCoordinators/index");
           }
         }
       } else {
