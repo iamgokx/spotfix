@@ -12,6 +12,7 @@ import { useState } from "react";
 import { useRouter } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
+
 const SaveProposal = () => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;

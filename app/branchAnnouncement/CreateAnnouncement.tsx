@@ -13,7 +13,8 @@ import {
   Switch,
   Image,
 } from "react-native";
-
+import docIcon from "../../assets/images/proposals/docs.png";
+import pdfIcon from "../../assets/images/proposals/pdf.png";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { ScrollView } from "react-native";
@@ -26,11 +27,18 @@ import { useColorScheme } from "react-native";
 import * as Animatable from "react-native-animatable";
 import LottieView from "lottie-react-native";
 import uploadMedia from "../../assets/images/issues/uploadMedia.json";
-
+import * as DocumentPicker from "expo-document-picker";
 const CreateAnnouncement = ({ goToAddressScreen }: any) => {
   const router = useRouter();
-  const { details, setDetails, clearDetails, removeMedia, addMedia } =
-    useAnnouncementContext();
+  const {
+    details,
+    setDetails,
+    clearDetails,
+    removeMedia,
+    addMedia,
+    addDocument,
+    removeDocument,
+  } = useAnnouncementContext();
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
 
@@ -65,14 +73,45 @@ const CreateAnnouncement = ({ goToAddressScreen }: any) => {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const handleSelect = (dep: string) => {
-    setDetails((prev) => ({ ...prev, department: dep }));
-    setIsModalVisible(false);
+  const pickDocuments = async () => {
+    try {
+      if (details.documents.length >= 5) {
+        alert("You can only upload up to 5 documents.");
+        return;
+      }
+
+      const result = await DocumentPicker.getDocumentAsync({
+        type: [
+          "application/pdf",
+          "application/msword",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        ],
+        copyToCacheDirectory: true,
+        multiple: true,
+      });
+
+      if (!result.canceled && result.assets?.length > 0) {
+        const newDocuments = result.assets.map((asset) => ({
+          uri: asset.uri,
+          type: asset.mimeType,
+          name: asset.name,
+          size: asset.size,
+        }));
+
+        const remainingSlots = 5 - details.documents.length;
+        newDocuments.slice(0, remainingSlots).forEach((doc) => {
+          addDocument(doc);
+        });
+      } else {
+        console.log("No documents selected or operation canceled.");
+      }
+    } catch (error) {
+      console.error("Error picking documents:", error);
+    }
   };
 
-  const handleClearButtonPress = () => {
-    clearDetails();
-    // router.push("/home/reportIssue");
+  const handleRemoveDocument = (uri: string) => {
+    removeDocument(uri);
   };
 
   return (
@@ -103,11 +142,13 @@ const CreateAnnouncement = ({ goToAddressScreen }: any) => {
             style={styles.progressContainer}>
             <Text style={styles.progressBarOne}></Text>
             <Text style={styles.progressBarTwo}></Text>
-            <Text style={styles.progressBarThree}></Text>
+            
           </Animatable.View>
         </ImageBackground>
       </View>
-      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <TouchableWithoutFeedback
+        onPress={() => Keyboard.dismiss()}
+        style={{ flex: 1 }}>
         <Animatable.View animation="fadeInUp" style={styles.dataContainer}>
           <View style={styles.subContainer}>
             <Text style={[styles.inputTitles, { color: currentColors.text }]}>
@@ -129,107 +170,148 @@ const CreateAnnouncement = ({ goToAddressScreen }: any) => {
               placeholder="eg. Major Power Outage in Tiswadi"></TextInput>
           </View>
           <View style={styles.subContainer}>
+          <Text style={[styles.inputTitles, { color: currentColors.text }]}>
+              Location
+            </Text>
             <TouchableOpacity
               onPress={() => router.push("/branchAnnouncement/AnnouncementMap")}
               style={[
                 styles.dataInput,
                 {
                   backgroundColor: currentColors.secondary,
-                  display: "flex",
                   flexDirection: "row",
                   justifyContent: "space-between",
+                  alignItems: "center",
                   paddingHorizontal: 10,
                 },
               ]}>
-              <Text style={{ color: "white", fontWeight: 600, fontSize: 15 }}>
-                {" "}
-                Select Location
-              </Text>
-              <Feather name="map-pin" size={24} color={"white"} />
+              {details.generatedAddress === "" ? (
+                <>
+                  <Text
+                    style={{ color: "white", fontWeight: "600", fontSize: 15 }}>
+                    Select Location
+                  </Text>
+                  <Feather name="map-pin" size={24} color="white" />
+                </>
+              ) : (
+                <Text style={{ color: "white", fontSize: 15 }}>
+                  {details.generatedAddress}
+                </Text>
+              )}
             </TouchableOpacity>
-
-            {
-              details.generatedAddress && (
-                <View style={[styles.subContainer ,{marginTop : 20}]}>
-              <Text style={[styles.inputTitles, { color: currentColors.text }]}>
-                Generated Address
-              </Text>
-              <Text
-                style={[
-                  styles.dataInput,
-                  {
-                    backgroundColor: currentColors.background,
-                    color: currentColors.text,
-                  },
-                ]}>
-                {details.generatedAddress}
-              </Text>
-            </View>
-              )
-            }
           </View>
 
-          <Animatable.View animation="fadeInUp" style={styles.dataContainer}>
-            <TouchableOpacity style={styles.dropContainer} onPress={pickMedia}>
-              <LottieView
-                source={uploadMedia}
-                autoPlay
-                loop
-                style={{ width: 200, height: 200, marginBottom: -30 }}
-              />
-              <Text style={{ color: currentColors.text }}>Upload Media</Text>
-            </TouchableOpacity>
+          <TouchableOpacity style={styles.dropContainer} onPress={pickMedia}>
+            <LottieView
+              source={uploadMedia}
+              autoPlay
+              loop
+              style={{ width: 200, height: 200, marginBottom: -30 }}
+            />
+            <Text style={{ color: currentColors.text }}>Upload Media</Text>
+          </TouchableOpacity>
 
-            <View style={styles.mediaContainer}>
-              {details.media.map((item, index) => (
-                <View key={index} style={styles.mediaItem}>
-                  {item.type === "image" ? (
-                    <Image source={{ uri: item.uri }} style={styles.image} />
-                  ) : (
-                    <VideoComponent uri={item.uri} />
-                  )}
+          <View style={styles.mediaContainer}>
+            {details.media.map((item, index) => (
+              <View key={index} style={styles.mediaItem}>
+                {item.type === "image" ? (
+                  <Image source={{ uri: item.uri }} style={styles.image} />
+                ) : (
+                  <VideoComponent uri={item.uri} />
+                )}
+                <TouchableOpacity
+                  onPress={() => handleRemoveItem(item.uri)}
+                  style={styles.removePosition}>
+                  <Ionicons
+                    name="close"
+                    style={styles.removeBtn}
+                    color={"white"}
+                    size={20}></Ionicons>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+
+          <TouchableOpacity
+            style={styles.dropContainer}
+            onPress={pickDocuments}>
+            <LottieView
+              source={uploadMedia}
+              autoPlay
+              loop
+              style={{ width: 200, height: 200, marginBottom: -30 }}
+            />
+            <Text style={{ color: currentColors.text }}>Upload Files</Text>
+          </TouchableOpacity>
+
+          {details.documents && (
+            <View style={styles.documentContainer}>
+              {details.documents.map((doc, index) => (
+                <View key={index} style={styles.documentItem}>
+                  <Image
+                    style={{ width: 50, height: 50 }}
+                    source={doc.type == "application/pdf" ? pdfIcon : docIcon}
+                  />
+                  <Text
+                    style={[
+                      styles.documentName,
+                      { color: currentColors.text },
+                    ]}>
+                    {" "}
+                    {doc.name.length > 10
+                      ? `${doc.name.slice(0, 50)}...`
+                      : doc.name}
+                  </Text>
+
                   <TouchableOpacity
-                    onPress={() => handleRemoveItem(item.uri)}
+                    onPress={() => handleRemoveDocument(doc.uri)}
                     style={styles.removePosition}>
                     <Ionicons
                       name="close"
                       style={styles.removeBtn}
                       color={"white"}
-                      size={20}></Ionicons>
+                      size={20}
+                    />
                   </TouchableOpacity>
                 </View>
               ))}
-            </View>
 
-            <View style={styles.btnMainContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.backBtnContainer,
-                  { borderColor: currentColors.secondary },
-                ]}
-                onPress={() => router.back()}>
-                <Text
-                  style={[
-                    styles.backButton,
-                    { color: currentColors.secondary },
-                  ]}>
-                  Back
+              {details.documents.length >= 5 && (
+                <Text style={{ color: "white" }}>
+                  Document upload limit reached (5/5).
                 </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.btnContainer,
-                  { backgroundColor: currentColors.secondary },
-                ]}
-                onPress={() => submitIssue()}>
-                {/* onPress={() => router.push("/issues/SaveIssue")}> */}
-                <Text style={styles.nextButton}>Next</Text>
-              </TouchableOpacity>
+              )}
             </View>
-          </Animatable.View>
+          )}
+
+
+
+<View style={styles.btnMainContainer}>
+            <TouchableOpacity
+              style={[
+                styles.backBtnContainer,
+                { borderColor: currentColors.secondary },
+              ]}
+              onPress={() => router.back()}>
+              <Text
+                style={[styles.backButton, { color: currentColors.secondary }]}>
+                Back
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.btnContainer,
+                { backgroundColor: currentColors.secondary },
+              ]}
+             
+              onPress={() => router.push("/branchAnnouncement/AnnoucnementDescription")}> 
+              <Text style={styles.nextButton}>Next</Text>
+            </TouchableOpacity>
+          </View>
         </Animatable.View>
+        
       </TouchableWithoutFeedback>
-      <View style={{ width: "100%", height: 100 }}></View>
+    
     </ScrollView>
   );
 };
@@ -253,287 +335,186 @@ function VideoComponent({ uri }: { uri: string }) {
   );
 }
 
-const styles = StyleSheet.create({
+
+
+export const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    width: "100%",
-    alignItems: "center",
+    paddingBottom: 20, 
     backgroundColor: "rgb(230, 240, 255)",
   },
   headerContainer: {
     width: "100%",
-    height: "20%",
-
+    alignItems: "center",
+    justifyContent: "center",
     overflow: "hidden",
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
+        borderBottomLeftRadius: 30,
+        borderBottomRightRadius: 30,
   },
   imgBack: {
     width: "100%",
-    height: "100%",
-    objectFit: "contain",
-
-    display: "flex",
+    height: 200,
     justifyContent: "center",
     alignItems: "center",
-    gap: 10,
+
   },
   title: {
+    fontSize: 22,
+    fontWeight: "bold",
     color: "white",
     textAlign: "center",
-    fontSize: 24,
-    fontWeight: 600,
   },
   subTitle: {
+    fontSize: 16,
     color: "white",
     textAlign: "center",
-    fontSize: 15,
+    marginTop: 5,
   },
   progressContainer: {
-    width: "70%",
-
-    display: "flex",
     flexDirection: "row",
+    marginTop: 10,
     justifyContent: "center",
-
     alignItems: "center",
   },
   progressBarOne: {
-    backgroundColor: "yellow",
-    width: "33%",
-    height: "30%",
-    borderTopLeftRadius: 20,
-    borderBottomLeftRadius: 20,
+    width: 30,
+    height: 5,
+    backgroundColor: "black",
+    borderRadius: 10,
+    marginHorizontal: 3,
   },
   progressBarTwo: {
+    width: 30,
+    height: 5,
     backgroundColor: "white",
-    width: "33%",
-    height: "30%",
+    borderRadius: 10,
+    marginHorizontal: 3,
   },
   progressBarThree: {
+    width: 30,
+    height: 5,
     backgroundColor: "white",
-    width: "33%",
-    height: "30%",
-    borderTopRightRadius: 20,
-    borderBottomRightRadius: 20,
+    borderRadius: 10,
+    marginHorizontal: 3,
   },
   dataContainer: {
-    width: "100%",
-    height: "65%",
+    flex: 1,
     padding: 20,
-
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    gap: 50,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+ gap : 20,
+   
   },
   subContainer: {
-    width: "100%",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 10,
-  },
-  mapContainer: {
-    width: "100%",
-    backgroundColor: "rgb(0, 102, 255)",
-    borderRadius: 30,
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 14,
-    padding: 10,
-    gap: 10,
-  },
-  mapText: {
-    fontWeight: 600,
+    marginBottom: 15,
+   
   },
   inputTitles: {
-    fontSize: 15,
-    width: " 100%",
-    marginBottom: 10,
-  },
-  textInput: {
-    height: "auto",
-    width: "100%",
-    backgroundColor: "white",
-    borderRadius: 20,
-    paddingVertical: 14,
-    padding: 10,
-    textAlignVertical: "top",
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 5,
   },
   dataInput: {
-    width: "100%",
-    backgroundColor: "white",
+    height: 50,
     borderRadius: 20,
-    paddingVertical: 14,
-    padding: 10,
-  },
-  cityTown: {
-    width: "100%",
-
-    backgroundColor: "white",
-    borderRadius: 20,
-    paddingVertical: 14,
-    textAlignVertical: "top",
-    padding: 10,
-  },
-  street: {
-    width: "100%",
-
-    backgroundColor: "white",
-    borderRadius: 20,
-    paddingVertical: 14,
-    textAlignVertical: "top",
-    padding: 10,
-  },
-  btnContainer: {
-    backgroundColor: "rgb(0, 102, 255)",
-    fontSize: 20,
-    color: "white",
-    width: "40%",
-
-    paddingVertical: 10,
-    borderRadius: 30,
-    fontWeight: 900,
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "row",
-    gap: 5,
-  },
-  backBtnContainer: {
-    backgroundColor: "white",
-    fontSize: 20,
-    color: "white",
-    width: "40%",
-
-    paddingVertical: 10,
-    borderRadius: 30,
-    fontWeight: 900,
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "row",
-    gap: 5,
-    borderColor: "blue",
-    borderWidth: 1,
-  },
-  btnMainContainer: {
-    width: "100%",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    flexDirection: "row",
-  },
-  nextButton: {
-    color: "white",
-    fontSize: 20,
-  },
-  backButton: {
-    color: "#0066ff",
-    fontSize: 20,
-  },
-
-  dropdownButton: {
-    width: "100%",
-    padding: 15,
-    backgroundColor: "#fff",
-    borderRadius: 20,
-
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  dropdownText: {
-    width: "100%",
-    fontSize: 16,
-    color: "#333",
-    textAlign: "left",
-  },
-  modalOverlay: {
-    width: "100%",
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    width: "80%",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    paddingVertical: 20,
-    paddingHorizontal: 10,
-    maxHeight: 500,
-  },
-  item: {
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f1f1f1",
-  },
-  itemText: {
-    fontSize: 16,
-    color: "#333",
-  },
-
-  mediaWrapper: {
-    width: 100,
-    height: 100,
-    overflow: "hidden",
-    backgroundColor: "#000",
-    borderRadius: 20,
-  },
-  video: {
-    flex: 1,
-    width: "200%",
-    height: "100%",
-    alignSelf: "center",
-  },
-  removeBtn: {
-    backgroundColor: "#0066ff",
-    padding: 5,
-    borderRadius: 30,
-    transform: [{ translateY: "-50%" }, { translateX: "50%" }],
-  },
-  removePosition: {
-    position: "absolute",
-    top: 0,
-    right: 0,
+    paddingHorizontal: 15,
+    fontSize: 15,
+    color: "black",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
   },
   dropContainer: {
-    width: "100%",
-    height: 200,
-    borderRadius: 50,
+    alignItems: "center",
+    justifyContent: "center",
+        borderRadius: 50,
     borderWidth: 2,
     borderColor: "#0066ff",
     borderStyle: "dashed",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 5,
-    paddingVertical: 40,
+   
+    paddingVertical: 20,
+    marginBottom: 15,
+  
   },
   mediaContainer: {
-    width: "100%",
-    overflow: "hidden",
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    padding: 10,
+    justifyContent: "space-between",
+    marginBottom: 15,
+    gap : 10,
   },
   mediaItem: {
-    margin: 10,
-    alignItems: "center",
+    width: "48%",
+    height: 100,
+    borderRadius: 10,
+    overflow: "hidden",
     position: "relative",
   },
   image: {
-    width: 100,
-    height: 100,
-    marginBottom: 10,
-    objectFit: "cover",
-    borderRadius: 20,
+    width: "100%",
+    height: "100%",
+    borderRadius: 10,
+  },
+  removePosition: {
+    position: "absolute",
+    top: 5,
+    right: 5,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    borderRadius: 15,
+    padding: 5,
+  },
+  removeBtn: {
+    fontSize: 16,
+  },
+  documentContainer: {
+    marginTop: 10,
+   
+    padding: 10,
+    borderRadius: 10,
+  },
+  documentItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 10,
+  },
+  documentName: {
+    flex: 1,
+    marginLeft: 10,
+    fontSize: 14,
+  },
+  btnMainContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+  },
+  backBtnContainer: {
+    flex: 1,
+    paddingVertical: 12,
+    borderWidth: 2,
+    borderRadius: 50,
+    alignItems: "center",
+    marginRight: 10,
+  },
+  backButton: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  btnContainer: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 50,
+    alignItems: "center",
+  },
+  nextButton: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "white",
   },
 });
+
 export default CreateAnnouncement;

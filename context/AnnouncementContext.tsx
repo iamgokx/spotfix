@@ -5,7 +5,7 @@ interface AnnouncementDetails {
   title: string;
   description: string;
 
-  department: string;
+  announcementType: string;
   latitude: string;
   longitude: string;
   generatedState: string;
@@ -78,7 +78,7 @@ export const AnnouncementProvider: React.FC<AnnouncementProps> = ({
     title: "",
     description: "",
     
-    department: "",
+    announcementType: "",
     latitude: "",
     longitude: "",
     generatedState: "",
@@ -110,7 +110,7 @@ export const AnnouncementProvider: React.FC<AnnouncementProps> = ({
       title: "",
       description: "",
      
-      department: "",
+      announcementType: "",
       latitude: "",
       longitude: "",
       generatedState: "",

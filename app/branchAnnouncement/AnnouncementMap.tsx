@@ -7,7 +7,7 @@ import "../../global.css";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { ActivityIndicator } from "react-native";
-import { useIssueContext } from "@/context/IssueContext";
+
 import { useAnnouncementContext } from "@/context/AnnouncementContext";
 import LottieView from "lottie-react-native";
 import loading from "../../assets/images/welcome/loading.json";

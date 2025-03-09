@@ -18,8 +18,9 @@ const BranchLayout = () => {
       <SearchProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="branchAnnouncement" />
+            <Stack.Screen name="CreateAnnouncement" />
             <Stack.Screen name="AnnouncementMap" />
+            <Stack.Screen name="AnnoucnementDescription" />
           </Stack>
         </GestureHandlerRootView>
       </SearchProvider>
