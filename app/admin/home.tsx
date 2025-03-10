@@ -101,7 +101,7 @@ const AdminDrawer = () => {
               fontWeight: "bold",
             },
           }}
-          initialRouteName="Manage Citizens"
+          initialRouteName="Admin Dashboard"
           drawerContent={(props) => <CustomDrawerContent {...props} />}>
           <Drawer.Screen
             name="Admin Dashboard"

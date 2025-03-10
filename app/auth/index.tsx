@@ -81,7 +81,7 @@ const Index = () => {
           } else if (jwtRes == "citizen") {
             router.push("/home");
           } else if (jwtRes == "department_coordinator") {
-            router.push("/branchCoordinators/index");
+            router.push("/branchCoordinators/Home");
           }
         }
       } else {

@@ -93,6 +93,7 @@ const Layout = () => {
           drawerContent={(props) => <CustomDrawerContent {...props} />}
           screenOptions={{ headerShown: false }}>
           <Drawer.Screen name="DashBoard" component={TabNavigator} />
+          
         </Drawer.Navigator>
       </NavigationContainer>
     </NavigationIndependentTree>

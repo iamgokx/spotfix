@@ -18,7 +18,7 @@ import { useRouter } from "expo-router";
 import { useIssueContext } from "@/context/IssueContext";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
-import * as Animatable from 'react-native-animatable'
+import * as Animatable from "react-native-animatable";
 const Issue = ({ goToAddressScreen }: any) => {
   const router = useRouter();
   const { details, setDetails, clearDetails } = useIssueContext();
@@ -71,11 +71,15 @@ const Issue = ({ goToAddressScreen }: any) => {
           resizeMode="cover"
           source={require("../../assets/images/blobs/b8.png")}
           style={styles.imgBack}>
-          <Animatable.Text animation='fadeInDown' style={styles.title}>Create your report</Animatable.Text>
-          <Animatable.Text animation='fadeInDown' style={styles.subTitle}>
+          <Animatable.Text animation="fadeInDown" style={styles.title}>
+            Create your report
+          </Animatable.Text>
+          <Animatable.Text animation="fadeInDown" style={styles.subTitle}>
             Fill in with the details to get your report registered
           </Animatable.Text>
-          <Animatable.View animation='fadeInDown' style={styles.progressContainer}>
+          <Animatable.View
+            animation="fadeInDown"
+            style={styles.progressContainer}>
             <Text style={styles.progressBarOne}></Text>
             <Text style={styles.progressBarTwo}></Text>
             <Text style={styles.progressBarThree}></Text>
@@ -83,7 +87,7 @@ const Issue = ({ goToAddressScreen }: any) => {
         </ImageBackground>
       </View>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <Animatable.View animation='fadeInUp' style={styles.dataContainer}>
+        <Animatable.View animation="fadeInUp" style={styles.dataContainer}>
           <ImageBackground
             source={require("../../assets/images/blobs/b8.png")}
             style={{
@@ -117,7 +121,10 @@ const Issue = ({ goToAddressScreen }: any) => {
             <TextInput
               style={[
                 styles.dataInput,
-                { backgroundColor: currentColors.inputField,color:currentColors.text },
+                {
+                  backgroundColor: currentColors.inputField,
+                  color: currentColors.text,
+                },
               ]}
               value={details.title}
               onChangeText={(text) =>
@@ -133,7 +140,10 @@ const Issue = ({ goToAddressScreen }: any) => {
             <TextInput
               style={[
                 styles.textInput,
-                { backgroundColor: currentColors.inputField,color:currentColors.text },
+                {
+                  backgroundColor: currentColors.inputField,
+                  color: currentColors.text,
+                },
               ]}
               multiline={true}
               value={details.description}
@@ -150,7 +160,10 @@ const Issue = ({ goToAddressScreen }: any) => {
             <TextInput
               style={[
                 styles.textInput,
-                { backgroundColor: currentColors.inputField,color:currentColors.text },
+                {
+                  backgroundColor: currentColors.inputField,
+                  color: currentColors.text,
+                },
               ]}
               multiline={true}
               value={details.suggestions}
@@ -161,11 +174,16 @@ const Issue = ({ goToAddressScreen }: any) => {
               placeholder="Tell us about your solutions and suggestions to fix this issue"></TextInput>
           </View>
           <View style={styles.subContainer}>
-            <Text style={[styles.inputTitles, {color : currentColors.text}]}>Select Department</Text>
+            <Text style={[styles.inputTitles, { color: currentColors.text }]}>
+              Select Department
+            </Text>
             <TouchableOpacity
-              style={[styles.dropdownButton, {backgroundColor : currentColors.secondary}]}
+              style={[
+                styles.dropdownButton,
+                { backgroundColor: currentColors.secondary },
+              ]}
               onPress={() => setIsModalVisible(true)}>
-              <Text style={[styles.dropdownText, {color : 'white'}]}>
+              <Text style={[styles.dropdownText, { color: "white" }]}>
                 {details.department || "Choose a department"}
               </Text>
             </TouchableOpacity>
@@ -178,14 +196,24 @@ const Issue = ({ goToAddressScreen }: any) => {
               <TouchableOpacity
                 style={styles.modalOverlay}
                 onPress={() => setIsModalVisible(false)}>
-                <View style={[styles.modalContent,{backgroundColor : currentColors.background}]}>
+                <View
+                  style={[
+                    styles.modalContent,
+                    { backgroundColor: currentColors.background },
+                  ]}>
                   <FlatList
                     data={departments}
                     renderItem={({ item }) => (
                       <TouchableOpacity
                         style={styles.item}
                         onPress={() => handleSelect(item)}>
-                        <Text style={[styles.itemText, {color : currentColors.text}]}>{item}</Text>
+                        <Text
+                          style={[
+                            styles.itemText,
+                            { color: currentColors.text },
+                          ]}>
+                          {item}
+                        </Text>
                       </TouchableOpacity>
                     )}
                     keyExtractor={(item, index) => index.toString()}
@@ -197,12 +225,21 @@ const Issue = ({ goToAddressScreen }: any) => {
 
           <View style={styles.btnMainContainer}>
             <TouchableOpacity
-              style={[styles.backBtnContainer, {borderColor : currentColors.secondary}]}
+              style={[
+                styles.backBtnContainer,
+                { borderColor: currentColors.secondary },
+              ]}
               onPress={() => handleClearButtonPress()}>
-              <Text style={[styles.backButton,{color : currentColors.secondary}]}>Close</Text>
+              <Text
+                style={[styles.backButton, { color: currentColors.secondary }]}>
+                Close
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.btnContainer, {backgroundColor : currentColors.secondary}]}
+              style={[
+                styles.btnContainer,
+                { backgroundColor: currentColors.secondary },
+              ]}
               onPress={() => router.push("/issues/issueLocation")}>
               <Text style={styles.nextButton}>Next</Text>
             </TouchableOpacity>

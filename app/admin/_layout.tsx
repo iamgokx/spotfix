@@ -14,7 +14,7 @@ const RootLayout = () => {
   const router = useRouter();
   return (
     <Stack
-      initialRouteName="ManageDepartments"
+      initialRouteName="dashboard"
       screenOptions={{ headerShown: false }}>
     
         <Stack.Screen name="home" />

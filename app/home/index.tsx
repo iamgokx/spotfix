@@ -29,6 +29,9 @@ import {
 import Help from "../screens/Help";
 import { clearStorage } from "@/hooks/useJwt";
 import IssueMapView from "../screens/IssueMapView";
+import settings from "../screens/Settings";
+import Settings from "../screens/Settings";
+import UserSettings from "../screens/UserSettings";
 const Drawer = createDrawerNavigator();
 
 const MyDrawer = () => {
@@ -157,6 +160,21 @@ const MyDrawer = () => {
             drawerItemPress: (e) => {
               e.preventDefault();
               router.push("/screens/Help");
+            },
+          })}
+        />
+        <Drawer.Screen
+          name="User settings"
+          component={UserSettings}
+          options={{
+            drawerIcon: ({ size, color }) => (
+              <Ionicons name="settings-outline" size={size} color={color} />
+            ),
+          }}
+          listeners={({ navigation }) => ({
+            drawerItemPress: (e) => {
+              e.preventDefault();
+              router.push("/screens/UserSettings");
             },
           })}
         />

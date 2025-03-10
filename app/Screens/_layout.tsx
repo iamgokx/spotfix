@@ -32,7 +32,9 @@ const DrawerLayout = () => {
         <Stack.Screen name="UserSubscriptions" />
         <Stack.Screen name="DetailedUserProposal" />
         <Stack.Screen name="IssueMapView" />
-        
+     
+        <Stack.Screen name="UserSettings" />
+
         <Stack.Screen
           name="EditDepartments"
           options={{

@@ -10,7 +10,7 @@ import { clearStorage } from "@/hooks/useJwt";
 import { Modal } from "react-native";
 import { useState } from "react";
 import * as Animatable from "react-native-animatable";
-const Help = () => {
+const UserSettings = () => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
   const insets = useSafeAreaInsets();
@@ -204,7 +204,7 @@ const Help = () => {
               fontSize: 20,
               fontWeight: 600,
             }}>
-            Help & Support
+            Settings
           </Text>
         </View>
       </ImageBackground>
@@ -222,7 +222,7 @@ const Help = () => {
         }}>
         <Animatable.View animation="fadeInUp">
           <TouchableOpacity
-            onPress={() => router.push("/password/index")}
+            onPress={() => router.push("/password/")}
             style={{
               width: "100%",
               backgroundColor: currentColors.backgroundDarker,
@@ -232,7 +232,7 @@ const Help = () => {
               justifyContent: "space-between",
               alignItems: "center",
             }}>
-            <Text style={{ color: currentColors.text }}>FAQ's</Text>
+            <Text style={{ color: currentColors.text }}>Change Password</Text>
             <Ionicons
               name="chevron-forward-outline"
               color={currentColors.secondary}
@@ -252,7 +252,7 @@ const Help = () => {
               justifyContent: "space-between",
               alignItems: "center",
             }}>
-            <Text style={{ color: currentColors.text }}>Report a problem</Text>
+            <Text style={{ color: currentColors.text }}>Notifications</Text>
             <Ionicons
               name="chevron-forward-outline"
               color={currentColors.secondary}
@@ -273,7 +273,7 @@ const Help = () => {
               justifyContent: "space-between",
               alignItems: "center",
             }}>
-            <Text style={{ color: currentColors.text }}>App Version</Text>
+            <Text style={{ color: currentColors.text }}>Log Out</Text>
             <Ionicons
               name="chevron-forward-outline"
               color={currentColors.secondary}
@@ -294,29 +294,7 @@ const Help = () => {
               justifyContent: "space-between",
               alignItems: "center",
             }}>
-            <Text style={{ color: currentColors.text }}>
-              Terms and Conditions
-            </Text>
-            <Ionicons
-              name="chevron-forward-outline"
-              color={currentColors.secondary}
-              size={24}
-            />
-          </TouchableOpacity>
-        </Animatable.View>
-        <Animatable.View animation={"fadeInUp"} delay={200}>
-          <TouchableOpacity
-            onPress={() => setisDeleteAccountModaActive(true)}
-            style={{
-              width: "100%",
-              backgroundColor: currentColors.backgroundDarker,
-              padding: 15,
-              borderRadius: 10,
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}>
-            <Text style={{ color: currentColors.text }}>About Spotfix</Text>
+            <Text style={{ color: currentColors.text }}>Delete Account</Text>
             <Ionicons
               name="chevron-forward-outline"
               color={currentColors.secondary}
@@ -328,4 +306,4 @@ const Help = () => {
     </View>
   );
 };
-export default Help;
+export default UserSettings;
