@@ -202,14 +202,14 @@ const Index = () => {
               />
             </Animatable.View>
 
-            <TouchableOpacity onPress={handleLogInPress} style={{ zIndex: 3 }}>
+            <Pressable onPress={handleLogInPress} style={{ zIndex: 3 }}>
               <Animatable.Text
                 animation="fadeInUp"
                 duration={600}
                 style={styles.loginBtn}>
-                Log in
+                Log in Now
               </Animatable.Text>
-            </TouchableOpacity>
+            </Pressable>
 
             <View
               style={{

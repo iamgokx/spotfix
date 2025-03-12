@@ -13,38 +13,75 @@ import {
   Switch,
 } from "react-native";
 import { ScrollView } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import { useIssueContext } from "@/context/IssueContext";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
 import * as Animatable from "react-native-animatable";
+import axios from "axios";
+import { API_IP_ADDRESS } from "../../ipConfig.json";
 const Issue = ({ goToAddressScreen }: any) => {
   const router = useRouter();
   const { details, setDetails, clearDetails } = useIssueContext();
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
   const [isEnabled, setIsEnabled] = useState(false);
-
+  const [errors, setErrors] = useState({});
   const toggleSwitch = () => setDetails((previousState) => !previousState);
 
-  const departments = [
-    "Public Works Department",
-    "Electricity Department",
-    "Municipal Administration",
-    "Department of Water Resources",
-    "Department of Health",
-    "Department of Transport",
-    "Department of Environment and Forests",
-    "Department of Tourism",
-    "Department of Rural Development",
-    "Department of Agriculture",
-    "Department of Social Welfare",
-  ];
+  // const departments = [
+  //   "Public Works Department",
+  //   "Electricity Department",
+  //   "Municipal Administration",
+  //   "Department of Water Resources",
+  //   "Department of Health",
+  //   "Department of Transport",
+  //   "Department of Environment and Forests",
+  //   "Department of Tourism",
+  //   "Department of Rural Development",
+  //   "Department of Agriculture",
+  //   "Department of Social Welfare",
+  // ];
+
+  const [departmentData, setdepartmentData] = useState();
+
+  const getDepartmentList = async () => {
+    try {
+      const response = await axios.post(
+        `http://${API_IP_ADDRESS}:8000/api/department/getDepartments`
+      );
+
+      if (response.data.status) {
+        console.log(response.data.results);
+        setdepartmentData(response.data.results);
+      } else {
+        console.log("no departments");
+        return;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getDepartmentList();
+  }, []);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [userSelectedDep, setuserSelectedDep] = useState();
+
+  function getDepartmentName(departmentId) {
+    const department = departmentData.find(
+      (dep) => dep.department_id === departmentId
+    );
+    return department ? department.department_name : "Department not found";
+  }
 
   const handleSelect = (dep: string) => {
+    const a = getDepartmentName(dep);
+    console.log(a);
+    setuserSelectedDep(a);
     setDetails((prev) => ({ ...prev, department: dep }));
     setIsModalVisible(false);
   };
@@ -52,6 +89,67 @@ const Issue = ({ goToAddressScreen }: any) => {
   const handleClearButtonPress = () => {
     clearDetails();
     router.push("/home/reportIssue");
+  };
+
+  const safeDetails = details || {};
+  const validate = () => {
+    let valid = true;
+    let newErrors = {};
+
+    if (!safeDetails.title || safeDetails.title.trim() === "") {
+      newErrors.title = "Please enter title";
+      valid = false;
+    } else if (/^\d+$/.test(safeDetails.title)) {
+      newErrors.title = "Title cannot contain only numbers";
+      valid = false;
+    } else if (safeDetails.title.length < 20) {
+      newErrors.title = "Title should be at least 20 characters long";
+    } else if (safeDetails.title.length <= 100) {
+      newErrors.title = "Title should be at most 100 characters long";
+    }
+
+    if (!safeDetails.description || safeDetails.description.trim() === "") {
+      newErrors.description = "Please enter description";
+      valid = false;
+    } else if (/^\d+$/.test(safeDetails.description)) {
+      newErrors.description = "Description cannot contain only numbers";
+      valid = false;
+    } else if (safeDetails.description.length < 50) {
+      newErrors.description =
+        "Description should be at least 50 characters long";
+    }
+
+    if (!safeDetails.suggestions || safeDetails.suggestions.trim() === "") {
+      newErrors.suggestions = "Please enter suggestions";
+      valid = false;
+    } else if (/^\d+$/.test(safeDetails.suggestions)) {
+      newErrors.suggestions = "suggestions cannot contain only numbers";
+      valid = false;
+    } else if (safeDetails.suggestions.length < 50) {
+      newErrors.suggestions =
+        "Description should be at least 50 characters long";
+    }
+
+    if (!safeDetails.department) {
+      newErrors.department = "Please select department";
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
+  const handleNextButtonPress = () => {
+    if (validate()) {
+      console.log();
+      console.log();
+      console.log();
+      console.log();
+      console.log();
+      console.log(details);
+      router.push("/issues/issueLocation");
+    } else {
+      console.log("enter all details");
+    }
   };
 
   return (
@@ -132,6 +230,11 @@ const Issue = ({ goToAddressScreen }: any) => {
               }
               placeholderTextColor={currentColors.textShade}
               placeholder="eg. Broke Street Light"></TextInput>
+            {errors.title && (
+              <Text style={{ color: "red", textAlign: "center" }}>
+                {errors.title}
+              </Text>
+            )}
           </View>
           <View style={styles.subContainer}>
             <Text style={[styles.inputTitles, { color: currentColors.text }]}>
@@ -152,6 +255,11 @@ const Issue = ({ goToAddressScreen }: any) => {
               }
               placeholder="Briefly describe your issue"
               placeholderTextColor={currentColors.textShade}></TextInput>
+            {errors.description && (
+              <Text style={{ color: "red", textAlign: "center" }}>
+                {errors.description}
+              </Text>
+            )}
           </View>
           <View style={styles.subContainer}>
             <Text style={[styles.inputTitles, { color: currentColors.text }]}>
@@ -172,6 +280,11 @@ const Issue = ({ goToAddressScreen }: any) => {
               }
               placeholderTextColor={currentColors.textShade}
               placeholder="Tell us about your solutions and suggestions to fix this issue"></TextInput>
+            {errors.suggestions && (
+              <Text style={{ color: "red", textAlign: "center" }}>
+                {errors.suggestions}
+              </Text>
+            )}
           </View>
           <View style={styles.subContainer}>
             <Text style={[styles.inputTitles, { color: currentColors.text }]}>
@@ -184,9 +297,15 @@ const Issue = ({ goToAddressScreen }: any) => {
               ]}
               onPress={() => setIsModalVisible(true)}>
               <Text style={[styles.dropdownText, { color: "white" }]}>
-                {details.department || "Choose a department"}
+                {userSelectedDep || "Choose a department"}
               </Text>
             </TouchableOpacity>
+
+            {errors.department && (
+              <Text style={{ color: "red", textAlign: "center" }}>
+                {errors.department}
+              </Text>
+            )}
           </View>
           {isModalVisible && (
             <Modal
@@ -202,17 +321,17 @@ const Issue = ({ goToAddressScreen }: any) => {
                     { backgroundColor: currentColors.background },
                   ]}>
                   <FlatList
-                    data={departments}
+                    data={departmentData}
                     renderItem={({ item }) => (
                       <TouchableOpacity
                         style={styles.item}
-                        onPress={() => handleSelect(item)}>
+                        onPress={() => handleSelect(item.department_id)}>
                         <Text
                           style={[
                             styles.itemText,
                             { color: currentColors.text },
                           ]}>
-                          {item}
+                          {item.department_name}
                         </Text>
                       </TouchableOpacity>
                     )}
@@ -240,7 +359,7 @@ const Issue = ({ goToAddressScreen }: any) => {
                 styles.btnContainer,
                 { backgroundColor: currentColors.secondary },
               ]}
-              onPress={() => router.push("/issues/issueLocation")}>
+              onPress={handleNextButtonPress}>
               <Text style={styles.nextButton}>Next</Text>
             </TouchableOpacity>
           </View>
@@ -361,6 +480,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     padding: 10,
     textAlignVertical: "top",
+    marginBottom: 10,
   },
   dataInput: {
     width: "100%",
@@ -423,6 +543,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     flexDirection: "row",
+    marginVertical: 20,
   },
   nextButton: {
     color: "white",

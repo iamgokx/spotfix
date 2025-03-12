@@ -22,7 +22,7 @@ import axios from "axios";
 import { getStoredRawToken, getStoredData } from "../../hooks/useJwt";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
-import * as Animatable from 'react-native-animatable'
+import * as Animatable from "react-native-animatable";
 export default function IssueMedia() {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
@@ -148,8 +148,35 @@ export default function IssueMedia() {
     }
   };
 
+  const [errors, setErrors] = useState({});
+  const safeDetails = details || {};
+  const validate = () => {
+    let valid = true;
+    let newErrors = {};
+
+    if (safeDetails.media.length < 1) {
+      newErrors.media = "Please select atlease 1 image";
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
+  const handleNextButtonPress = () => {
+    if (validate()) {
+      submitIssue();
+    } else {
+      console.log("enter all details");
+    }
+  };
+
   return (
-    <View style={[styles.container,{backgroundColor : currentColors.backgroundDarker}]}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: currentColors.backgroundDarker },
+      ]}>
       <StatusBar
         barStyle={"light-content"}
         backgroundColor="transparent"
@@ -160,11 +187,15 @@ export default function IssueMedia() {
           resizeMode="cover"
           source={require("../../assets/images/blobs/b8.png")}
           style={styles.imgBack}>
-          <Animatable.Text animation='fadeInDown' style={styles.title}>Create your report</Animatable.Text>
-          <Animatable.Text animation='fadeInDown' style={styles.subTitle}>
+          <Animatable.Text animation="fadeInDown" style={styles.title}>
+            Create your report
+          </Animatable.Text>
+          <Animatable.Text animation="fadeInDown" style={styles.subTitle}>
             Add relevant images for your issue
           </Animatable.Text>
-          <Animatable.View animation='fadeInDown' style={styles.progressContainer}>
+          <Animatable.View
+            animation="fadeInDown"
+            style={styles.progressContainer}>
             <Text style={styles.progressBarOne}></Text>
             <Text style={styles.progressBarTwo}></Text>
             <Text style={styles.progressBarThree}></Text>
@@ -172,7 +203,7 @@ export default function IssueMedia() {
         </ImageBackground>
       </View>
 
-      <Animatable.View animation='fadeInUp' style={styles.dataContainer}>
+      <Animatable.View animation="fadeInUp" style={styles.dataContainer}>
         <TouchableOpacity style={styles.dropContainer} onPress={pickMedia}>
           <LottieView
             source={uploadMedia}
@@ -180,8 +211,14 @@ export default function IssueMedia() {
             loop
             style={{ width: 200, height: 200, marginBottom: -30 }}
           />
-          <Text style={{color : currentColors.text}}>Upload Media</Text>
+          <Text style={{ color: currentColors.text }}>Upload Media</Text>
         </TouchableOpacity>
+
+        {errors.media && (
+          <Text style={{ color: "red", textAlign: "center" }}>
+            {errors.media}
+          </Text>
+        )}
 
         <View style={styles.mediaContainer}>
           {details.media.map((item, index) => (
@@ -206,14 +243,22 @@ export default function IssueMedia() {
 
         <View style={styles.btnMainContainer}>
           <TouchableOpacity
-            style={[styles.backBtnContainer,{borderColor : currentColors.secondary}]}
+            style={[
+              styles.backBtnContainer,
+              { borderColor: currentColors.secondary },
+            ]}
             onPress={() => router.back()}>
-            <Text style={[styles.backButton,{color:currentColors.secondary
-            }]}>Back</Text>
+            <Text
+              style={[styles.backButton, { color: currentColors.secondary }]}>
+              Back
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.btnContainer,{backgroundColor : currentColors.secondary}]}
-            onPress={() => submitIssue()}>
+            style={[
+              styles.btnContainer,
+              { backgroundColor: currentColors.secondary },
+            ]}
+            onPress={handleNextButtonPress}>
             {/* onPress={() => router.push("/issues/SaveIssue")}> */}
             <Text style={styles.nextButton}>Next</Text>
           </TouchableOpacity>
@@ -417,5 +462,4 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     borderBottomRightRadius: 20,
   },
- 
 });

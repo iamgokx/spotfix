@@ -28,6 +28,11 @@ import * as Animatable from "react-native-animatable";
 import LottieView from "lottie-react-native";
 import uploadMedia from "../../assets/images/issues/uploadMedia.json";
 import * as DocumentPicker from "expo-document-picker";
+import axios from "axios";
+import { API_IP_ADDRESS } from "../../ipConfig.json";
+import { useEffect } from "react";
+import { getStoredData } from "@/hooks/useJwt";
+import { nextWednesday } from "date-fns";
 const CreateAnnouncement = ({ goToAddressScreen }: any) => {
   const router = useRouter();
   const {
@@ -41,10 +46,70 @@ const CreateAnnouncement = ({ goToAddressScreen }: any) => {
   } = useAnnouncementContext();
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
+  const [errors, setErrors] = useState({});
+  const [departmentDetails, setdepartmentDetails] = useState();
 
   const handleRemoveItem = (uri: string) => {
     removeMedia(uri);
   };
+  const addedDetails = details || {};
+  const validateAnnouncement = () => {
+    let valid = true;
+    let newErrors = {};
+
+    if (!addedDetails.title) {
+      newErrors.title = "Announcement title is required";
+      valid = false;
+    }
+
+    if (!addedDetails.generatedAddress) {
+      newErrors.generatedAddress = "Please select the locaton";
+      valid = false;
+    }
+
+    if (addedDetails.media.length < 1) {
+      newErrors.media = "Please select at leaset 1 media file";
+      valid = false;
+      console.log("media array lenght : ", details.media.length);
+    }
+
+    setErrors(newErrors);
+    // return valid;
+    return true;
+  };
+
+  const handleNextBtnPress = () => {
+    if (validateAnnouncement()) {
+      router.push("/branchAnnouncement/AnnoucnementDescription");
+    } else {
+      console.log("add all fields ");
+    }
+  };
+
+  useEffect(() => {
+    const getDepartmentDetails = async () => {
+      try {
+        const user = await getStoredData();
+        console.log(user);
+        const idResponse = await axios.post(
+          `http://${API_IP_ADDRESS}:8000/api/department/getDepartmentId`,
+          {
+            email: user.email,
+          }
+        );
+
+        if (idResponse) {
+          console.log(idResponse.data.results);
+          setdepartmentDetails(idResponse.data.results);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getDepartmentDetails();
+  }, []);
+
   const pickMedia = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
@@ -142,7 +207,6 @@ const CreateAnnouncement = ({ goToAddressScreen }: any) => {
             style={styles.progressContainer}>
             <Text style={styles.progressBarOne}></Text>
             <Text style={styles.progressBarTwo}></Text>
-            
           </Animatable.View>
         </ImageBackground>
       </View>
@@ -168,9 +232,15 @@ const CreateAnnouncement = ({ goToAddressScreen }: any) => {
               }
               placeholderTextColor={currentColors.textShade}
               placeholder="eg. Major Power Outage in Tiswadi"></TextInput>
+            {errors.title && (
+              <Text
+                style={{ color: "red", textAlign: "center", marginTop: 10 }}>
+                {errors.title}
+              </Text>
+            )}
           </View>
           <View style={styles.subContainer}>
-          <Text style={[styles.inputTitles, { color: currentColors.text }]}>
+            <Text style={[styles.inputTitles, { color: currentColors.text }]}>
               Location
             </Text>
             <TouchableOpacity
@@ -199,6 +269,12 @@ const CreateAnnouncement = ({ goToAddressScreen }: any) => {
                 </Text>
               )}
             </TouchableOpacity>
+            {errors.generatedAddress && (
+              <Text
+                style={{ color: "red", textAlign: "center", marginTop: 10 }}>
+                {errors.generatedAddress}
+              </Text>
+            )}
           </View>
 
           <TouchableOpacity style={styles.dropContainer} onPress={pickMedia}>
@@ -211,6 +287,11 @@ const CreateAnnouncement = ({ goToAddressScreen }: any) => {
             <Text style={{ color: currentColors.text }}>Upload Media</Text>
           </TouchableOpacity>
 
+          {errors.media && (
+            <Text style={{ color: "red", textAlign: "center" }}>
+              {errors.media}
+            </Text>
+          )}
           <View style={styles.mediaContainer}>
             {details.media.map((item, index) => (
               <View key={index} style={styles.mediaItem}>
@@ -232,7 +313,7 @@ const CreateAnnouncement = ({ goToAddressScreen }: any) => {
             ))}
           </View>
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.dropContainer}
             onPress={pickDocuments}>
             <LottieView
@@ -282,11 +363,9 @@ const CreateAnnouncement = ({ goToAddressScreen }: any) => {
                 </Text>
               )}
             </View>
-          )}
+          )} */}
 
-
-
-<View style={styles.btnMainContainer}>
+          <View style={styles.btnMainContainer}>
             <TouchableOpacity
               style={[
                 styles.backBtnContainer,
@@ -303,15 +382,12 @@ const CreateAnnouncement = ({ goToAddressScreen }: any) => {
                 styles.btnContainer,
                 { backgroundColor: currentColors.secondary },
               ]}
-             
-              onPress={() => router.push("/branchAnnouncement/AnnoucnementDescription")}> 
+              onPress={handleNextBtnPress}>
               <Text style={styles.nextButton}>Next</Text>
             </TouchableOpacity>
           </View>
         </Animatable.View>
-        
       </TouchableWithoutFeedback>
-    
     </ScrollView>
   );
 };
@@ -335,12 +411,10 @@ function VideoComponent({ uri }: { uri: string }) {
   );
 }
 
-
-
 export const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    paddingBottom: 20, 
+    paddingBottom: 20,
     backgroundColor: "rgb(230, 240, 255)",
   },
   headerContainer: {
@@ -348,15 +422,14 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
-        borderBottomLeftRadius: 30,
-        borderBottomRightRadius: 30,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
   },
   imgBack: {
     width: "100%",
     height: 200,
     justifyContent: "center",
     alignItems: "center",
-
   },
   title: {
     fontSize: 22,
@@ -402,12 +475,10 @@ export const styles = StyleSheet.create({
     padding: 20,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
- gap : 20,
-   
+    gap: 20,
   },
   subContainer: {
     marginBottom: 15,
-   
   },
   inputTitles: {
     fontSize: 16,
@@ -429,21 +500,20 @@ export const styles = StyleSheet.create({
   dropContainer: {
     alignItems: "center",
     justifyContent: "center",
-        borderRadius: 50,
+    borderRadius: 50,
     borderWidth: 2,
     borderColor: "#0066ff",
     borderStyle: "dashed",
-   
+
     paddingVertical: 20,
     marginBottom: 15,
-  
   },
   mediaContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
     marginBottom: 15,
-    gap : 10,
+    gap: 10,
   },
   mediaItem: {
     width: "48%",
@@ -470,7 +540,7 @@ export const styles = StyleSheet.create({
   },
   documentContainer: {
     marginTop: 10,
-   
+
     padding: 10,
     borderRadius: 10,
   },

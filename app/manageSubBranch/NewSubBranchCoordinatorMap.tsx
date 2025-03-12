@@ -7,19 +7,14 @@ import "../../global.css";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { ActivityIndicator } from "react-native";
-import { useIssueContext } from "@/context/IssueContext";
+import { useSubBranch } from "@/context/newSubBranchContext";
 import LottieView from "lottie-react-native";
 import loading from "../../assets/images/welcome/loading.json";
-import { Colors } from "@/constants/Colors";
-import { useColorScheme } from "react-native";
-const IssueMap = ({ goToAddressScreen }: any) => {
-  const colorScheme = useColorScheme();
-  const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
-
+const NewSubBranchCoordinatorMap = ({ goToAddressScreen }: any) => {
   const [marker, setmarker] = useState("");
   const [userAddress, setAddress] = useState("");
   const [addressLoaded, setaddressLoaded] = useState(false);
-  const { details, setDetails } = useIssueContext();
+  const { coordinator, setCoordinator } = useSubBranch();
   const [isloading, setisloading] = useState(false);
   const onMapPress = async (event: any) => {
     setisloading(true);
@@ -28,7 +23,7 @@ const IssueMap = ({ goToAddressScreen }: any) => {
 
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`,
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addresscoordinator=1`,
         {
           headers: {
             "User-Agent": "spotfix/1.0 (lekhwargokul84@gmail.com)",
@@ -59,21 +54,8 @@ const IssueMap = ({ goToAddressScreen }: any) => {
         setAddress(data.display_name);
 
         setaddressLoaded(true);
-        setDetails((prev) => ({ ...prev, latitude: latitude }));
-        setDetails((prev) => ({ ...prev, longitude: longitude }));
-        setDetails((prev) => ({
-          ...prev,
-          generatedAddress: data.display_name,
-        }));
-        setDetails((prev) => ({ ...prev, generatedLocality: locality }));
-        console.log(data.display_name);
-        console.log(postcode);
-        console.log(city);
-        console.log(state);
-        setDetails((prev) => ({ ...prev, generatedState: state }));
-        setDetails((prev) => ({ ...prev, generatedCity: city }));
-        setDetails((prev) => ({ ...prev, generatedPincode: postcode }));
-
+        setCoordinator((prev) => ({ ...prev, latitude: latitude }));
+        setCoordinator((prev) => ({ ...prev, longitude: longitude }));
         setisloading(false);
       } else {
         setAddress("Please replace your marker nearby, error getting address");
@@ -85,7 +67,7 @@ const IssueMap = ({ goToAddressScreen }: any) => {
 
   const handleConfirmAddressClick = () => {
     goToAddressScreen();
-    console.log(details);
+    console.log(coordinator);
   };
 
   return (
@@ -119,7 +101,7 @@ const IssueMap = ({ goToAddressScreen }: any) => {
               color="blue"
               size={40}
               style={{ width: 40 }}></Ionicons>
-            <View style={{ paddingHorizontal: 10 }}>
+            <View>
               <Text style={styles.addressText}>Location Detected</Text>
               <Text>{userAddress}</Text>
             </View>
@@ -151,7 +133,7 @@ const styles = StyleSheet.create({
     left: 20,
     right: 20,
     backgroundColor: "white",
-    paddingHorizontal: 20,
+    paddingHorizontal: 40,
     paddingTop: 10,
     borderRadius: 30,
     shadowColor: "#000",
@@ -169,6 +151,7 @@ const styles = StyleSheet.create({
     color: "blue",
   },
   confirmButton: {
+    width: "50%",
     backgroundColor: "#0066ff",
     paddingVertical: 15,
     paddingHorizontal: 20,
@@ -200,4 +183,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default IssueMap;
+export default NewSubBranchCoordinatorMap;

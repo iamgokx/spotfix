@@ -21,6 +21,9 @@ const PasswordLayout = () => {
           headerTitleAlign: "center",
         }}>
         <Stack.Screen name="index" />
+        <Stack.Screen name="PasswordOtp" />
+        <Stack.Screen name="newPassword" />
+        <Stack.Screen name="userLogout" />
       </Stack>
     </ProfileProvider>
   );

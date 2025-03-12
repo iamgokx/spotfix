@@ -17,14 +17,78 @@ import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
 import LottieView from "lottie-react-native";
 import deopPinOnMap from "../../assets/images/issues/selectLocationOnMap.json";
-import * as Animatable from 'react-native-animatable'
+import * as Animatable from "react-native-animatable";
+import { useState } from "react";
 const IssueLocation = () => {
   const { details, setDetails } = useIssueContext();
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
   const router = useRouter();
+
+  const [errors, setErrors] = useState({});
+  const safeDetails = details || {};
+  const validate = () => {
+    let valid = true;
+    let newErrors = {};
+
+    if (
+      !safeDetails.generatedAddress ||
+      safeDetails.generatedAddress.trim() === ""
+    ) {
+      newErrors.generatedAddress = "Please select the location";
+      valid = false;
+    }
+
+    if (!safeDetails.generatedCity || safeDetails.generatedCity.trim() === "") {
+      newErrors.generatedCity = "Please enter the city";
+      valid = false;
+    }
+
+    if (
+      !safeDetails.generatedLocality ||
+      safeDetails.generatedLocality.trim() === ""
+    ) {
+      newErrors.generatedLocality = "Please enter the locality";
+      valid = false;
+    }
+    if (
+      !safeDetails.generatedPincode ||
+      safeDetails.generatedPincode.trim() === ""
+    ) {
+      newErrors.generatedPincode = "Please enter the pincode";
+      valid = false;
+    }
+    if (
+      !safeDetails.generatedState ||
+      safeDetails.generatedState.trim() === ""
+    ) {
+      newErrors.generatedState = "Please enter the state";
+      valid = false;
+    } else if (
+      safeDetails.generatedState != "Goa" ||
+      safeDetails.generatedState != "goa"
+    ) {
+      newErrors.generatedState = "Please enter location from goa";
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
+  const handleNextButtonPress = () => {
+    if (validate()) {
+      router.push("/issues/IssueMedia");
+    } else {
+      console.log("enter all details");
+    }
+  };
+  
   return (
-    <View style={[styles.container,{backgroundColor : currentColors.backgroundDarker}]}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: currentColors.backgroundDarker },
+      ]}>
       <StatusBar
         barStyle={"light-content"}
         backgroundColor="transparent"
@@ -35,11 +99,15 @@ const IssueLocation = () => {
           resizeMode="cover"
           source={require("../../assets/images/blobs/b8.png")}
           style={styles.imgBack}>
-          <Animatable.Text animation='fadeInDown' style={styles.title}>Create your report</Animatable.Text>
-          <Animatable.Text animation='fadeInDown' style={styles.subTitle}>
+          <Animatable.Text animation="fadeInDown" style={styles.title}>
+            Create your report
+          </Animatable.Text>
+          <Animatable.Text animation="fadeInDown" style={styles.subTitle}>
             Fill in with the details to get your report registered
           </Animatable.Text>
-          <Animatable.View animation='fadeInDown' style={styles.progressContainer}>
+          <Animatable.View
+            animation="fadeInDown"
+            style={styles.progressContainer}>
             <Text style={styles.progressBarOne}></Text>
             <Text style={styles.progressBarTwo}></Text>
             <Text style={styles.progressBarThree}></Text>
@@ -47,19 +115,28 @@ const IssueLocation = () => {
         </ImageBackground>
       </View>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <Animatable.View animation='fadeInUp' style={styles.dataContainer}>
-         {!details.generatedAddress &&  <TouchableOpacity
-            onPress={() => router.push("/issues/IssueMap")}
-            style={styles.mapContainer}>
-            <Text className="text-white text-xl" style={styles.mapText}>
-              Drop Pin On Map
-            </Text>
-            <Ionicons
-              name="location"
-              color="orange"
-              size={32}
-              style={{ marginRight: 10 }}></Ionicons>
-          </TouchableOpacity>}
+        <Animatable.View animation="fadeInUp" style={styles.dataContainer}>
+          {!details.generatedAddress && (
+            <>
+              <TouchableOpacity
+                onPress={() => router.push("/issues/IssueMap")}
+                style={styles.mapContainer}>
+                <Text className="text-white text-xl" style={styles.mapText}>
+                  Drop Pin On Map
+                </Text>
+                <Ionicons
+                  name="location"
+                  color="orange"
+                  size={32}
+                  style={{ marginRight: 10 }}></Ionicons>
+              </TouchableOpacity>
+              {errors.generatedAddress && (
+                <Text style={{ color: "red", textAlign: "center" }}>
+                  {errors.generatedAddress}
+                </Text>
+              )}
+            </>
+          )}
 
           {!details.generatedAddress && (
             <View style={styles.imgContainer}>
@@ -74,9 +151,17 @@ const IssueLocation = () => {
 
           {details.generatedAddress != "" && (
             <View style={styles.subContainer}>
-              <Text style={[styles.inputTitles,{color : currentColors.text}]}>Location Details</Text>
+              <Text style={[styles.inputTitles, { color: currentColors.text }]}>
+                Location Details
+              </Text>
               <TextInput
-                style={[styles.dataInput,{backgroundColor : currentColors.inputField, color : currentColors.text}]}
+                style={[
+                  styles.dataInput,
+                  {
+                    backgroundColor: currentColors.inputField,
+                    color: currentColors.text,
+                  },
+                ]}
                 multiline={true}
                 editable={details.generatedAddress == undefined ? true : false}
                 value={details.generatedAddress}
@@ -85,41 +170,83 @@ const IssueLocation = () => {
                 }}
                 placeholder="Address"></TextInput>
               <TextInput
-                style={[styles.cityTown,{backgroundColor : currentColors.inputField, color : currentColors.text}]}
+                style={[
+                  styles.cityTown,
+                  {
+                    backgroundColor: currentColors.inputField,
+                    color: currentColors.text,
+                  },
+                ]}
                 editable={details.generatedCity == undefined ? true : false}
                 onChangeText={(text) => {
                   setDetails((prev) => ({ ...prev, generatedCity: text }));
                 }}
                 value={details.generatedCity}
                 placeholder="City / Town"></TextInput>
+              {errors.generatedCity && (
+                <Text style={{ color: "red", textAlign: "center" }}>
+                  {errors.generatedCity}
+                </Text>
+              )}
               <TextInput
-                style={[styles.street,{backgroundColor : currentColors.inputField, color : currentColors.text}]}
+                style={[
+                  styles.street,
+                  {
+                    backgroundColor: currentColors.inputField,
+                    color: currentColors.text,
+                  },
+                ]}
                 editable={details.generatedPincode == undefined ? true : false}
                 onChangeText={(text) => {
                   setDetails((prev) => ({ ...prev, generatedPincode: text }));
                 }}
                 value={details.generatedPincode}
                 placeholder="Pincode"></TextInput>
+              {errors.generatedPincode && (
+                <Text style={{ color: "red", textAlign: "center" }}>
+                  {errors.generatedPincode}
+                </Text>
+              )}
               <TextInput
-                style={[styles.street,{backgroundColor : currentColors.inputField, color : currentColors.text}]}
+                style={[
+                  styles.street,
+                  {
+                    backgroundColor: currentColors.inputField,
+                    color: currentColors.text,
+                  },
+                ]}
                 editable={details.generatedState == undefined ? true : false}
                 value={details.generatedState}
                 onChangeText={(text) => {
                   setDetails((prev) => ({ ...prev, generatedState: text }));
                 }}
                 placeholder="State"></TextInput>
+              {errors.generatedState && (
+                <Text style={{ color: "red", textAlign: "center" }}>
+                  {errors.generatedAddress}
+                </Text>
+              )}
             </View>
           )}
 
           <View style={styles.btnMainContainer}>
             <TouchableOpacity
-              style={[styles.backBtnContainer,{borderColor : currentColors.secondary}]}
+              style={[
+                styles.backBtnContainer,
+                { borderColor: currentColors.secondary },
+              ]}
               onPress={() => router.back()}>
-              <Text style={[styles.backButton, {color : currentColors.secondary}]}>Back</Text>
+              <Text
+                style={[styles.backButton, { color: currentColors.secondary }]}>
+                Back
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.btnContainer, {backgroundColor : currentColors.secondary}]}
-              onPress={() => router.push("/issues/IssueMedia")}>
+              style={[
+                styles.btnContainer,
+                { backgroundColor: currentColors.secondary },
+              ]}
+              onPress={handleNextButtonPress}>
               <Text style={styles.nextButton}>Next</Text>
             </TouchableOpacity>
           </View>

@@ -1,10 +1,19 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Feather } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
+import { Button } from "react-native";
+import * as Animatable from "react-native-animatable";
+import CustomHeader from "@/components/branchCoordinators/CustomHeader";
 const Home = () => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
@@ -17,27 +26,13 @@ const Home = () => {
         styles.container,
         { backgroundColor: currentColors.backgroundDarkest },
       ]}>
-      <View
-        style={[
-          styles.header,
-          {
-            paddingTop: insets.top + 10,
-            backgroundColor: currentColors.background,
-          },
-        ]}>
-        <TouchableOpacity onPress={() => navigation.openDrawer()}>
-          <Feather name="menu" size={24} color={currentColors.secondary} />
-        </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: currentColors.secondary }]}>
-          Welcome Gokul
-        </Text>
-        <View style={{ width: 24 }} />
-      </View>
-
-      <Text style={{ color: "white" }}>Welcome to Home Screen</Text>
+      <CustomHeader title="Dashboard" />
     </View>
   );
 };
+{
+  /* <Button title="Open Drawer" onPress={() => navigation.openDrawer()} /> */
+}
 
 const styles = StyleSheet.create({
   container: {

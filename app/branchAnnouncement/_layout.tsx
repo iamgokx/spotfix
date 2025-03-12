@@ -21,6 +21,7 @@ const BranchLayout = () => {
             <Stack.Screen name="CreateAnnouncement" />
             <Stack.Screen name="AnnouncementMap" />
             <Stack.Screen name="AnnoucnementDescription" />
+            <Stack.Screen name="DetailedAnnouncement" />
           </Stack>
         </GestureHandlerRootView>
       </SearchProvider>

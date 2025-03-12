@@ -5,54 +5,49 @@ import {
   FlatList,
   StyleSheet,
   RefreshControl,
-  TouchableOpacity,
-  ImageBackground,
-  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
 import { API_IP_ADDRESS } from "../../ipConfig.json";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useSearch } from "@/context/adminSearchContext";
 import { getStoredData } from "@/hooks/useJwt";
 import Fuse from "fuse.js";
-import background from "../../assets/images/gradients/bluegradient.png";
-import { useRouter } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
-const ManageSubBranchCoordinators = () => {
-  const [subBranchCoordinatorData, setsubBranchCoordinatorData] = useState([]);
-  const router = useRouter();
+import {} from "@expo/vector-icons";
+const Subscribers = () => {
+  const [subscribersData, setSubscribersData] = useState([]);
   const [filteredCitizens, setFilteredCitizens] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
+
   const colorScheme = useColorScheme();
   const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
   const { searchValue } = useSearch();
-  const insets = useSafeAreaInsets();
-  
-  const getSubBranchCoordinators = async () => {
+
+  const getSubscribers = async () => {
     setRefreshing(true);
     setLoading(true);
 
     try {
       const user = await getStoredData();
+      console.log("this is user email - ", user.email);
       const response = await axios.post(
-        `http://${API_IP_ADDRESS}:8000/api/branchCoordinator/getSubBranchCoordinators`,
+        `http://${API_IP_ADDRESS}:8000/api/branchCoordinator/getSubscribers`,
         { email: user.email }
       );
 
       if (response.data.status && response.data.results.length > 0) {
         console.log("Subscribers fetched:", response.data.results);
-        setsubBranchCoordinatorData(response.data.results);
+        setSubscribersData(response.data.results);
       } else {
         console.log("No subscribers found");
-        setsubBranchCoordinatorData([]);
+        setSubscribersData([]);
       }
     } catch (error) {
       console.log("Error fetching subscribers:", error);
-      setsubBranchCoordinatorData([]);
+      setSubscribersData([]);
     } finally {
       setRefreshing(false);
       setLoading(false);
@@ -60,14 +55,14 @@ const ManageSubBranchCoordinators = () => {
   };
 
   useEffect(() => {
-    getSubBranchCoordinators();
+    getSubscribers();
   }, []);
 
   useEffect(() => {
     if (searchValue.trim().length < 2) {
-      setFilteredCitizens(subBranchCoordinatorData);
+      setFilteredCitizens(subscribersData);
     } else {
-      const fuse = new Fuse(subBranchCoordinatorData, {
+      const fuse = new Fuse(subscribersData, {
         keys: ["full_name", "locality", "pincode"],
         threshold: 0.3,
       });
@@ -75,7 +70,11 @@ const ManageSubBranchCoordinators = () => {
         fuse.search(searchValue).map((result) => result.item)
       );
     }
-  }, [searchValue, subBranchCoordinatorData]);
+  }, [searchValue, subscribersData]);
+
+  const handleRefresh = useCallback(() => {
+    getSubscribers();
+  }, []);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -86,26 +85,35 @@ const ManageSubBranchCoordinators = () => {
   const renderItem = ({ item }) => (
     <View
       style={[
-        styles.departmentContainer,
+        styles.subscriberContainer,
         { backgroundColor: currentColors.backgroundDarker },
       ]}>
-      <View style={{ width: "95%" }}>
+      <Image
+        source={{
+          uri: `http://${API_IP_ADDRESS}:8000/uploads/profile/${item.picture_name}`,
+        }}
+        style={styles.logo}
+      />
+
+      <View style={styles.subscriberDetails}>
         <Text
           style={[
             styles.citizenInfo,
-            { color: currentColors.secondary, fontSize: 20 },
+            { color: currentColors.secondary, fontSize: 18 },
           ]}>
-          Name: {item.full_name}
+          {item.full_name}
         </Text>
         <Text style={[styles.citizenInfo, { color: currentColors.textShade }]}>
-          Email : {item.sub_department_coordinator_id}
+          📧 {item.email}
         </Text>
         <Text style={[styles.citizenInfo, { color: currentColors.textShade }]}>
-          Address : {item.latitude}, {item.longitude}
+          📍 {item.locality}, {item.pincode}
         </Text>
-
+        <Text style={[styles.citizenInfo, { color: currentColors.textShade }]}>
+          🗓 Joined: {formatDate(item.registration_date_time)}
+        </Text>
         <Text style={[styles.citizenInfo, { color: currentColors.secondary }]}>
-          {item.department_name}
+          📞 +91 {item.phone_number}
         </Text>
       </View>
     </View>
@@ -115,34 +123,15 @@ const ManageSubBranchCoordinators = () => {
     <View
       style={[
         styles.container,
-        {
-          backgroundColor: currentColors.backgroundDarkest,
-          paddingTop: 10,
-          position: "relative",
-        },
+        { backgroundColor: currentColors.backgroundDarkest },
       ]}>
-      <ImageBackground
-        source={background}
-        style={{
-          borderRadius: 50,
-          overflow: "hidden",
-          position: "absolute",
-          bottom: insets.bottom + 15,
-          right: insets.bottom + 15,
-          padding: 10,
-          zIndex: 2,
-        }}>
-        <TouchableOpacity
-          onPress={() =>
-            router.push("/manageSubBranch/AddNewSubBranchCoordinator")
-          }>
-          <Ionicons name="add" size={37} color={"white"} />
-        </TouchableOpacity>
-      </ImageBackground>
-
       {loading ? (
-        <Text style={styles.loadingText}>Loading data...</Text>
-      ) : subBranchCoordinatorData.length === 0 ? (
+        <ActivityIndicator
+          size="large"
+          color={currentColors.secondary}
+          style={{ marginTop: 20 }}
+        />
+      ) : subscribersData.length === 0 ? (
         <Text style={styles.noDataText}>No subscribers found</Text>
       ) : (
         <FlatList
@@ -150,16 +139,8 @@ const ManageSubBranchCoordinators = () => {
           keyExtractor={(item, index) => index.toString()}
           renderItem={renderItem}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          style={{ zIndex: 1 }}
           refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={getSubBranchCoordinators}
-            />
+            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
           }
           ListEmptyComponent={
             filteredCitizens.length === 0 && searchValue.length > 1 ? (
@@ -175,35 +156,33 @@ const ManageSubBranchCoordinators = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "flex-start",
     alignItems: "center",
+    paddingTop: 10,
   },
-  departmentContainer: {
-    backgroundColor: "#f5f5f5",
-    padding: 10,
-    marginBottom: 10,
-    borderRadius: 20,
-    width: "100%",
-    elevation: 10,
+  subscriberContainer: {
     flexDirection: "row",
-    gap: 10,
+    backgroundColor: "#f5f5f5",
+    padding: 12,
+    marginBottom: 10,
+    borderRadius: 15,
+    width: "95%",
+    alignSelf: "center",
+    elevation: 5,
     alignItems: "center",
-    justifyContent: "center",
   },
   logo: {
     width: 60,
     height: 60,
-    objectFit: "contain",
+    borderRadius: 30,
+    backgroundColor: "white",
+  },
+  subscriberDetails: {
+    marginLeft: 12,
+    width: "80%",
   },
   citizenInfo: {
     fontSize: 14,
-    color: "#555",
-  },
-  loadingText: {
-    fontSize: 16,
-    color: "#888",
-    textAlign: "center",
-    marginTop: 20,
+    marginBottom: 2,
   },
   noDataText: {
     fontSize: 18,
@@ -213,4 +192,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ManageSubBranchCoordinators;
+export default Subscribers;

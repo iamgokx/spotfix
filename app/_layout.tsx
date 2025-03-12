@@ -25,6 +25,7 @@ const RootLayout = () => {
           <Stack.Screen name="branchCoordinators" />
           <Stack.Screen name="branchAnnouncement" />
           <Stack.Screen name="password" />
+          <Stack.Screen name="manageSubBranch" />
         </Stack>
       </GestureHandlerRootView>
     </SearchProvider>

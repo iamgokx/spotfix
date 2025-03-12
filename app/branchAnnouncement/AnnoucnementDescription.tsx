@@ -9,6 +9,7 @@ import {
   Keyboard,
   TextInput,
   TouchableOpacity,
+  Modal,
 } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
@@ -34,11 +35,14 @@ const Description = () => {
 
   const handleSubmitAnnouncement = async () => {
     const user = await getStoredData();
-    console.log(details);
+    const userEmail = user.email;
+    console.log("this is the details", userEmail);
     try {
       const formData = new FormData();
 
+      formData.append("email", userEmail);
       formData.append("title", details.title);
+      formData.append("description", details.description);
       formData.append("generatedAddress", details.generatedAddress);
       formData.append("generatedCity", details.generatedCity);
       formData.append("generatedPincode", details.generatedPincode);
@@ -47,6 +51,8 @@ const Description = () => {
       formData.append("latitude", details.latitude);
       formData.append("longitude", details.longitude);
       formData.append("announcementType", details.announcementType);
+      formData.append("district", selectedDistrict);
+      formData.append("taluka", selectedTaluka);
 
       details.media.forEach((media, index) => {
         if (media && media.uri) {
@@ -60,14 +66,34 @@ const Description = () => {
         }
       });
 
-      details.documents.forEach((doc, index) => {
-        formData.append(`documents`, {
+      //TODO need to remove doucments from the formdata if they are not selected
+
+      if (details.documents.length > 0) {
+        console.log("this document function ran");
+
+        details.documents.forEach((doc, index) => {
+          formData.append("documents", {
+            uri: doc.uri.startsWith("file://") ? doc.uri : `file://${doc.uri}`,
+            type: doc.type,
+            name: doc.name || `gov-document${index + 1}`,
+          });
+        });
+      }
+
+      if (details.documents.length > 0) {
+        const doc = details.documents[0];
+
+        console.log("doc: ", doc);
+        formData.append("documents", {
           uri: doc.uri.startsWith("file://") ? doc.uri : `file://${doc.uri}`,
           type: doc.type,
-          name: doc.name || `gov-document${index + 1}`,
+          name: doc.name || "gov-document.pdf",
         });
-      });
-      console.log("FormData:", formData);
+      }
+
+      for (let pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
+      }
 
       const response = await axios.post(
         `http://${API_IP_ADDRESS}:8000/api/branchCoordinator/newAnnouncement`,
@@ -76,9 +102,97 @@ const Description = () => {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
+
+      if (response?.data) {
+        console.log("Backend Response:", response.data);
+
+        if (response.data.message) {
+          console.log("success in adding announcement");
+          setannouncementSuccessModalIsActive(true);
+        } else if (response.data.error) {
+          alert(`Error: ${response.data.error}`);
+        } else {
+          alert("Unexpected response from the server.");
+        }
+      } else {
+        console.log("Unexpected response format:", response);
+      }
     } catch (error) {
-      console.log("Error", error);
+      console.error("Error submitting announcement:", error);
+
+      if (error.response) {
+        console.log("Backend Error Response:", error.response.data);
+        alert(`Error: ${error.response.data.error || "Something went wrong"}`);
+      } else {
+        alert("Network error. Please try again.");
+      }
     }
+  };
+
+  const goaData = {
+    "North Goa": [
+      "Bardez",
+      "Bicholim",
+      "Pernem",
+      "Ponda",
+      "Sattari",
+      "Tiswadi",
+    ],
+    "South Goa": [
+      "Canacona",
+      "Mormugao",
+      "Quepem",
+      "Salcete",
+      "Sanguem",
+      "Dharbandora",
+    ],
+  };
+
+  const [selectedDistrict, setSelectedDistrict] = useState("All");
+  const [selectedTaluka, setSelectedTaluka] = useState();
+  const [errors, setErrors] = useState({});
+  const districtOptions = ["All", ...Object.keys(goaData)];
+  const talukaOptions =
+    selectedDistrict !== "All" ? ["All", ...goaData[selectedDistrict]] : [];
+
+  const addedDetails = details || {};
+  const validateAnnouncement = () => {
+    let valid = true;
+    let newErrors = {};
+
+    if (!addedDetails.description || addedDetails.description.length < 50) {
+      newErrors.description =
+        "Description is required and must be at least 50 characters long";
+      valid = false;
+    }
+
+    if (!addedDetails.announcementType) {
+      newErrors.announcementType = "Please select announcement type";
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
+  const handleNextBtnPress = () => {
+    if (validateAnnouncement()) {
+      console.log("valid form");
+      handleSubmitAnnouncement();
+    } else {
+      console.log("add all fields ");
+    }
+  };
+
+  const [
+    announcementSuccessModalIsActive,
+    setannouncementSuccessModalIsActive,
+  ] = useState(false);
+
+  const onCloseModal = () => {
+    console.log("modal closed");
+    setannouncementSuccessModalIsActive(false);
+    router.replace('/branchCoordinators/MakeNew')
   };
 
   return (
@@ -88,11 +202,58 @@ const Description = () => {
         { backgroundColor: currentColors.backgroundDarker },
       ]}
       scrollEnabled={true}>
-      <StatusBar
-        barStyle={"light-content"}
-        backgroundColor="transparent"
-        translucent
-      />
+      <Modal
+        transparent
+        visible={announcementSuccessModalIsActive}
+        animationType="fade">
+        <View
+          style={{
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "rgba(0,0,0,0.5)",
+          }}>
+          <View
+            style={{
+              backgroundColor: currentColors.background,
+              padding: 20,
+              borderRadius: 20,
+              gap: 20,
+              width: "70%",
+            }}>
+            <Text
+              style={{ color: currentColors.secondary, textAlign: "center" }}>
+              Announcement Sent
+            </Text>
+            <Text style={{ color: currentColors.text }}>
+              Thank You , Your Announcement Has Been Sent Successfully
+            </Text>
+
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+              }}>
+              <TouchableOpacity style={{ width: "50%" }} onPress={onCloseModal}>
+                <Text
+                  style={{
+                    padding: 10,
+                    textAlign: "center",
+                    color: currentColors.secondary,
+                    borderRadius: 30,
+                    borderWidth: 3,
+                    borderColor: currentColors.secondary,
+                    fontWeight: 600,
+                  }}>
+                  Ok
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* <StatusBar backgroundColor="black" barStyle="light-content" /> */}
       <View style={styles.headerContainer}>
         <ImageBackground
           resizeMode="cover"
@@ -137,6 +298,13 @@ const Description = () => {
               }
               placeholderTextColor={currentColors.textShade}
               placeholder="Brief description about your announcement"></TextInput>
+
+            {errors.description && (
+              <Text
+                style={{ color: "red", textAlign: "center", marginTop: 10 }}>
+                {errors.description}
+              </Text>
+            )}
           </View>
           <View style={styles.subContainer}>
             <Text style={[styles.inputTitles, { color: currentColors.text }]}>
@@ -157,13 +325,69 @@ const Description = () => {
                 }
                 dropdownIconColor="white"
                 style={{ color: currentColors.text }}>
+                <Picker.Item label="Select" value="" enabled={false} />
                 <Picker.Item label="General" value="general" />
                 <Picker.Item label="Emergency" value="emergency" />
                 <Picker.Item label="Reports" value="reports" />
                 <Picker.Item label="Custom" value="custom" />
               </Picker>
             </View>
+            {errors.announcementType && (
+              <Text
+                style={{ color: "red", textAlign: "center", marginTop: 10 }}>
+                {errors.announcementType}
+              </Text>
+            )}
           </View>
+          <View style={styles.subContainer}>
+            <Text style={[styles.inputTitles, { color: currentColors.text }]}>
+              Select District
+            </Text>
+            <View
+              style={[
+                styles.pickerContainer,
+                { backgroundColor: currentColors.inputField },
+              ]}>
+              <Picker
+                selectedValue={selectedDistrict}
+                onValueChange={(itemValue) => {
+                  setSelectedDistrict(itemValue);
+                  setSelectedTaluka("All");
+                }}
+                dropdownIconColor="white"
+                style={{ color: currentColors.text }}>
+                {districtOptions.map((district) => (
+                  <Picker.Item
+                    key={district}
+                    label={district}
+                    value={district}
+                  />
+                ))}
+              </Picker>
+            </View>
+          </View>
+          {selectedDistrict !== "All" && (
+            <View style={styles.subContainer}>
+              <Text style={[styles.inputTitles, { color: currentColors.text }]}>
+                Select Taluka
+              </Text>
+              <View
+                style={[
+                  styles.pickerContainer,
+                  { backgroundColor: currentColors.inputField },
+                ]}>
+                <Picker
+                  selectedValue={selectedTaluka}
+                  onValueChange={setSelectedTaluka}
+                  dropdownIconColor="white"
+                  style={{ color: currentColors.text }}>
+                  {talukaOptions.map((taluka) => (
+                    <Picker.Item key={taluka} label={taluka} value={taluka} />
+                  ))}
+                </Picker>
+              </View>
+            </View>
+          )}
 
           <View style={styles.btnMainContainer}>
             <TouchableOpacity
@@ -182,7 +406,7 @@ const Description = () => {
                 styles.btnContainer,
                 { backgroundColor: currentColors.secondary },
               ]}
-              onPress={handleSubmitAnnouncement}>
+              onPress={handleNextBtnPress}>
               <Text style={styles.nextButton}>Next</Text>
             </TouchableOpacity>
           </View>

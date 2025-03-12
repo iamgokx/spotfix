@@ -27,6 +27,9 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
         {
           backgroundColor: currentColors.backgroundDarker,
           bottom: insectsBottom.bottom,
+       
+         
+          
         },
       ]}>
       {state.routes.map((route, index) => {

@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { ImageBackground } from "react-native";
 import imgBackground from "../../assets/images/gradients/bluegradient.png";
+
 import { clearStorage } from "@/hooks/useJwt";
 import { Modal } from "react-native";
 import { useEffect, useState } from "react";
@@ -37,14 +38,18 @@ const index = () => {
   }, []);
 
   const handleChangePasswordPress = () => {
-    console.log("change paswword " , user.email);
+    console.log("change paswword ", user.email);
+    router.push({
+      pathname: "/password/PasswordOtp",
+      params: { email: user.email },
+    });
   };
 
   return (
     <View
       style={{
         flex: 1,
-        backgroundColor: currentColors.backgroundDarker,
+        backgroundColor: currentColors.background,
         paddingBottom: insets.bottom + 10,
       }}>
       <ImageBackground
@@ -140,7 +145,7 @@ const index = () => {
         </View>
 
         <TouchableOpacity
-        onPress={handleChangePasswordPress}
+          onPress={handleChangePasswordPress}
           style={{
             alignSelf: "center",
             position: "absolute",
@@ -153,6 +158,7 @@ const index = () => {
               fontSize: 17,
               borderRadius: 30,
               paddingHorizontal: 20,
+              color: "white",
             }}>
             Change Password
           </Text>

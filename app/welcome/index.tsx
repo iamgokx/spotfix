@@ -39,7 +39,7 @@ const index = () => {
         resizeMode="cover">
         <Blob1 style={styles.blob1} />
 
-        <Animatable.View animation='fadeInUp' duration={500}>
+        <Animatable.View animation="fadeInUp" duration={500}>
           <LottieView
             source={loginSignup}
             autoPlay
@@ -50,11 +50,21 @@ const index = () => {
 
         <Blob2 style={styles.blob2} />
         <TouchableOpacity onPress={loginroute}>
-          <Animatable.Text animation={'fadeInUp'} duration={700} style={styles.loginBtn}>Log In</Animatable.Text>
+          <Animatable.Text
+            animation={"fadeInUp"}
+            duration={700}
+            style={styles.loginBtn}>
+            Log In
+          </Animatable.Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={signuproute}>
-          <Animatable.Text animation={'fadeInUp'} duration={900} style={styles.signupBtn}>Sign Up</Animatable.Text>
+          <Animatable.Text
+            animation={"fadeInUp"}
+            duration={900}
+            style={styles.signupBtn}>
+            Sign Up
+          </Animatable.Text>
         </TouchableOpacity>
       </ImageBackground>
     </View>

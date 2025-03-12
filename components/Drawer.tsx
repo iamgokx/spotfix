@@ -71,7 +71,10 @@ const CustomDrawer = (props: any) => {
     <View
       style={[
         styles.drawerContainer,
-        { backgroundColor: currentColors.backgroundDarker },
+        {
+          backgroundColor: currentColors.backgroundDarker,
+          zIndex: 5,
+        },
       ]}>
       <View style={[styles.headerContainer]}>
         <ImageBackground
@@ -109,12 +112,12 @@ const CustomDrawer = (props: any) => {
 
       <DrawerContentScrollView
         {...props}
-        contentContainerStyle={styles.scrollContainer}>
+        contentContainerStyle={[styles.scrollContainer, { zIndex: 5 }]}>
         <DrawerItemList {...props} />
         <DrawerItem
           label="Logout"
           labelStyle={{
-            color: currentColors.secondary, 
+            color: currentColors.secondary,
             fontWeight: "bold",
           }}
           icon={({ color, size }) => (
@@ -145,8 +148,9 @@ const styles = StyleSheet.create({
     padding: 0,
     width: "100%",
     overflow: "hidden",
-
+  
     gap: 10,
+    
   },
   headerContainer: {
     width: "100%",

@@ -7,12 +7,17 @@ import {
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { getStoredData } from "@/hooks/useJwt";
+import { useState, useEffect } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const CustomDrawerContent = (props) => {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
-
+  const [userDetails, setuserDetails] = useState();
   const handleLogout = () => {
     Alert.alert("Logout", "Are you sure you want to log out?", [
       { text: "Cancel", style: "cancel" },
@@ -20,19 +25,54 @@ const CustomDrawerContent = (props) => {
     ]);
   };
 
+  useEffect(() => {
+    const getUserDetails = async () => {
+      const user = await getStoredData();
+      console.log(user);
+      setuserDetails(user);
+    };
+    getUserDetails();
+  }, []);
+
   return (
     <DrawerContentScrollView
       {...props}
-      style={{ backgroundColor: currentColors.background }}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Hello Gokul Lekhwar</Text>
+      style={{ backgroundColor: currentColors.backgroundDarker }}>
+      <View style={{ padding: 10, marginTop: insets.top + 10 }}>
+        {userDetails && (
+          <>
+            <Text
+              style={{
+                color: currentColors.text,
+                fontWeight: 500,
+                fontSize: 18,
+              }}>
+              Hello {userDetails.name}
+            </Text>
+
+            <Text style={{ color: currentColors.text }}>
+              {userDetails.userType}
+            </Text>
+          </>
+        )}
       </View>
       <DrawerItemList {...props} />
 
-      {/* Logout Button */}
-      <View style={styles.logoutContainer}>
-        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-          <Text style={styles.logoutText}>Logout</Text>
+      <View style={{}}>
+        <TouchableOpacity
+          onPress={handleLogout}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 10,
+            backgroundColor: "white",
+            paddingVertical: 10,
+            borderRadius: 30,
+            justifyContent: "center",
+            marginTop: 30,
+          }}>
+          <Ionicons name="exit" color={currentColors.secondary} size={24} />
+          <Text style={{ color: currentColors.secondary }}>Logout</Text>
         </TouchableOpacity>
       </View>
     </DrawerContentScrollView>

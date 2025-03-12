@@ -29,8 +29,7 @@ import {
 import Help from "../screens/Help";
 import { clearStorage } from "@/hooks/useJwt";
 import IssueMapView from "../screens/IssueMapView";
-import settings from "../screens/Settings";
-import Settings from "../screens/Settings";
+
 import UserSettings from "../screens/UserSettings";
 const Drawer = createDrawerNavigator();
 
@@ -45,10 +44,12 @@ const MyDrawer = () => {
         drawerContent={(props) => <CustomDrawer {...props} />}
         screenOptions={{
           drawerType: "front",
-          // drawerHideStatusBarOnOpen: true,
+
+          overlayColor: "transperant",
           drawerStyle: {
             backgroundColor: "#f5f5f5",
             width: 300,
+            
           },
           headerStyle: {
             backgroundColor: "#0066ff",

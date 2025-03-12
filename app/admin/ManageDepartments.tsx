@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import governmentLogo from "../../assets/images/admin/governmentLogo.png";
 import Fuse from "fuse.js";
+
+//TODO this page onlyw swaps the department coordintor
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
 import { API_IP_ADDRESS } from "../../ipConfig.json";

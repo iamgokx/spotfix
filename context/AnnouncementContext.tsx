@@ -74,10 +74,9 @@ export const AnnouncementProvider: React.FC<AnnouncementProps> = ({
   children,
 }) => {
   const [details, setDetails] = useState<AnnouncementDetails>({
-   
     title: "",
     description: "",
-    
+
     announcementType: "",
     latitude: "",
     longitude: "",
@@ -106,10 +105,9 @@ export const AnnouncementProvider: React.FC<AnnouncementProps> = ({
 
   const clearDetails = () => {
     setDetails({
-     
       title: "",
       description: "",
-     
+
       announcementType: "",
       latitude: "",
       longitude: "",

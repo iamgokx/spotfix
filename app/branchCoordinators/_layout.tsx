@@ -1,10 +1,13 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  CurrentRenderContext,
+  NavigationContainer,
+} from "@react-navigation/native";
 import Home from "./Home";
 import Reports from "./Reports";
 import Announcements from "./Announcements";
 import Proposals from "./Proposals";
-import { Feather } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import CustomDrawerContent from "@/components/branchCoordinators/CustomDrawerContent";
 import { NavigationIndependentTree } from "@react-navigation/native";
@@ -12,7 +15,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme, View } from "react-native";
 import MakeNew from "./MakeNew";
-
+import ManageSubBranchCoordinators from "./ManageSubBranchCoordinators";
+import { StyleSheet } from "react-native";
+import Subscribers from "./Subscribers";
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -23,14 +28,14 @@ const TabNavigator = () => {
 
   return (
     <Tab.Navigator
-      initialRouteName="MakeNew"
+      initialRouteName="Home"
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           const icons = {
             Home: "home",
             Reports: "file-text",
-            Announcement: "message-circle",
-            Proposal: "book-open",
+            Announcement: "bell",
+            Proposal: "book",
             MakeNew: "plus-circle",
           };
 
@@ -60,7 +65,7 @@ const TabNavigator = () => {
         },
 
         tabBarShowLabel: false,
-        tabBarActiveTintColor: "tomato",
+        tabBarActiveTintColor: currentColors.secondary,
         tabBarInactiveTintColor: "gray",
         headerShown: false,
         tabBarStyle: {
@@ -86,18 +91,72 @@ const TabNavigator = () => {
 };
 
 const Layout = () => {
+  const insets = useSafeAreaInsets();
+  const colorScheme = useColorScheme();
+  const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
   return (
     <NavigationIndependentTree>
       <NavigationContainer>
         <Drawer.Navigator
+          initialRouteName="DashBoard"
           drawerContent={(props) => <CustomDrawerContent {...props} />}
-          screenOptions={{ headerShown: false }}>
+          screenOptions={({ route }) => ({
+            headerShown: false,
+            headerStyle: {
+              backgroundColor: currentColors.backgroundDarker,
+            },
+            headerTintColor: currentColors.text,
+            headerTitleAlign: "center",
+            drawerStyle: {
+              width: "70%",
+            },
+
+            drawerContentStyle: {
+              paddingVertical: 20,
+            },
+            drawerItemStyle: {
+              marginVertical: 10,
+            },
+            drawerLabelStyle: styles.drawerLabel,
+            drawerActiveTintColor: "white",
+            drawerActiveBackgroundColor: currentColors.secondary,
+            drawerInactiveTintColor: currentColors.textShade,
+            drawerType: "front",
+            drawerIcon: ({ focused, color, size }) => {
+              let iconName;
+
+              if (route.name === "DashBoard") {
+                iconName = focused ? "home" : "home-outline";
+              } else if (route.name === "Manage Sub Branch Coordinators") {
+                iconName = focused ? "people" : "people-outline";
+              } else if (route.name === "Subscribers") {
+                iconName = focused ? "people-circle-outline" : "people-circle";
+              }
+
+              return <Ionicons name={iconName} size={size} color={color} />;
+            },
+          })}>
           <Drawer.Screen name="DashBoard" component={TabNavigator} />
-          
+          <Drawer.Screen
+            name="Manage Sub Branch Coordinators"
+            component={ManageSubBranchCoordinators}
+          />
+          <Drawer.Screen name="Subscribers" component={Subscribers} />
         </Drawer.Navigator>
       </NavigationContainer>
     </NavigationIndependentTree>
   );
 };
+
+const styles = StyleSheet.create({
+  drawerLabel: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+});
+
+
+
+
 
 export default Layout;
