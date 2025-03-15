@@ -23,7 +23,10 @@ export default function App() {
         backgroundColor: currentColors.backgroundDarkest,
       }}>
       <Tab.Navigator
+      
+
         screenOptions={{
+          swipeEnabled : false,
           tabBarStyle: {
             backgroundColor: currentColors.backgroundDarker,
             paddingTop: insets.top,

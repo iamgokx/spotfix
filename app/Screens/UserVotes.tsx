@@ -151,7 +151,7 @@ const UserVotes = () => {
                       {issue.title}
                     </Text>
                     <Text style={{ color: currentColors.text }}>
-                      {issue.category}
+                      {issue.department_name}
                     </Text>
                     <Text style={{ color: currentColors.textShade }}>
                       {issue.locality} {issue.pincode}

@@ -48,6 +48,7 @@ const DetailedUserProposal = () => {
   };
   const getDetailedUserProposal = async () => {
     try {
+      console.log('making req');
       const response = await axios.post(
         `http://${API_IP_ADDRESS}:8000/api/proposals/getCitizenDetailedProposal`,
         {
@@ -71,6 +72,7 @@ const DetailedUserProposal = () => {
         setdocFiles(otherFiles);
         getAddress(response.data[0].latitude, response.data[0].longitude);
         setProposalDetails(response.data[0]);
+        setisLoading(false);
       }
     } catch (error) {
       console.log("error getting detailed proposal issues : ", error);

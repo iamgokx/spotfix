@@ -10,6 +10,7 @@ import {
   Keyboard,
   Image,
 } from "react-native";
+import { useState } from "react";
 import { useRouter } from "expo-router";
 import { useProposalContext } from "@/context/ProposalContext";
 import { Ionicons } from "@expo/vector-icons";
@@ -23,6 +24,66 @@ const ProposalLocation = () => {
   const router = useRouter();
   const colorTheme = useColorScheme();
   const currentColors = colorTheme == "dark" ? Colors.dark : Colors.light;
+
+  const [errors, setErrors] = useState({});
+  const safeDetails = details || {};
+  const validate = () => {
+    let valid = true;
+    let newErrors = {};
+
+    if (
+      !safeDetails.generatedAddress ||
+      safeDetails.generatedAddress.trim() === ""
+    ) {
+      newErrors.generatedAddress = "Please select the location";
+      valid = false;
+    }
+
+    if (!safeDetails.generatedCity || safeDetails.generatedCity.trim() === "") {
+      newErrors.generatedCity = "Please enter the city";
+      valid = false;
+    }
+
+    if (
+      !safeDetails.generatedLocality ||
+      safeDetails.generatedLocality.trim() === ""
+    ) {
+      newErrors.generatedLocality = "Please enter the locality";
+      valid = false;
+    }
+    if (
+      !safeDetails.generatedPincode ||
+      safeDetails.generatedPincode.trim() === ""
+    ) {
+      newErrors.generatedPincode = "Please enter the pincode";
+      valid = false;
+    }
+    if (
+      !safeDetails.generatedState ||
+      safeDetails.generatedState.trim() === ""
+    ) {
+      newErrors.generatedState = "Please enter the state";
+      valid = false;
+    }
+
+    if (safeDetails.generatedState != "Goa") {
+      newErrors.generatedState = "Please enter location from goa";
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
+  const handleNextButtonPress = () => {
+    if (validate()) {
+      console.log(details);
+      router.push("/proposals/ProposalMedia");
+    } else {
+      console.log("enter all details");
+    }
+  };
+
   return (
     <View
       style={[
@@ -53,7 +114,10 @@ const ProposalLocation = () => {
         <Animatable.View animation="fadeInUp" style={styles.dataContainer}>
           {!details.generatedAddress && (
             <TouchableOpacity
-              onPress={() => router.push("/proposals/Map")}
+              onPress={() => {
+                router.push("/proposals/Map");
+                setErrors({});
+              }}
               style={styles.mapContainer}>
               <Text className="text-white text-xl" style={styles.mapText}>
                 Drop Pin On Map
@@ -77,6 +141,12 @@ const ProposalLocation = () => {
             </View>
           )}
 
+          {errors.generatedAddress && (
+            <Text style={{ color: "red", textAlign: "center" }}>
+              {errors.generatedAddress}
+            </Text>
+          )}
+
           {details.generatedAddress != "" && (
             <View style={styles.subContainer}>
               <Text style={[styles.inputTitles, { color: currentColors.text }]}>
@@ -98,6 +168,11 @@ const ProposalLocation = () => {
                 }}
                 placeholderTextColor={currentColors.textShade}
                 placeholder="Enter Address"></TextInput>
+              {errors.generatedAddress && (
+                <Text style={{ color: "red", textAlign: "center" }}>
+                  {errors.generatedAddress}
+                </Text>
+              )}
               <TextInput
                 style={[
                   styles.dataInput,
@@ -106,13 +181,22 @@ const ProposalLocation = () => {
                     color: currentColors.text,
                   },
                 ]}
-                editable={details.generatedCity == undefined ? true : false}
                 onChangeText={(text) => {
                   setDetails((prev) => ({ ...prev, generatedCity: text }));
                 }}
                 value={details.generatedCity}
-                placeholder="Enter City / Town"
+                editable={details.generatedCity == undefined ? true : true}
+                placeholder={
+                  details.generatedCity == undefined
+                    ? "error fetching..please enter city"
+                    : "City / Town"
+                }
                 placeholderTextColor={currentColors.textShade}></TextInput>
+              {errors.generatedCity && (
+                <Text style={{ color: "red", textAlign: "center" }}>
+                  {errors.generatedCity}
+                </Text>
+              )}
               <TextInput
                 style={[
                   styles.dataInput,
@@ -128,6 +212,11 @@ const ProposalLocation = () => {
                 value={details.generatedPincode}
                 placeholder="Enter Pincode"
                 placeholderTextColor={currentColors.textShade}></TextInput>
+              {errors.generatedPincode && (
+                <Text style={{ color: "red", textAlign: "center" }}>
+                  {errors.generatedPincode}
+                </Text>
+              )}
               <TextInput
                 style={[
                   styles.dataInput,
@@ -143,6 +232,11 @@ const ProposalLocation = () => {
                 }}
                 placeholder="Enter State"
                 placeholderTextColor={currentColors.textShade}></TextInput>
+              {errors.generatedState && (
+                <Text style={{ color: "red", textAlign: "center" }}>
+                  {errors.generatedState}
+                </Text>
+              )}
             </View>
           )}
 
@@ -163,7 +257,7 @@ const ProposalLocation = () => {
                 styles.btnContainer,
                 { backgroundColor: currentColors.secondary },
               ]}
-              onPress={() => router.push("/proposals/ProposalMedia")}>
+              onPress={handleNextButtonPress}>
               <Text style={styles.nextButton}>Next</Text>
             </TouchableOpacity>
           </View>

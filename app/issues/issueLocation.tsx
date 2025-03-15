@@ -19,6 +19,7 @@ import LottieView from "lottie-react-native";
 import deopPinOnMap from "../../assets/images/issues/selectLocationOnMap.json";
 import * as Animatable from "react-native-animatable";
 import { useState } from "react";
+import { Setter } from "date-fns/parse/_lib/Setter";
 const IssueLocation = () => {
   const { details, setDetails } = useIssueContext();
   const colorScheme = useColorScheme();
@@ -82,7 +83,7 @@ const IssueLocation = () => {
       console.log("enter all details");
     }
   };
-  
+
   return (
     <View
       style={[
@@ -119,7 +120,10 @@ const IssueLocation = () => {
           {!details.generatedAddress && (
             <>
               <TouchableOpacity
-                onPress={() => router.push("/issues/IssueMap")}
+                onPress={() => {
+                  router.push("/issues/IssueMap");
+                  setErrors({});
+                }}
                 style={styles.mapContainer}>
                 <Text className="text-white text-xl" style={styles.mapText}>
                   Drop Pin On Map
@@ -177,12 +181,17 @@ const IssueLocation = () => {
                     color: currentColors.text,
                   },
                 ]}
-                editable={details.generatedCity == undefined ? true : false}
                 onChangeText={(text) => {
                   setDetails((prev) => ({ ...prev, generatedCity: text }));
                 }}
                 value={details.generatedCity}
-                placeholder="City / Town"></TextInput>
+                placeholderTextColor={currentColors.textShade}
+                editable={details.generatedCity == undefined ? true : true}
+                placeholder={
+                  details.generatedCity == undefined
+                    ? "error fetching..please enter city"
+                    : "City / Town"
+                }></TextInput>
               {errors.generatedCity && (
                 <Text style={{ color: "red", textAlign: "center" }}>
                   {errors.generatedCity}

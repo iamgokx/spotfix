@@ -33,7 +33,7 @@ const CustomDrawerContent = (props: any) => {
   const router = useRouter();
   const handleLogOutButtonPress = () => {
     clearStorage();
-    router.push("/welcome");
+    router.replace("/welcome");
   };
 
   return (
@@ -102,6 +102,7 @@ const AdminDrawer = () => {
             },
           }}
           initialRouteName="Admin Dashboard"
+        
           drawerContent={(props) => <CustomDrawerContent {...props} />}>
           <Drawer.Screen
             name="Admin Dashboard"

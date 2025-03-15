@@ -101,11 +101,14 @@ const Index = () => {
         console.log("jwt authenticated");
         console.log(response.data);
         router.push("/home");
-      }
-       else if (response.data.user_type == "department_coordinator") {
+      } else if (response.data.user_type == "department_coordinator") {
         console.log("jwt authenticated");
         console.log(response.data);
         router.push("/branchCoordinators/Home");
+      } else if (response.data.user_type == "sub_branch_coordinator") {
+        console.log("jwt authenticated");
+        console.log(response.data);
+        router.push("/subBranchCoordinator/ApproveIssues");
       }
     } else {
       console.log("couldnt authenticate jwt");
@@ -146,10 +149,7 @@ const Index = () => {
     setCurrentIndex(index);
   };
 
-  const { login } = useLogin();
-  const handleLogin = async () => {
-    router.push("/home");
-  };
+
   return (
     <>
       <StatusBar backgroundColor={currentColors.backgroundDarker} />
@@ -243,14 +243,7 @@ const Index = () => {
               </Animatable.Text>
             </>
           )}
-          <TouchableOpacity
-            onPressIn={() => router.push("/issues/SaveIssue")}
-            // onPressIn={() => handleLogin()}
-            style={styles.devBtn}>
-            <Text className="text-xl text-yellow-400 bg-black p-5 rounded-full">
-              Dev Skip{"  </>"}
-            </Text>
-          </TouchableOpacity>
+        
         </View>
 
         <View

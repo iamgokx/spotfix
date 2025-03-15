@@ -63,7 +63,7 @@ const CustomDrawer = (props: any) => {
 
   const handleLogOutButtonPress = () => {
     clearStorage();
-    router.push("/welcome");
+    router.replace("/welcome");
   };
   // fetchUserData();
 
@@ -148,9 +148,8 @@ const styles = StyleSheet.create({
     padding: 0,
     width: "100%",
     overflow: "hidden",
-  
+
     gap: 10,
-    
   },
   headerContainer: {
     width: "100%",

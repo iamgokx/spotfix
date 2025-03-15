@@ -77,25 +77,25 @@ const PasswordOtp = () => {
     }
   };
 
-  useEffect(() => {
-    const getUserOtp = async () => {
-      const data = await getStoredData();
-      console.log("user data : ", data);
-      setDetails(data);
+  const getUserOtp = async () => {
+    const data = await getStoredData();
+    console.log("user data : ", data);
+    setDetails(data);
 
-      try {
-        const response = await axios.get(
-          `http://${API_IP_ADDRESS}:8000/api/users/otp`,
-          {
-            params: {
-              email: data.email,
-            },
-          }
-        );
-      } catch (error) {
-        console.log(error);
-      }
-    };
+    try {
+      const response = await axios.get(
+        `http://${API_IP_ADDRESS}:8000/api/users/otp`,
+        {
+          params: {
+            email: data.email,
+          },
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
 
     getUserOtp();
   }, []);
@@ -283,7 +283,7 @@ const PasswordOtp = () => {
             style={{ paddingBottom: keyboardVisible ? 100 : 20 }}>
             <Text style={styles.otpVerifyBtn}>Verify</Text>
           </TouchableOpacity>
-          <Pressable style={{ display: "flex", flexDirection: "row" }}>
+          <Pressable style={{ display: "flex", flexDirection: "row" }} onPress={getUserOtp}>
             <Text style={{ color: currentColors.text }}>
               Didn't receive an OTP ?
             </Text>

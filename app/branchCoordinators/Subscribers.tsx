@@ -15,6 +15,8 @@ import axios from "axios";
 import { useSearch } from "@/context/adminSearchContext";
 import { getStoredData } from "@/hooks/useJwt";
 import Fuse from "fuse.js";
+import CustomHeader from "@/components/branchCoordinators/CustomHeader";
+
 import {} from "@expo/vector-icons";
 const Subscribers = () => {
   const [subscribersData, setSubscribersData] = useState([]);
@@ -92,7 +94,7 @@ const Subscribers = () => {
         source={{
           uri: `http://${API_IP_ADDRESS}:8000/uploads/profile/${item.picture_name}`,
         }}
-        style={styles.logo}
+        style={{width : 100, aspectRatio: 1, borderRadius : 500}}
       />
 
       <View style={styles.subscriberDetails}>
@@ -104,16 +106,16 @@ const Subscribers = () => {
           {item.full_name}
         </Text>
         <Text style={[styles.citizenInfo, { color: currentColors.textShade }]}>
-          📧 {item.email}
+           {item.email}
         </Text>
         <Text style={[styles.citizenInfo, { color: currentColors.textShade }]}>
-          📍 {item.locality}, {item.pincode}
+           {item.locality}, {item.pincode}
         </Text>
         <Text style={[styles.citizenInfo, { color: currentColors.textShade }]}>
-          🗓 Joined: {formatDate(item.registration_date_time)}
+          {formatDate(item.registration_date_time)}
         </Text>
         <Text style={[styles.citizenInfo, { color: currentColors.secondary }]}>
-          📞 +91 {item.phone_number}
+           +91 {item.phone_number}
         </Text>
       </View>
     </View>
@@ -125,6 +127,8 @@ const Subscribers = () => {
         styles.container,
         { backgroundColor: currentColors.backgroundDarkest },
       ]}>
+      <CustomHeader title="Subscribers" />
+
       {loading ? (
         <ActivityIndicator
           size="large"
@@ -136,6 +140,7 @@ const Subscribers = () => {
       ) : (
         <FlatList
           data={filteredCitizens}
+          style={{paddingTop : 10}}
           keyExtractor={(item, index) => index.toString()}
           renderItem={renderItem}
           showsVerticalScrollIndicator={false}

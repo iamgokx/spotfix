@@ -32,6 +32,51 @@ const index = () => {
   const handleClearButtonPress = () => {
     router.push("/home/reportIssue");
   };
+  const [errors, setErrors] = useState({});
+  const safeDetails = details || {};
+  const validate = () => {
+    let valid = true;
+    let newErrors = {};
+
+    if (!safeDetails.title || safeDetails.title.trim() === "") {
+      newErrors.title = "Please enter title";
+      valid = false;
+    } else if (/^\d+$/.test(safeDetails.title)) {
+      newErrors.title = "Title cannot contain only numbers";
+      valid = false;
+    } else if (safeDetails.title.length < 20) {
+      newErrors.title = "Title should be at least 20 characters long";
+      valid = false;
+    } else if (safeDetails.title.length >= 100) {
+      newErrors.title = "Title should be at most 100 characters long";
+      valid = false;
+    }
+
+    if (!safeDetails.description || safeDetails.description.trim() === "") {
+      newErrors.description = "Please enter description";
+      valid = false;
+    } else if (/^\d+$/.test(safeDetails.description)) {
+      newErrors.description = "Description cannot contain only numbers";
+      valid = false;
+    } else if (safeDetails.description.length < 50) {
+      newErrors.description =
+        "Description should be at least 50 characters long";
+        valid = false
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
+  const handleNextButtonPress = () => {
+    if (validate()) {
+      console.log(details);
+      router.push("/proposals/ProposalLocation");
+    } else {
+      console.log("enter all details");
+    }
+  };
+
   return (
     <ScrollView
       contentContainerStyle={[
@@ -81,6 +126,11 @@ const index = () => {
               }
               placeholder="eg. Underground Power Cabling"
               placeholderTextColor={currentColors.textShade}></TextInput>
+            {errors.title && (
+              <Text style={{ color: "red", textAlign: "center" }}>
+                {errors.title}
+              </Text>
+            )}
           </View>
           <View style={styles.subContainer}>
             <Text style={[styles.inputTitles, { color: currentColors.text }]}>
@@ -102,6 +152,11 @@ const index = () => {
               }
               placeholder="Describe your proposal here"
               placeholderTextColor={currentColors.textShade}></TextInput>
+            {errors.description && (
+              <Text style={{ color: "red", textAlign: "center" }}>
+                {errors.description}
+              </Text>
+            )}
           </View>
 
           <View style={styles.btnMainContainer}>
@@ -123,7 +178,7 @@ const index = () => {
                 styles.btnContainer,
                 { backgroundColor: currentColors.secondary },
               ]}
-              onPress={() => router.push("/proposals/ProposalLocation")}>
+              onPress={handleNextButtonPress}>
               <Text style={styles.nextButton}>Next</Text>
             </TouchableOpacity>
           </View>

@@ -39,6 +39,8 @@ const AddNewSubBranchCoordinator = () => {
   const [departmentId, setdepartmentId] = useState();
   const [modalText, setmodalText] = useState();
   const [isModalActive, setisModalActive] = useState(false);
+  const [isSuccessVisible, setsuccessModalIsActive] = useState(false);
+  const [successModalMessage, setsuccessModalMessage] = useState("");
   const validateForm = () => {
     let valid = true;
     let newErrors = {};
@@ -49,7 +51,9 @@ const AddNewSubBranchCoordinator = () => {
     } else if (safeCoordinator.name.length < 3) {
       newErrors.name = "Name must be at least 3 characters";
       valid = false;
-    } else {
+    } else if (/\d/.test(safeCoordinator.name)) {
+      newErrors.name = "Name cannot contain numbers";
+      valid = false;
     }
 
     if (!safeCoordinator.departmentName) {
@@ -116,7 +120,8 @@ const AddNewSubBranchCoordinator = () => {
       if (response.data.status) {
         console.log("success");
         console.log(response.data.message);
-        router.push("/branchCoordinators/ManageSubBranchCoordinators");
+        setsuccessModalMessage(response.data.message);
+        setsuccessModalIsActive(true);
       } else {
         console.log("failed");
         console.log(response.data.message);
@@ -177,6 +182,13 @@ const AddNewSubBranchCoordinator = () => {
     getDepartmentList();
   }, []);
 
+  const onCLoseSuccessModal = () => {
+    setsuccessModalIsActive(false);
+    setTimeout(() => {
+      router.push("/branchCoordinators/ManageSubBranchCoordinators");
+    }, 100);
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -185,6 +197,64 @@ const AddNewSubBranchCoordinator = () => {
           position: "relative",
           paddingTop: insets.top + 10,
         }}>
+        <Modal
+          visible={isSuccessVisible}
+          transparent
+          animationType="fade"
+         >
+          <View
+            style={{
+              flex: 1,
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "rgba(0,0,0,0.4)",
+            }}>
+            <View
+              style={{
+                width: "80%",
+                backgroundColor: currentColors.text,
+                padding: 10,
+                borderRadius: 20,
+                paddingHorizontal: 20,
+                gap: 14,
+              }}>
+              <Text
+                style={{
+                  color: currentColors.secondary,
+                  textAlign: "center",
+                  fontSize: 20,
+                  fontWeight: 900,
+                }}>
+                SUCCESS
+              </Text>
+              <Text
+                style={{
+                  color: currentColors.textSecondary,
+                  textAlign: "center",
+                  fontSize: 20,
+                }}>
+                {successModalMessage}
+              </Text>
+              <TouchableOpacity
+                style={{
+                  width: " 100%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                onPress={onCLoseSuccessModal}>
+                <Text
+                  style={{
+                    backgroundColor: currentColors.secondary,
+                    padding: 10,
+                    paddingHorizontal: 15,
+                    borderRadius: 10,
+                  }}>
+                  OK
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
         <View
           style={{
             width: "100%",
@@ -533,6 +603,18 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "transparent",
   },
+
+  showModalButton: { backgroundColor: "#007AFF", padding: 10, borderRadius: 5 },
+  buttonText: { color: "#FFF", fontSize: 16 },
+  modalContainer: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalText: { fontSize: 18, marginBottom: 20 },
+  okButton: { backgroundColor: "#007AFF", padding: 10, borderRadius: 5 },
+  okButtonText: { color: "white", fontSize: 16 },
 });
 
 export default AddNewSubBranchCoordinator;

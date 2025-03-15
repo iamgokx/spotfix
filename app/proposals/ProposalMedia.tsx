@@ -59,6 +59,33 @@ export default function ProposalMedia() {
     removeMedia(uri);
   };
 
+  
+  const [errors, setErrors] = useState({});
+  const safeDetails = details || {};
+  const validate = () => {
+    let valid = true;
+    let newErrors = {};
+
+    if (safeDetails.media.length < 1) {
+      newErrors.media = "Please select atlease 1 image";
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
+
+  const handleNextButtonPress = () => {
+    if (validate()) {
+      
+      router.push("/proposals/ProposalFIles")
+    } else {
+      console.log("enter all details");
+    }
+  };
+
+
   return (
     <View
       style={[
@@ -100,7 +127,11 @@ export default function ProposalMedia() {
           />
           <Text style={{ color: currentColors.text }}>Upload Media</Text>
         </TouchableOpacity>
-
+        {errors.media && (
+          <Text style={{ color: "red", textAlign: "center" }}>
+            {errors.media}
+          </Text>
+        )}
         <View style={styles.mediaContainer}>
           {details.media.map((item, index) => (
             <View key={index} style={styles.mediaItem}>
@@ -139,7 +170,7 @@ export default function ProposalMedia() {
               styles.btnContainer,
               { backgroundColor: currentColors.secondary },
             ]}
-            onPress={() => router.push("/proposals/ProposalFIles")}>
+            onPress={handleNextButtonPress}>
             <Text style={styles.nextButton}>Next</Text>
           </TouchableOpacity>
         </View>

@@ -1,8 +1,9 @@
 import { View, Text } from "react-native";
+import DepProposalScreen from "../screens/DepProposalScreen";
 const Proposals = () => {
   return (
-    <View>
-      <Text>Proposals</Text>
+    <View style={{flex : 1, }}>
+      <DepProposalScreen />
     </View>
   );
 };

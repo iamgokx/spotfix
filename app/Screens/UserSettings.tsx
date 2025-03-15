@@ -241,26 +241,6 @@ const UserSettings = () => {
           </TouchableOpacity>
         </Animatable.View>
 
-        <Animatable.View animation={"fadeInUp"} delay={100}>
-          <TouchableOpacity
-            style={{
-              width: "100%",
-              backgroundColor: currentColors.backgroundDarker,
-              padding: 15,
-              borderRadius: 10,
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}>
-            <Text style={{ color: currentColors.text }}>Notifications</Text>
-            <Ionicons
-              name="chevron-forward-outline"
-              color={currentColors.secondary}
-              size={24}
-            />
-          </TouchableOpacity>
-        </Animatable.View>
-
         <Animatable.View animation={"fadeInUp"} delay={150}>
           <TouchableOpacity
             onPress={() => setisLogOutModalActive((prev) => !prev)}

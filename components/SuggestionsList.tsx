@@ -30,7 +30,7 @@ import { FadeInUp, withDecay } from "react-native-reanimated";
 import { getStoredData } from "@/hooks/useJwt";
 import { io } from "socket.io-client";
 import * as Animatable from "react-native-animatable";
-const SuggestionsList = ({ issue_id }: any) => {
+const SuggestionsList = ({ issue_id,allowSuggestions }: any) => {
   const colorScheme = useColorScheme();
   const insets = useSafeAreaInsets();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
@@ -280,7 +280,7 @@ const SuggestionsList = ({ issue_id }: any) => {
         <Text>Loading...</Text>
       )}
 
-      <KeyboardAvoidingView
+     {allowSuggestions &&  <KeyboardAvoidingView
         onLayout={() => setKeyboardHeight((prev) => prev)}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{
@@ -320,7 +320,7 @@ const SuggestionsList = ({ issue_id }: any) => {
           color={currentColors.secondary}
           onPress={() => handleSubmitSuggestion()}
         />
-      </KeyboardAvoidingView>
+      </KeyboardAvoidingView>}
     </Animatable.View>
   );
 };

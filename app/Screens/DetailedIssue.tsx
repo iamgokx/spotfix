@@ -119,6 +119,8 @@ const DetailedIssue = () => {
       }
     } catch (error) {
       console.error("Error fetching issue details:", error);
+    } finally {
+      setIsDataLoading(false);
     }
   };
 
@@ -334,7 +336,9 @@ const DetailedIssue = () => {
               style={{
                 fontSize: 20,
               }}>
-              {issueDetails.is_anonymous == 0 ? issueDetails.full_name : 'Spotfix User'}
+              {issueDetails.is_anonymous == 0
+                ? issueDetails.full_name
+                : "Spotfix User"}
             </Text>
             <Text>{getDateFormatted(issueDetails.date_time_created)}</Text>
           </View>
@@ -424,7 +428,9 @@ const DetailedIssue = () => {
         )}
       </ScrollView>
 
-      {isSuggestionsOpen && <SuggestionsList issue_id={issue_id} />}
+      {isSuggestionsOpen && (
+        <SuggestionsList issue_id={issue_id} allowSuggestions={true} />
+      )}
     </View>
   );
 };

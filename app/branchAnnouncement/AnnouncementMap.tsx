@@ -108,30 +108,39 @@ const AnnouncementMap = ({ goToAddressScreen }: any) => {
         {marker && <Marker coordinate={marker} />}
       </MapView>
       {addressLoaded && (
-        <View style={styles.infoContainer}>
-          <View style={styles.mapAddressContainer}>
-            <Ionicons
-              name="location"
-              color="blue"
-              size={40}
-              style={{ width: 40 }}></Ionicons>
-            <View>
-              <Text style={styles.addressText}>Location Detected</Text>
-              <Text>{userAddress}</Text>
-            </View>
-          </View>
+  <View style={styles.infoContainer}>
+    <View style={styles.mapAddressContainer}>
+      <Ionicons name="location" color="blue" size={40} style={{ width: 40 }} />
+      <View style={{ paddingHorizontal: 10 }}>
+        <Text style={styles.addressText}>Location Detected</Text>
+        <Text>{userAddress}</Text>
+      </View>
+    </View>
 
-          <TouchableOpacity
-            style={styles.confirmButton}
-            onPress={() => router.back()}>
-            <Text style={styles.confirmButtonText}>Confirm Address</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+    {details.generatedState === "Goa" ? (
+      <TouchableOpacity
+        style={styles.confirmButton}
+        onPress={() => router.back()}
+      >
+        <Text style={styles.confirmButtonText}>Confirm Address</Text>
+      </TouchableOpacity>
+    ) : (
+      <Text style={styles.errorText}>
+        Please select an address within Goa
+      </Text>
+    )}
+  </View>
+)}
     </View>
   );
 };
 const styles = StyleSheet.create({
+  errorText: {
+    color: "red",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginTop: 10,
+  },
   container: {
     width: "100%",
     height: "100%",

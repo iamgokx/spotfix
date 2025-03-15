@@ -69,8 +69,6 @@ const Description = () => {
       //TODO need to remove doucments from the formdata if they are not selected
 
       if (details.documents.length > 0) {
-        console.log("this document function ran");
-
         details.documents.forEach((doc, index) => {
           formData.append("documents", {
             uri: doc.uri.startsWith("file://") ? doc.uri : `file://${doc.uri}`,
@@ -80,16 +78,16 @@ const Description = () => {
         });
       }
 
-      if (details.documents.length > 0) {
-        const doc = details.documents[0];
+      // if (details.documents.length > 0) {
+      //   const doc = details.documents[0];
 
-        console.log("doc: ", doc);
-        formData.append("documents", {
-          uri: doc.uri.startsWith("file://") ? doc.uri : `file://${doc.uri}`,
-          type: doc.type,
-          name: doc.name || "gov-document.pdf",
-        });
-      }
+      //   console.log("doc: ", doc);
+      //   formData.append("documents", {
+      //     uri: doc.uri.startsWith("file://") ? doc.uri : `file://${doc.uri}`,
+      //     type: doc.type,
+      //     name: doc.name || "gov-document.pdf",
+      //   });
+      // }
 
       for (let pair of formData.entries()) {
         console.log(pair[0], pair[1]);
@@ -164,6 +162,9 @@ const Description = () => {
       newErrors.description =
         "Description is required and must be at least 50 characters long";
       valid = false;
+    } else if (/^\d+$/.test(addedDetails.description.trim())) {
+      newErrors.description = "Description cannot contain only numbers";
+      valid = false;
     }
 
     if (!addedDetails.announcementType) {
@@ -192,7 +193,7 @@ const Description = () => {
   const onCloseModal = () => {
     console.log("modal closed");
     setannouncementSuccessModalIsActive(false);
-    router.replace('/branchCoordinators/MakeNew')
+    router.replace("/branchCoordinators/MakeNew");
   };
 
   return (

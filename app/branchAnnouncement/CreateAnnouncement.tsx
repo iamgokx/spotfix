@@ -33,6 +33,7 @@ import { API_IP_ADDRESS } from "../../ipConfig.json";
 import { useEffect } from "react";
 import { getStoredData } from "@/hooks/useJwt";
 import { nextWednesday } from "date-fns";
+
 const CreateAnnouncement = ({ goToAddressScreen }: any) => {
   const router = useRouter();
   const {
@@ -57,9 +58,16 @@ const CreateAnnouncement = ({ goToAddressScreen }: any) => {
     let valid = true;
     let newErrors = {};
 
-    if (!addedDetails.title) {
-      newErrors.title = "Announcement title is required";
+    if (!addedDetails.title || addedDetails.title.trim() === "") {
+      newErrors.title = "Please enter title";
       valid = false;
+    } else if (/^\d+$/.test(addedDetails.title)) {
+      newErrors.title = "Title cannot contain only numbers";
+      valid = false;
+    } else if (addedDetails.title.length < 20) {
+      newErrors.title = "Title should be at least 20 characters long";
+    } else if (addedDetails.title.length <= 100) {
+      newErrors.title = "Title should be at most 100 characters long";
     }
 
     if (!addedDetails.generatedAddress) {
@@ -74,8 +82,7 @@ const CreateAnnouncement = ({ goToAddressScreen }: any) => {
     }
 
     setErrors(newErrors);
-    // return valid;
-    return true;
+    return valid;
   };
 
   const handleNextBtnPress = () => {
@@ -156,12 +163,18 @@ const CreateAnnouncement = ({ goToAddressScreen }: any) => {
       });
 
       if (!result.canceled && result.assets?.length > 0) {
+        console.log(result);
         const newDocuments = result.assets.map((asset) => ({
           uri: asset.uri,
           type: asset.mimeType,
           name: asset.name,
           size: asset.size,
         }));
+
+        console.log("details : ", result.assets[0].uri);
+        console.log("details : ", result.assets[0].mimeType);
+        console.log("details : ", result.assets[0].name);
+        console.log("details : ", result.assets[0].size);
 
         const remainingSlots = 5 - details.documents.length;
         newDocuments.slice(0, remainingSlots).forEach((doc) => {
@@ -264,9 +277,12 @@ const CreateAnnouncement = ({ goToAddressScreen }: any) => {
                   <Feather name="map-pin" size={24} color="white" />
                 </>
               ) : (
-                <Text style={{ color: "white", fontSize: 15 }}>
+                <TextInput
+                  multiline
+                  style={{ color: "white", fontSize: 15 }}
+                  editable={false}>
                   {details.generatedAddress}
-                </Text>
+                </TextInput>
               )}
             </TouchableOpacity>
             {errors.generatedAddress && (
@@ -313,7 +329,7 @@ const CreateAnnouncement = ({ goToAddressScreen }: any) => {
             ))}
           </View>
 
-          {/* <TouchableOpacity
+          <TouchableOpacity
             style={styles.dropContainer}
             onPress={pickDocuments}>
             <LottieView
@@ -363,7 +379,7 @@ const CreateAnnouncement = ({ goToAddressScreen }: any) => {
                 </Text>
               )}
             </View>
-          )} */}
+          )}
 
           <View style={styles.btnMainContainer}>
             <TouchableOpacity
@@ -412,6 +428,12 @@ function VideoComponent({ uri }: { uri: string }) {
 }
 
 export const styles = StyleSheet.create({
+  video: {
+    flex: 1,
+    width: "200%",
+    height: "100%",
+    alignSelf: "center",
+  },
   container: {
     flexGrow: 1,
     paddingBottom: 20,
@@ -486,7 +508,7 @@ export const styles = StyleSheet.create({
     marginBottom: 5,
   },
   dataInput: {
-    height: 50,
+    minHeight: 50,
     borderRadius: 20,
     paddingHorizontal: 15,
     fontSize: 15,
@@ -543,6 +565,13 @@ export const styles = StyleSheet.create({
 
     padding: 10,
     borderRadius: 10,
+  },
+  mediaWrapper: {
+    width: 200,
+    height: 100,
+    overflow: "hidden",
+    backgroundColor: "#000",
+    borderRadius: 20,
   },
   documentItem: {
     flexDirection: "row",

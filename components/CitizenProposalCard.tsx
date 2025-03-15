@@ -12,6 +12,7 @@ import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { Ionicons } from "@expo/vector-icons";
+import defaultpfp from "../assets/images/profile/defaultProfile.jpeg";
 const CitizenProposalCard = ({
   username,
   dateTimeCreated,
@@ -74,10 +75,10 @@ const CitizenProposalCard = ({
     <Animatable.View
       animation="fadeInUp"
       style={{
-        width: "95%",
+        width: "100%",
         height: "auto",
         borderRadius: 20,
-        
+
         paddingVertical: 20,
         paddingHorizontal: 10,
         gap: 10,
@@ -89,10 +90,13 @@ const CitizenProposalCard = ({
           padding: 10,
         }}>
         <Image
-          source={{
-            uri: `http://${API_IP_ADDRESS}:8000/uploads/profile/${profilePicture}`,
-          }}
+          source={
+            profilePicture != 'null' ? {
+              uri: `http://${API_IP_ADDRESS}:8000/uploads/profile/${profilePicture}`,
+            } : defaultpfp
+          }
           style={{ width: 40, height: 40, borderRadius: 500 }}></Image>
+     
         <View style={{ flexDirection: "column" }}>
           <Text style={{ color: currentColors.text }}>{username}</Text>
           <Text style={{ color: currentColors.text }}>

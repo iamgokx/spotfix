@@ -78,6 +78,10 @@ export default function ProposalFiles() {
     fetchUserDetails();
   }, []);
 
+  const sanitizeFilename = (filename) => {
+    return filename.replace(/[()]/g, "").replace(/[^a-zA-Z0-9._-]/g, "_");
+  };
+
   const submitIssue = async () => {
     console.log();
     console.log();
@@ -97,70 +101,62 @@ export default function ProposalFiles() {
       formData.append("generatedLocality", details.generatedLocality);
       formData.append("generatedState", details.generatedState);
 
-      // if (details.media[0]) {
-      //   formData.append("media", {
-      //     uri: details.media[0].uri.startsWith("file://")
-      //       ? details.media[0].uri
-      //       : `file://${details.media[0].uri}`,
-      //     type: "image/jpeg",
-      //     name: "proposal.jpg",
-      //   });
-      // }
-      // if (details.media[1]) {
-      //   formData.append("media", {
-      //     uri: details.media[1].uri.startsWith("file://")
-      //       ? details.media[1].uri
-      //       : `file://${details.media[1].uri}`,
-      //     type: "image/jpeg",
-      //     name: "proposal.jpg",
-      //   });
-      // }
-      // if (details.media[2]) {
-      //   formData.append("media", {
-      //     uri: details.media[2].uri.startsWith("file://")
-      //       ? details.media[2].uri
-      //       : `file://${details.media[2].uri}`,
-      //     type: "image/jpeg",
-      //     name: "proposal.jpg",
-      //   });
-      // }
-      // if (details.media[3]) {
-      //   formData.append("media", {
-      //     uri: details.media[3].uri.startsWith("file://")
-      //       ? details.media[3].uri
-      //       : `file://${details.media[3].uri}`,
-      //     type: "image/jpeg",
-      //     name: "proposal.jpg",
-      //   });
-      // }
-      // if (details.media[4]) {
-      //   formData.append("media", {
-      //     uri: details.media[4].uri.startsWith("file://")
-      //       ? details.media[4].uri
-      //       : `file://${details.media[4].uri}`,
-      //     type: "image/jpeg",
-      //     name: "proposal.jpg",
-      //   });
-      // }
-      details.media.forEach((media, index) => {
-        if (media && media.uri) {
-          formData.append("media", {
-            uri: media.uri.startsWith("file://")
-              ? media.uri
-              : `file://${media.uri}`,
-            type: "image/jpeg",
-            name: "proposal.jpg",
-          });
-        }
-      });
-
+      if (details.media[0]) {
+        formData.append("media", {
+          uri: details.media[0].uri.startsWith("file://")
+            ? details.media[0].uri
+            : `file://${details.media[0].uri}`,
+          type: "image/jpeg",
+          name: "proposal.jpg",
+        });
+      }
+      if (details.media[1]) {
+        formData.append("media", {
+          uri: details.media[1].uri.startsWith("file://")
+            ? details.media[1].uri
+            : `file://${details.media[1].uri}`,
+          type: "image/jpeg",
+          name: "proposal.jpg",
+        });
+      }
+      if (details.media[2]) {
+        formData.append("media", {
+          uri: details.media[2].uri.startsWith("file://")
+            ? details.media[2].uri
+            : `file://${details.media[2].uri}`,
+          type: "image/jpeg",
+          name: "proposal.jpg",
+        });
+      }
+      if (details.media[3]) {
+        formData.append("media", {
+          uri: details.media[3].uri.startsWith("file://")
+            ? details.media[3].uri
+            : `file://${details.media[3].uri}`,
+          type: "image/jpeg",
+          name: "proposal.jpg",
+        });
+      }
+      if (details.media[4]) {
+        formData.append("media", {
+          uri: details.media[4].uri.startsWith("file://")
+            ? details.media[4].uri
+            : `file://${details.media[4].uri}`,
+          type: "image/jpeg",
+          name: "proposal.jpg",
+        });
+      }
+   
+     if(details.documents.length > 0){
       details.documents.forEach((doc, index) => {
         formData.append(`documents`, {
           uri: doc.uri.startsWith("file://") ? doc.uri : `file://${doc.uri}`,
           type: doc.type,
-          name: doc.name || `document${index + 1}`,
+          name: sanitizeFilename(doc.name || `document_${index + 1}`),
         });
       });
+      
+     }
       console.log("FormData:", formData);
 
       const response = await axios.post(

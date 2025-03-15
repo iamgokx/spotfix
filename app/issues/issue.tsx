@@ -104,8 +104,10 @@ const Issue = ({ goToAddressScreen }: any) => {
       valid = false;
     } else if (safeDetails.title.length < 20) {
       newErrors.title = "Title should be at least 20 characters long";
-    } else if (safeDetails.title.length <= 100) {
+      valid = false;
+    } else if (safeDetails.title.length >= 100) {
       newErrors.title = "Title should be at most 100 characters long";
+      valid = false;
     }
 
     if (!safeDetails.description || safeDetails.description.trim() === "") {
@@ -117,6 +119,7 @@ const Issue = ({ goToAddressScreen }: any) => {
     } else if (safeDetails.description.length < 50) {
       newErrors.description =
         "Description should be at least 50 characters long";
+        valid = false;
     }
 
     if (!safeDetails.suggestions || safeDetails.suggestions.trim() === "") {
@@ -127,7 +130,8 @@ const Issue = ({ goToAddressScreen }: any) => {
       valid = false;
     } else if (safeDetails.suggestions.length < 50) {
       newErrors.suggestions =
-        "Description should be at least 50 characters long";
+        "Suggestion should be at least 50 characters long";
+        valid = false;
     }
 
     if (!safeDetails.department) {
@@ -140,11 +144,6 @@ const Issue = ({ goToAddressScreen }: any) => {
 
   const handleNextButtonPress = () => {
     if (validate()) {
-      console.log();
-      console.log();
-      console.log();
-      console.log();
-      console.log();
       console.log(details);
       router.push("/issues/issueLocation");
     } else {

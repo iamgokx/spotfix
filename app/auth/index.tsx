@@ -82,6 +82,8 @@ const Index = () => {
             router.push("/home");
           } else if (jwtRes == "department_coordinator") {
             router.push("/branchCoordinators/Home");
+          } else if (jwtRes == "sub_branch_coordinator") {
+            router.push("/subBranchCoordinator/ApproveIssues");
           }
         }
       } else {
@@ -202,14 +204,14 @@ const Index = () => {
               />
             </Animatable.View>
 
-            <Pressable onPress={handleLogInPress} style={{ zIndex: 3 }}>
+            <TouchableOpacity onPress={handleLogInPress} style={{ zIndex: 3 }}>
               <Animatable.Text
                 animation="fadeInUp"
                 duration={600}
                 style={styles.loginBtn}>
                 Log in Now
               </Animatable.Text>
-            </Pressable>
+            </TouchableOpacity>
 
             <View
               style={{

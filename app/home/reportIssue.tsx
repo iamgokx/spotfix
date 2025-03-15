@@ -115,7 +115,7 @@ const ReportIssue = () => {
             style={{
               flexGrow: 1,
               height: "100%",
-
+              width : '60%',
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
@@ -168,8 +168,8 @@ const ReportIssue = () => {
           <View
             style={{
               flexGrow: 1,
+              width : '60%',
               height: "100%",
-
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",

@@ -37,32 +37,29 @@ const NewSubBranchCoordinatorMap = ({ goToAddressScreen }: any) => {
 
       const data = await response.json();
       if (data && data.display_name) {
-        const {
-          country,
-          state,
-          city,
-          postcode,
-          county,
-          district,
-          road,
-          suburb,
-          state_district,
-        } = data.address;
+        const { state } = data.address;
 
-        const locality =
-          city || suburb || district || road || county || state_district;
+        if (state !== "Goa") {
+          setAddress("Please select an address from Goa");
+          setaddressLoaded(false); // Prevent confirmation button from appearing
+          setisloading(false);
+          return;
+        }
+
         setAddress(data.display_name);
-
         setaddressLoaded(true);
-        setCoordinator((prev) => ({ ...prev, latitude: latitude }));
-        setCoordinator((prev) => ({ ...prev, longitude: longitude }));
-        setisloading(false);
+        setCoordinator((prev) => ({ ...prev, latitude }));
+        setCoordinator((prev) => ({ ...prev, longitude }));
       } else {
         setAddress("Please replace your marker nearby, error getting address");
+        setaddressLoaded(false);
       }
     } catch (error) {
       console.error("Error fetching address:", error.message || error);
+      setAddress("Error fetching address, please try again.");
+      setaddressLoaded(false);
     }
+    setisloading(false);
   };
 
   const handleConfirmAddressClick = () => {
@@ -93,7 +90,7 @@ const NewSubBranchCoordinatorMap = ({ goToAddressScreen }: any) => {
         onPress={onMapPress}>
         {marker && <Marker coordinate={marker} />}
       </MapView>
-      {addressLoaded && (
+      {addressLoaded ? (
         <View style={styles.infoContainer}>
           <View style={styles.mapAddressContainer}>
             <Ionicons
@@ -112,6 +109,20 @@ const NewSubBranchCoordinatorMap = ({ goToAddressScreen }: any) => {
             onPress={() => router.back()}>
             <Text style={styles.confirmButtonText}>Confirm Address</Text>
           </TouchableOpacity>
+        </View>
+      ) : (
+        <View style={styles.infoContainer}>
+          <View style={styles.mapAddressContainer}>
+            <Ionicons
+              name="location"
+              color="blue"
+              size={40}
+              style={{ width: 40 }}></Ionicons>
+            <View>
+              <Text style={styles.addressText}>Location Detected</Text>
+              <Text>{userAddress}</Text>
+            </View>
+          </View>
         </View>
       )}
     </View>

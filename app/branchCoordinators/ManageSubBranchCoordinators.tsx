@@ -21,6 +21,7 @@ import background from "../../assets/images/gradients/bluegradient.png";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import CustomHeader from "@/components/branchCoordinators/CustomHeader";
 const ManageSubBranchCoordinators = () => {
   const [subBranchCoordinatorData, setsubBranchCoordinatorData] = useState([]);
   const router = useRouter();
@@ -31,7 +32,7 @@ const ManageSubBranchCoordinators = () => {
   const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
   const { searchValue } = useSearch();
   const insets = useSafeAreaInsets();
-  
+
   const getSubBranchCoordinators = async () => {
     setRefreshing(true);
     setLoading(true);
@@ -117,10 +118,12 @@ const ManageSubBranchCoordinators = () => {
         styles.container,
         {
           backgroundColor: currentColors.backgroundDarkest,
-          paddingTop: 10,
+
           position: "relative",
         },
       ]}>
+      <CustomHeader title="Dashboard" />
+
       <ImageBackground
         source={background}
         style={{
@@ -154,7 +157,7 @@ const ManageSubBranchCoordinators = () => {
             alignItems: "center",
             justifyContent: "center",
           }}
-          style={{ zIndex: 1 }}
+          style={{ zIndex: 1 , paddingTop : 10}}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}

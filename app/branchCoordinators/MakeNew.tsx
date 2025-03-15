@@ -20,7 +20,7 @@ import {
 import announcement from "../../assets/lottie/announcement.json";
 
 import { getStoredRawToken, getStoredData } from "@/hooks/useJwt";
-import { jwtDecode } from "jwt-decode";
+
 const MakeNew = () => {
   const [fontsLoaded] = useFonts({
     Poppins_100Thin,
@@ -33,33 +33,27 @@ const MakeNew = () => {
   const router = useRouter();
   const [user, setUser] = useState("");
 
-  // const getUserDetails = async () => {
-  //   try {
-  //     const rawToken = await getStoredData();
-  //     if (!rawToken || !rawToken.name) {
-  //       console.error("Token data is missing or invalid");
-  //       setUser("User");
-  //       return;
-  //     }
-  //     const fName = rawToken.name.split(" ");
-  //     setUser(fName[0] || "User");
-  //   } catch (error) {
-  //     console.error("Error fetching user details:", error);
-  //     setUser("User");
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getUserDetails();
-  // }, []);
+  useEffect(() => {
+    const userDetails = async () => {
+      const luser = await getStoredData();
+      setUser(luser.name);
+    };
+    userDetails()
+  }, []);
 
   if (!fontsLoaded) {
     return (
-      <View style={styles.container}>
-        <Text>Loading...</Text>
+      <View
+        style={[
+          styles.container,
+          { backgroundColor: currentColors.backgroundDarkest },
+        ]}>
+        <Text style={{ color: currentColors.text }}>Loading...</Text>
       </View>
     );
   }
+
+  //TODO update the name of the departmetn here
 
   return (
     <IssueProvider>
@@ -84,7 +78,7 @@ const MakeNew = () => {
               fontSize: 35,
               color: currentColors.text,
             }}>
-            Department Of Electricty{/* Hey {user} */}
+            Hey {user}
           </Animatable.Text>
 
           <Animatable.Text
@@ -188,8 +182,7 @@ const MakeNew = () => {
             </Text>
             <TouchableOpacity
               style={styles.btnContainer}
-              // onPress={() => router.push("/proposals")}
-            >
+              onPress={() => router.push("/branchProposal/createProposal")}>
               <Text
                 style={[
                   styles.btn,

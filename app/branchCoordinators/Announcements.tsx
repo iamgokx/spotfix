@@ -17,6 +17,7 @@ import { API_IP_ADDRESS } from "../../ipConfig.json";
 import { useState, useEffect } from "react";
 import * as Animatable from "react-native-animatable";
 import { router } from "expo-router";
+import watermark from "../../assets/images/watermark.png";
 const Announcements = () => {
   const colorTheme = useColorScheme();
   const currentColors = colorTheme == "dark" ? Colors.dark : Colors.light;
@@ -116,7 +117,7 @@ const Announcements = () => {
         animation="fadeInUp"
         delay={delay + 50}
         style={{
-          marginBottom: 10,
+          margin: 10,
           padding: 10,
           borderRadius: 20,
           overflow: "hidden",
@@ -203,7 +204,7 @@ const Announcements = () => {
             }}>
             <TextInput
               style={{ width: "90%", color: currentColors.text }}
-              placeholder="Search for an announcement"
+              placeholder="Search for an announcement..."
               placeholderTextColor={currentColors.textShade}
               value={searchQuery}
               onChangeText={setSearchQuery}
@@ -238,7 +239,6 @@ const Announcements = () => {
                 fontSize: 20,
                 fontWeight: 600,
                 padding: 10,
-               
               }}>
               Latest News
             </Animatable.Text>
@@ -246,7 +246,19 @@ const Announcements = () => {
               data={filteredData}
               keyExtractor={(item, index) => index.toString()}
               renderItem={renderItem}
-              ListFooterComponent={(<View style={{height : insets.bottom + 80}}></View>)}
+              ListFooterComponent={
+                <View
+                  style={{
+                    marginTop: 100,
+                    paddingBottom: insets.bottom + 100,
+                    gap: 10,
+                  }}>
+                  <Image
+                    source={watermark}
+                    style={{ width: "100%", height: 100, objectFit: "contain" }}
+                  />
+                </View>
+              }
               showsVerticalScrollIndicator={false}
               refreshControl={
                 <RefreshControl
