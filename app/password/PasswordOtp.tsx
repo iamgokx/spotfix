@@ -91,12 +91,14 @@ const PasswordOtp = () => {
           },
         }
       );
+
+      console.log("New OTP sent, resetting timer...");
+      startTimer();
     } catch (error) {
       console.log(error);
     }
   };
   useEffect(() => {
-
     getUserOtp();
   }, []);
 
@@ -283,18 +285,18 @@ const PasswordOtp = () => {
             style={{ paddingBottom: keyboardVisible ? 100 : 20 }}>
             <Text style={styles.otpVerifyBtn}>Verify</Text>
           </TouchableOpacity>
-          <Pressable style={{ display: "flex", flexDirection: "row" }} onPress={getUserOtp}>
+          <View style={{ display: "flex", flexDirection: "row" }}>
             <Text style={{ color: currentColors.text }}>
               Didn't receive an OTP ?
             </Text>
-            <Text
-              onPress={() => sendUserOtp()}
-              style={{ color: currentColors.secondary }}
+            <TouchableOpacity
+              onPress={getUserOtp}
+              
               className="text-blue-600">
-              {" "}
-              Resend
-            </Text>
-          </Pressable>
+             
+              <Text style={{ color: currentColors.secondary }}>{" "}Resend</Text>
+            </TouchableOpacity>
+          </View>
           <View style={styles.separator} />
         </Animatable.View>
       </View>

@@ -1,5 +1,5 @@
 import CustomHeader from "@/components/CustomHeader";
-import { View, Text, RefreshControl } from "react-native";
+import { View, Text, RefreshControl, Image } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -8,8 +8,12 @@ import { FlatList } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
 import CitizenProposalCard from "@/components/CitizenProposalCard";
+import watermark from "../../assets/images/watermark.png";
 import * as Animatable from "react-native-animatable";
+
 const HomeUserProposals = ({ navigation }: any) => {
+  const insets = useSafeAreaInsets();
+
   const currentTheme = useColorScheme();
   const currentColors = currentTheme == "dark" ? Colors.dark : Colors.light;
   const [citizenProposalData, setCitizenProposalData] = useState();
@@ -21,8 +25,10 @@ const HomeUserProposals = ({ navigation }: any) => {
       );
 
       if (response) {
-       
-        setCitizenProposalData(response.data);
+        const sortedData = [...response.data].sort((a, b) =>
+          b.date_time_created.localeCompare(a.date_time_created)
+        );
+        setCitizenProposalData(sortedData);
       }
     } catch (error) {
       console.log("error getting citizen proposals", error);
@@ -55,15 +61,18 @@ const HomeUserProposals = ({ navigation }: any) => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         ListFooterComponent={
-          <View style={{ width: "100%", height: 100, margin: 30 }}>
-            <Text
-              style={{
-                color: "white",
-                fontFamily: "Poppins_300Light",
-              }}>
-              Nothing more to view.
-            </Text>
-          </View>
+          <Animatable.View
+            animation={"fadeInUp"}
+            style={{
+              marginTop: 100,
+              paddingBottom: insets.bottom + 100,
+              gap: 10,
+            }}>
+            <Image
+              source={watermark}
+              style={{ width: 300, height: 100, objectFit: "contain" }}
+            />
+          </Animatable.View>
         }
         ListHeaderComponent={(item) => {
           return <Text style={{ marginTop: 10 }}></Text>;

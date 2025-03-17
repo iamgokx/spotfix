@@ -10,6 +10,7 @@ import {
   Alert,
 } from "react-native";
 import { Colors } from "@/constants/Colors";
+import * as Animatable from 'react-native-animatable'
 import { useColorScheme } from "react-native";
 import { API_IP_ADDRESS } from "../../ipConfig.json";
 import { useState, useEffect } from "react";
@@ -84,33 +85,38 @@ const ManageSubBranchCoordinators = () => {
     return date.toLocaleDateString("en-GB", options).replace(",", "");
   };
 
-  const renderItem = ({ item }) => (
-    <View
-      style={[
-        styles.departmentContainer,
-        { backgroundColor: currentColors.backgroundDarker },
-      ]}>
-      <View style={{ width: "95%" }}>
-        <Text
-          style={[
-            styles.citizenInfo,
-            { color: currentColors.secondary, fontSize: 20 },
-          ]}>
-          Name: {item.full_name}
-        </Text>
-        <Text style={[styles.citizenInfo, { color: currentColors.textShade }]}>
-          Email : {item.sub_department_coordinator_id}
-        </Text>
-        <Text style={[styles.citizenInfo, { color: currentColors.textShade }]}>
-          Address : {item.latitude}, {item.longitude}
-        </Text>
-
-        <Text style={[styles.citizenInfo, { color: currentColors.secondary }]}>
-          {item.department_name}
-        </Text>
-      </View>
-    </View>
-  );
+  const renderItem = ({ item }) => {
+    let delay = 100
+    return (
+      <Animatable.View
+      animation={'fadeInUp'}
+      delay={delay + 50}
+        style={[
+          styles.departmentContainer,
+          { backgroundColor: currentColors.backgroundDarker },
+        ]}>
+        <View style={{ width: "95%" }}>
+          <Text
+            style={[
+              styles.citizenInfo,
+              { color: currentColors.secondary, fontSize: 20 },
+            ]}>
+            Name: {item.full_name}
+          </Text>
+          <Text style={[styles.citizenInfo, { color: currentColors.textShade }]}>
+            Email : {item.sub_department_coordinator_id}
+          </Text>
+          <Text style={[styles.citizenInfo, { color: currentColors.textShade }]}>
+            Address : {item.latitude}, {item.longitude}
+          </Text>
+  
+          <Text style={[styles.citizenInfo, { color: currentColors.secondary }]}>
+            {item.department_name}
+          </Text>
+        </View>
+      </Animatable.View>
+    )
+  };
 
   return (
     <View

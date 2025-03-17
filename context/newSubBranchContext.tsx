@@ -8,6 +8,7 @@ interface SubBranchCoordinator {
   latitude: number;
   longitude: number;
   password: string;
+  pincodes: string;
 }
 
 interface SubBranchContextType {
@@ -24,6 +25,7 @@ const defaultCoordinator: SubBranchCoordinator = {
   latitude: 0,
   longitude: 0,
   password: "",
+  pincodes: "",
 };
 
 const SubBranchContext = createContext<SubBranchContextType | undefined>(

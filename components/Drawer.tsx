@@ -21,6 +21,7 @@ import { useColorScheme } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { API_IP_ADDRESS } from "../ipConfig.json";
 import axios from "axios";
+import { ScrollView } from "react-native-gesture-handler";
 const CustomDrawer = (props: any) => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
@@ -111,26 +112,26 @@ const CustomDrawer = (props: any) => {
       </View>
 
       <DrawerContentScrollView
-        {...props}
-        contentContainerStyle={[styles.scrollContainer, { zIndex: 5 }]}>
-        <DrawerItemList {...props} />
-        <DrawerItem
-          label="Logout"
-          labelStyle={{
-            color: currentColors.secondary,
-            fontWeight: "bold",
-          }}
-          icon={({ color, size }) => (
-            <Ionicons
-              name="log-out-outline"
-              size={size}
-              color={currentColors.secondary}
-            />
-          )}
-          style={{}}
-          onPress={() => handleLogOutButtonPress()}
-        />
-      </DrawerContentScrollView>
+  {...props}
+  contentContainerStyle={styles.scrollContainer}>
+  <DrawerItemList {...props} />
+  <DrawerItem
+    label="Logout"
+    labelStyle={{
+      color: currentColors.secondary,
+      fontWeight: "bold",
+    }}
+    icon={({ color, size }) => (
+      <Ionicons
+        name="log-out-outline"
+        size={size}
+        color={currentColors.secondary}
+      />
+    )}
+    onPress={() => handleLogOutButtonPress()}
+  />
+</DrawerContentScrollView>
+
     </View>
   );
 };
@@ -138,19 +139,14 @@ const CustomDrawer = (props: any) => {
 const styles = StyleSheet.create({
   drawerContainer: {
     flex: 1,
-    width: "100%",
     height: "100%",
-    overflow: "hidden",
   },
   scrollContainer: {
-    flex: 1,
-    margin: 0,
-    padding: 0,
-    width: "100%",
-    overflow: "hidden",
-
-    gap: 10,
+    flexGrow: 1,
+    gap : 10,
+    paddingBottom: 150, 
   },
+
   headerContainer: {
     width: "100%",
     height: "25%",

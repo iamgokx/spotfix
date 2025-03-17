@@ -1,5 +1,5 @@
 import CustomHeader from "@/components/CustomHeader";
-import { View, Text, RefreshControl } from "react-native";
+import { View, Text, RefreshControl, Image } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -8,13 +8,15 @@ import { FlatList } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
 import GovProposalCard from "@/components/GovProposalCard";
+
+import watermark from "../../assets/images/watermark.png";
 import * as Animatable from "react-native-animatable";
-import govPicture from '../'
 const HomeDepartmentProposals = ({ navigation }: any) => {
   const currentTheme = useColorScheme();
   const currentColors = currentTheme == "dark" ? Colors.dark : Colors.light;
   const [govProposalData, setgovProposalData] = useState();
   const [refreshing, setRefreshing] = useState(false);
+  const insets = useSafeAreaInsets();
   const getUserProposals = async () => {
     try {
       const response = await axios.post(
@@ -22,8 +24,8 @@ const HomeDepartmentProposals = ({ navigation }: any) => {
       );
 
       if (response) {
-       
-        setgovProposalData(response.data);
+        const sortedData = [...response.data].sort((a, b) => b.date_time_created.localeCompare(a.date_time_created));
+        setgovProposalData(sortedData);
       }
     } catch (error) {
       console.log("error getting citizen proposals", error);
@@ -56,15 +58,18 @@ const HomeDepartmentProposals = ({ navigation }: any) => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         ListFooterComponent={
-          <View style={{ width: "100%", height: 100, margin: 30 }}>
-            <Text
-              style={{
-                color: "white",
-                fontFamily: "Poppins_300Light",
-              }}>
-              Nothing more to view.
-            </Text>
-          </View>
+          <Animatable.View
+            animation={"fadeInUp"}
+            style={{
+              marginTop: 100,
+              paddingBottom: insets.bottom + 100,
+              gap: 10,
+            }}>
+            <Image
+              source={watermark}
+              style={{ width: 300, height: 100, objectFit: "contain" }}
+            />
+          </Animatable.View>
         }
         ListHeaderComponent={(item) => {
           return <Text style={{ marginTop: 10 }}></Text>;
@@ -82,7 +87,7 @@ const HomeDepartmentProposals = ({ navigation }: any) => {
         renderItem={({ item }: any) => {
           return (
             <GovProposalCard
-            govProposalId={item.gov_proposal_id}
+              govProposalId={item.gov_proposal_id}
               username={item.department_name}
               dateTimeCreated={item.date_time_created}
               latitude={item.latitude}
@@ -90,7 +95,7 @@ const HomeDepartmentProposals = ({ navigation }: any) => {
               title={item.title}
               description={item.proposal_description}
               mediaFiles={item.media_files}
-              profilePicture={''}
+              profilePicture={""}
               suggestionCount={item.suggestion_count}
             />
           );
@@ -98,7 +103,5 @@ const HomeDepartmentProposals = ({ navigation }: any) => {
     </View>
   );
 };
-
-
 
 export default HomeDepartmentProposals;

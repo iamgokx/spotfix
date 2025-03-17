@@ -16,6 +16,7 @@ import { clearStorage, getStoredData } from "@/hooks/useJwt";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Picker } from "@react-native-picker/picker";
+import { ScrollView } from "react-native-gesture-handler";
 const ApproveIssues = () => {
   const router = useRouter();
   const [issuesData, setIssuesData] = useState([]);
@@ -94,10 +95,13 @@ const ApproveIssues = () => {
         backgroundColor: currentColors.backgroundDarkest,
         paddingHorizontal: 20,
         paddingBottom: insets.bottom + 10,
-
       }}>
-      <View style={{ flexDirection: "row", margin: 10, gap: 10 }}>
-        {["registered", "approved", "in process"].map((status) => (
+      <ScrollView
+        style={{ flexDirection: "row", marginBottom: 10 }}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ gap: 10, padding: 10, height : 60 }}>
+        {["registered", "approved", "in process", "completed"].map((status) => (
           <TouchableOpacity
             key={status}
             onPress={() => handleFilterPress(status)}
@@ -120,7 +124,7 @@ const ApproveIssues = () => {
             </Text>
           </TouchableOpacity>
         ))}
-      </View>
+      </ScrollView>
 
       <FlatList
         data={filteredIssues}
@@ -128,7 +132,16 @@ const ApproveIssues = () => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        ListFooterComponent={<Text style={{color : currentColors.text, textAlign :"center", margin  :20}}>Nothing more to view</Text>}
+        ListFooterComponent={
+          <Text
+            style={{
+              color: currentColors.text,
+              textAlign: "center",
+              margin: 20,
+            }}>
+            Nothing more to view
+          </Text>
+        }
         renderItem={({ item }) => {
           const firstFileName = item.file_names
             ? item.file_names.split(",")[0].trim()
@@ -211,7 +224,7 @@ const ApproveIssues = () => {
                         : "black",
                     padding: 10,
                     borderRadius: 30,
-                
+
                     textAlign: "center",
                   }}>
                   {item.issue_status}
@@ -222,7 +235,7 @@ const ApproveIssues = () => {
                     backgroundColor: currentColors.secondary,
                     padding: 10,
                     borderRadius: 30,
-            
+
                     textAlign: "center",
                   }}>
                   Priority : {item.priority}

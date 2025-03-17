@@ -41,10 +41,13 @@ const AddNewSubBranchCoordinator = () => {
   const [isModalActive, setisModalActive] = useState(false);
   const [isSuccessVisible, setsuccessModalIsActive] = useState(false);
   const [successModalMessage, setsuccessModalMessage] = useState("");
+  const [pincodeInput, setPincodeInput] = useState("");
+  const [pincodeError, setPincodeError] = useState("");
+
   const validateForm = () => {
     let valid = true;
     let newErrors = {};
-    console.log(safeCoordinator);
+
     if (!safeCoordinator.name || safeCoordinator.name.trim() === "") {
       newErrors.name = "Full Name is required";
       valid = false;
@@ -97,6 +100,70 @@ const AddNewSubBranchCoordinator = () => {
       valid = false;
     }
 
+    const goaPincodes = [
+      "403001",
+      "403002",
+      "403003",
+      "403004",
+      "403005",
+      "403006",
+      "403007",
+      "403101",
+      "403102",
+      "403103",
+      "403104",
+      "403105",
+      "403106",
+      "403107",
+      "403108",
+      "403109",
+      "403110",
+      "403201",
+      "403202",
+      "403203",
+      "403204",
+      "403205",
+      "403206",
+      "403207",
+      "403208",
+      "403209",
+      "403210",
+      "403211",
+      "403212",
+      "403213",
+      "403214",
+      "403301",
+      "403302",
+      "403303",
+      "403304",
+      "403305",
+      "403306",
+      "403307",
+      "403308",
+      "403309",
+    ];
+
+    if (!coordinator.pincodes) {
+      newErrors.pincode = "Pincode field is required.";
+      valid = false;
+    } else {
+      const enteredPincodes = coordinator.pincodes
+        .split(",")
+        .map((p) => p.trim());
+      for (let pin of enteredPincodes) {
+        if (!/^\d{6}$/.test(pin)) {
+          newErrors.pincode = `Invalid pincode format: ${pin}`;
+          valid = false;
+          break;
+        }
+        if (!goaPincodes.includes(pin)) {
+          newErrors.pincode = `Invalid Goa pincode: ${pin}`;
+          valid = false;
+          break;
+        }
+      }
+    }
+
     setErrors(newErrors);
     return valid;
   };
@@ -114,6 +181,7 @@ const AddNewSubBranchCoordinator = () => {
           latitude: coordinator.latitude,
           longitude: coordinator.longitude,
           password: coordinator.password,
+          pincodes: coordinator.pincodes,
         }
       );
 
@@ -197,11 +265,7 @@ const AddNewSubBranchCoordinator = () => {
           position: "relative",
           paddingTop: insets.top + 10,
         }}>
-        <Modal
-          visible={isSuccessVisible}
-          transparent
-          animationType="fade"
-         >
+        <Modal visible={isSuccessVisible} transparent animationType="fade">
           <View
             style={{
               flex: 1,
@@ -280,11 +344,14 @@ const AddNewSubBranchCoordinator = () => {
 
       <ScrollView
         style={{
-          flex: 1,
           backgroundColor: currentColors.backgroundDarkest,
           padding: 15,
         }}
-        contentContainerStyle={{ display: "flex", alignItems: "center" }}>
+        contentContainerStyle={{
+          display: "flex",
+          alignItems: "center",
+          paddingBottom: 100,
+        }}>
         <Modal visible={isModalActive} transparent animationType="fade">
           <View
             style={{
@@ -347,7 +414,7 @@ const AddNewSubBranchCoordinator = () => {
               color: currentColors.text,
               backgroundColor: currentColors.background,
             },
-            errors.fullName && styles.errorInput,
+            errors.name && styles.errorInput,
           ]}
           placeholder="Full Name"
           placeholderTextColor={currentColors.textShade}
@@ -453,6 +520,30 @@ const AddNewSubBranchCoordinator = () => {
           maxLength={10}
         />
         {errors.phone && <Text style={styles.errorText}>{errors.phone}</Text>}
+
+        <Text style={[styles.label, { color: currentColors.text }]}>
+          Assign relevant pincodes for this coordinator (comma-separated)
+        </Text>
+        <TextInput
+          style={[
+            styles.input,
+            {
+              color: currentColors.text,
+              backgroundColor: currentColors.background,
+            },
+            errors.pincode && styles.errorInput,
+          ]}
+          placeholder="Enter Pincodes (comma-seperated)"
+          placeholderTextColor={currentColors.textShade}
+          value={coordinator?.pincodes}
+          onChangeText={(text) =>
+            setCoordinator((prev) => ({ ...prev, pincodes: text }))
+          }
+          keyboardType="numeric"
+        />
+        {errors.pincode ? (
+          <Text style={styles.errorText}>{errors.pincode}</Text>
+        ) : null}
 
         <Text style={[styles.label, { color: currentColors.text }]}>
           Location

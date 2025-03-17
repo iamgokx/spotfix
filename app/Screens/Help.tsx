@@ -19,160 +19,8 @@ const Help = () => {
   const [isDeleteAccountModaActive, setisDeleteAccountModaActive] =
     useState(false);
 
-  const onCloseLogOut = () => {
-    setisLogOutModalActive(false);
-  };
-
-  const onConfirmLogOut = () => {
-    setisLogOutModalActive(false);
-    setTimeout(() => {
-      clearStorage();
-      router.push("/welcome");
-    }, 100);
-  };
-
-  const onCloseDeleteAccount = () => {
-    setisDeleteAccountModaActive(false);
-  };
-
-  const onConfirmDeleteAccount = () => {
-    console.log("deleting account");
-  };
-
   return (
     <View style={{ flex: 1, backgroundColor: currentColors.backgroundDarker }}>
-      <Modal transparent visible={isLogOutModalActive} animationType="slide">
-        <View
-          style={{
-            flex: 1,
-            alignItems: "center",
-            justifyContent: "center",
-          }}>
-          <View
-            style={{
-              backgroundColor: currentColors.backgroundDarkest,
-              padding: 20,
-              borderRadius: 20,
-              gap: 20,
-              width: "70%",
-            }}>
-            <Text
-              style={{ color: currentColors.secondary, textAlign: "center" }}>
-              Confirmation
-            </Text>
-            <Text style={{ color: currentColors.text }}>
-              Are you sure you want to Log Out?
-            </Text>
-
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}>
-              <TouchableOpacity
-                style={{ width: "40%" }}
-                onPress={onCloseLogOut}>
-                <Text
-                  style={{
-                    padding: 10,
-                    textAlign: "center",
-                    color: currentColors.secondary,
-                    borderRadius: 30,
-                    borderWidth: 3,
-                    borderColor: currentColors.secondary,
-                    fontWeight: 600,
-                  }}>
-                  Cancel
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={{ width: "40%" }}
-                onPress={onConfirmLogOut}>
-                <Text
-                  style={{
-                    padding: 10,
-                    textAlign: "center",
-                    color: "white",
-                    borderRadius: 30,
-                    backgroundColor: currentColors.secondary,
-                    fontWeight: 600,
-                  }}>
-                  Confirm
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-      <Modal
-        transparent
-        visible={isDeleteAccountModaActive}
-        animationType="slide">
-        <View
-          style={{
-            flex: 1,
-            alignItems: "center",
-            justifyContent: "center",
-          }}>
-          <View
-            style={{
-              backgroundColor: currentColors.backgroundDarkest,
-              padding: 20,
-              borderRadius: 20,
-              gap: 20,
-              width: "70%",
-            }}>
-            <Text
-              style={{ color: currentColors.secondary, textAlign: "center" }}>
-              Confirmation
-            </Text>
-            <Text style={{ color: currentColors.text }}>
-              Are you sure you want to DELETE your account?
-            </Text>
-
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}>
-              <TouchableOpacity
-                style={{ width: "40%" }}
-                onPress={onCloseDeleteAccount}>
-                <Text
-                  style={{
-                    padding: 10,
-                    textAlign: "center",
-                    color: currentColors.secondary,
-                    borderRadius: 30,
-                    borderWidth: 3,
-                    borderColor: currentColors.secondary,
-                    fontWeight: 600,
-                  }}>
-                  Cancel
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={{ width: "40%" }}
-                onPress={onConfirmDeleteAccount}>
-                <Text
-                  style={{
-                    padding: 10,
-                    textAlign: "center",
-                    color: "white",
-                    borderRadius: 30,
-                    backgroundColor: currentColors.secondary,
-                    fontWeight: 600,
-                  }}>
-                  Delete
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
-
       <ImageBackground
         source={imgBackground}
         style={{
@@ -222,7 +70,7 @@ const Help = () => {
         }}>
         <Animatable.View animation="fadeInUp">
           <TouchableOpacity
-            onPress={() => router.push("/password/index")}
+            onPress={() => router.push("/screens/Faqs")}
             style={{
               width: "100%",
               backgroundColor: currentColors.backgroundDarker,
@@ -243,6 +91,7 @@ const Help = () => {
 
         <Animatable.View animation={"fadeInUp"} delay={100}>
           <TouchableOpacity
+            onPress={() => router.push("/screens/ReportaProblem")}
             style={{
               width: "100%",
               backgroundColor: currentColors.backgroundDarker,
@@ -263,7 +112,7 @@ const Help = () => {
 
         <Animatable.View animation={"fadeInUp"} delay={150}>
           <TouchableOpacity
-            onPress={() => setisLogOutModalActive((prev) => !prev)}
+            onPress={() => router.push("/screens/Appversion")}
             style={{
               width: "100%",
               backgroundColor: currentColors.backgroundDarker,
@@ -284,7 +133,7 @@ const Help = () => {
 
         <Animatable.View animation={"fadeInUp"} delay={200}>
           <TouchableOpacity
-            onPress={() => setisDeleteAccountModaActive(true)}
+            onPress={() => router.push("/screens/TermsandCondition")}
             style={{
               width: "100%",
               backgroundColor: currentColors.backgroundDarker,
@@ -306,7 +155,7 @@ const Help = () => {
         </Animatable.View>
         <Animatable.View animation={"fadeInUp"} delay={200}>
           <TouchableOpacity
-            onPress={() => setisDeleteAccountModaActive(true)}
+            onPress={() => router.push("/screens/AboutSpotFix")}
             style={{
               width: "100%",
               backgroundColor: currentColors.backgroundDarker,

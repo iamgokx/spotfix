@@ -32,15 +32,24 @@ const PendingIssues = () => {
     try {
       const response = await axios.post(
         `http://${API_IP_ADDRESS}:8000/api/subBranchCoordinator/getIssues`,
-        {
-          email: user.email,
-        }
+        { email: user.email }
       );
-
+  
       if (response.data.status) {
-        console.log(response.data.results);
-        setIssuesData(response.data.results);
-        setFilteredIssues(response.data.results);
+        const allIssues = response.data.results;
+ 
+    
+        console.log(JSON.stringify(allIssues, null, 2));
+        
+        // 🔹 Filter issues that are "Completed" and have no reports
+        const filtered = allIssues.filter(
+          (issue) => issue.issue_status == "completed"
+        );
+
+        console.log('filtered',JSON.stringify(filtered, null, 2));
+  
+        setIssuesData(filtered);
+        setFilteredIssues(filtered);
       } else {
         console.log(response.data.message);
       }
@@ -48,6 +57,7 @@ const PendingIssues = () => {
       console.log(error);
     }
   };
+  
 
   useEffect(() => {
     getIssues();

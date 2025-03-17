@@ -39,6 +39,14 @@ const DrawerLayout = () => {
         <Stack.Screen name="CompletedIssuesScreen" />
         <Stack.Screen name="PendingIssues" />
         <Stack.Screen name="UserSettings" />
+        <Stack.Screen name="Faqs" />
+        <Stack.Screen name="ReportaProblem" />
+        <Stack.Screen name="Appversion" />
+        <Stack.Screen name="TermsandCondition" />
+        <Stack.Screen name="AboutSpotFix" />
+        <Stack.Screen name="UserIssueSuggestions" />
+        <Stack.Screen name="UserCitizenProposalSuggestions" />
+        <Stack.Screen name="UserGovProposalsSuggestions" />
 
         <Stack.Screen
           name="EditDepartments"

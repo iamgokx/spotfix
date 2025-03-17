@@ -59,7 +59,6 @@ const UserRegistrationTrends = () => {
   //     }
   //   });
 
-  
   //   const sortedKeys = Object.keys(groupedData).sort((a, b) =>
   //     moment(a, "MMM YYYY").isBefore(moment(b, "MMM YYYY")) ? -1 : 1
   //   );
@@ -74,41 +73,50 @@ const UserRegistrationTrends = () => {
 
   const processData = (data) => {
     let groupedData = {};
-  
+
     data.forEach((item) => {
       const month = moment(item.registration_date_time).format("MMM"); // Extract only month
       if (!groupedData[month]) {
         groupedData[month] = { approved: 0, pending: 0, rejected: 0 };
       }
-  
+
       if (["approved", "pending", "rejected"].includes(item.status)) {
         groupedData[month][item.status] += 1;
       }
     });
-  
+
     const monthOrder = [
-      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
     ];
-  
+
     const labels = monthOrder;
     const approvedData = labels.map((key) => groupedData[key]?.approved || 0);
     const pendingData = labels.map((key) => groupedData[key]?.pending || 0);
     const rejectedData = labels.map((key) => groupedData[key]?.rejected || 0);
-  
+
     return { labels, approvedData, pendingData, rejectedData };
   };
-  
+
   useEffect(() => {
     if (User.length > 0) {
       console.log("Processing User Data...");
       const groupedData = processData(User);
       console.log("Grouped Data:", groupedData);
-  
+
       setChartData(groupedData);
     }
   }, [User]);
-  
 
   const chartData =
     chartDatag.approvedData.length > 0
@@ -143,10 +151,10 @@ const UserRegistrationTrends = () => {
         User Registration Trends
       </Text>
       <LineChart
-       bezier
+        bezier
         data={{
           labels: chartData.labels,
-          
+
           datasets: [
             {
               data: chartData.approvedData,
@@ -187,7 +195,7 @@ const UserRegistrationTrends = () => {
             { backgroundColor: currentColors.backgroundDarker },
           ]}>
           <Text style={styles.statsNumber}>
-          {chartData.approvedData.reduce((total, curr) => total + curr, 0)}
+            {chartData.approvedData.reduce((total, curr) => total + curr, 0)}
           </Text>
           <Text style={[styles.statsHeading, { color: currentColors.text }]}>
             Approved Users
@@ -234,8 +242,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "bold",
-    textAlign: "center",
-    margin: 10,
+
+    width: "100%",
   },
   chart: {
     marginVertical: 8,

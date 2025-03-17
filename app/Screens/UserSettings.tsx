@@ -27,7 +27,7 @@ const UserSettings = () => {
     setisLogOutModalActive(false);
     setTimeout(() => {
       clearStorage();
-      router.push("/welcome");
+      router.replace("/welcome");
     }, 100);
   };
 
@@ -222,7 +222,7 @@ const UserSettings = () => {
         }}>
         <Animatable.View animation="fadeInUp">
           <TouchableOpacity
-            onPress={() => router.push("/password/")}
+            onPress={() => router.push("/password")}
             style={{
               width: "100%",
               backgroundColor: currentColors.backgroundDarker,
@@ -232,7 +232,15 @@ const UserSettings = () => {
               justifyContent: "space-between",
               alignItems: "center",
             }}>
-            <Text style={{ color: currentColors.text }}>Change Password</Text>
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+              <Ionicons
+                name="key-outline"
+                color={currentColors.textShade}
+                size={24}
+              />
+              <Text style={{ color: currentColors.text }}>Change Password</Text>
+            </View>
             <Ionicons
               name="chevron-forward-outline"
               color={currentColors.secondary}
@@ -253,7 +261,15 @@ const UserSettings = () => {
               justifyContent: "space-between",
               alignItems: "center",
             }}>
-            <Text style={{ color: currentColors.text }}>Log Out</Text>
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+              <Ionicons
+                name="log-out-outline"
+                color={currentColors.textShade}
+                size={24}
+              />
+              <Text style={{ color: currentColors.text }}>Log Out</Text>
+            </View>
             <Ionicons
               name="chevron-forward-outline"
               color={currentColors.secondary}
@@ -267,17 +283,21 @@ const UserSettings = () => {
             onPress={() => setisDeleteAccountModaActive(true)}
             style={{
               width: "100%",
-              backgroundColor: currentColors.backgroundDarker,
+              backgroundColor: "red",
               padding: 15,
               borderRadius: 10,
               flexDirection: "row",
               justifyContent: "space-between",
               alignItems: "center",
             }}>
-            <Text style={{ color: currentColors.text }}>Delete Account</Text>
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+              <Ionicons name="trash-bin-outline" color={"white"} size={24} />
+              <Text style={{ color: "white" }}>Delete Account</Text>
+            </View>
             <Ionicons
               name="chevron-forward-outline"
-              color={currentColors.secondary}
+              color={"white"}
               size={24}
             />
           </TouchableOpacity>

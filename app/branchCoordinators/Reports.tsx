@@ -69,6 +69,7 @@ const issuesWithReports = [
     },
   },
 ];
+import { Modal } from "react-native";
 const Reports = () => {
   const router = useRouter();
   const [issuesData, setIssuesData] = useState([]);
@@ -79,7 +80,7 @@ const Reports = () => {
   const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
   const insets = useSafeAreaInsets();
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [activeIssueId, setActiveIssueId] = useState(null);
   const getIssues = async () => {
     const user = await getStoredData();
     try {
@@ -92,6 +93,7 @@ const Reports = () => {
 
       if (response.data.status) {
         setIssuesData(response.data.results);
+        console.log("response.data.results: ", response.data.results);
         setFilteredIssues(response.data.results);
       } else {
         console.log(response.data.message);
@@ -187,7 +189,8 @@ const Reports = () => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         ListFooterComponent={
-          <View
+          <Animatable.View
+            animation={"fadeInUp"}
             style={{
               marginTop: 100,
               paddingBottom: insets.bottom + 20,
@@ -197,15 +200,20 @@ const Reports = () => {
               source={watermark}
               style={{ width: "100%", height: 100, objectFit: "contain" }}
             />
-          </View>
+          </Animatable.View>
         }
         renderItem={({ item }) => {
-          const firstFileName = item.file_names
-            ? item.file_names.split(",")[0].trim()
+          const firstFileName = item.issue_media_files
+            ? item.issue_media_files.split(",")[0].trim()
             : null;
           const imageUrl = firstFileName
             ? `http://${API_IP_ADDRESS}:8000/uploads/issues/${firstFileName}`
             : null;
+
+          const reportImgsArray = item.report_media_files
+            ? item.report_media_files.split(",")
+            : null;
+          console.log("reportImgsArray: ", reportImgsArray);
 
           return (
             <TouchableOpacity
@@ -218,11 +226,99 @@ const Reports = () => {
                 marginTop: 20,
               }}
               onPress={() => {
-                router.push({
-                  pathname: "/screens/SubBranchDetailedIssue",
-                  params: { issue_id: item.issue_id },
-                });
+                console.log("press");
+                setActiveIssueId(item.issue_id);
               }}>
+              <Modal transparent visible={activeIssueId === item.issue_id} animationType="fade">
+                <View
+                  style={{
+                    flex: 1,
+
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}>
+                  <View
+                    style={{
+                      backgroundColor: currentColors.backgroundSecondary,
+                      padding: 10,
+                      borderRadius: 20,
+                      width: "90%",
+                      gap: 20,
+                    }}>
+                    <View style={{padding : 10}}>
+                      <TouchableOpacity
+                      onPress={() => setActiveIssueId(null)}
+                        style={{ position: "absolute", right: 10 }}>
+                        <Ionicons name="close-circle-outline" size={25} />
+                      </TouchableOpacity>
+                    </View>
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        fontWeight: 200,
+                        fontSize: 18,
+                      }}>
+                      Report By : {item.sub_department_coordinator_id}
+                    </Text>
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        fontWeight: 200,
+                        fontSize: 18,
+                      }}>
+                      Issue : {item.title}
+                    </Text>
+
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        fontWeight: 200,
+                        fontSize: 18,
+                      }}>
+                      Report Title : {item.report_title}
+                    </Text>
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        fontWeight: 200,
+                        fontSize: 18,
+                      }}>
+                      Report Description : {item.report_description}
+                    </Text>
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        fontWeight: 200,
+                        fontSize: 18,
+                      }}>
+                      Issue : {formatDate(item.report_created_at)}
+                    </Text>
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        fontWeight: 200,
+                        fontSize: 18,
+                      }}>
+                      Work related images
+                    </Text>
+
+                    {reportImgsArray.length > 0 ? (
+                      reportImgsArray.map((img, index) => {
+                        return (
+                          <Image
+                            style={{ width: 100, height: 100 }}
+                            key={`${img} -${index}`}
+                            source={{
+                              uri: `http://${API_IP_ADDRESS}:8000/uploads/reports/${img}`,
+                            }}></Image>
+                        );
+                      })
+                    ) : (
+                      <Text>No media</Text>
+                    )}
+                  </View>
+                </View>
+              </Modal>
               {imageUrl && (
                 <Image
                   source={{ uri: imageUrl }}

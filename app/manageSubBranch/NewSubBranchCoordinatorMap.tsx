@@ -1,29 +1,32 @@
-import { View, Text, Pressable, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-
 import { StyleSheet } from "react-native";
 import { useState } from "react";
 import "../../global.css";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { ActivityIndicator } from "react-native";
-import { useSubBranch } from "@/context/newSubBranchContext";
 import LottieView from "lottie-react-native";
 import loading from "../../assets/images/welcome/loading.json";
+import { useSubBranch } from "@/context/newSubBranchContext";
+
 const NewSubBranchCoordinatorMap = ({ goToAddressScreen }: any) => {
-  const [marker, setmarker] = useState("");
-  const [userAddress, setAddress] = useState("");
-  const [addressLoaded, setaddressLoaded] = useState(false);
+  const [marker, setMarker] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+  const [userAddress, setUserAddress] = useState("");
+  const [isAddressValid, setIsAddressValid] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { coordinator, setCoordinator } = useSubBranch();
-  const [isloading, setisloading] = useState(false);
+
   const onMapPress = async (event: any) => {
-    setisloading(true);
+    setIsLoading(true);
     const { latitude, longitude } = event.nativeEvent.coordinate;
-    setmarker({ latitude, longitude });
+    setMarker({ latitude, longitude });
 
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addresscoordinator=1`,
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`,
         {
           headers: {
             "User-Agent": "spotfix/1.0 (lekhwargokul84@gmail.com)",
@@ -40,36 +43,30 @@ const NewSubBranchCoordinatorMap = ({ goToAddressScreen }: any) => {
         const { state } = data.address;
 
         if (state !== "Goa") {
-          setAddress("Please select an address from Goa");
-          setaddressLoaded(false); // Prevent confirmation button from appearing
-          setisloading(false);
+          setUserAddress(data.display_name);
+          setIsAddressValid(false);
+          setIsLoading(false);
           return;
         }
 
-        setAddress(data.display_name);
-        setaddressLoaded(true);
-        setCoordinator((prev) => ({ ...prev, latitude }));
-        setCoordinator((prev) => ({ ...prev, longitude }));
+        setUserAddress(data.display_name);
+        setIsAddressValid(true);
+        setCoordinator({ latitude, longitude }); // Store in context
       } else {
-        setAddress("Please replace your marker nearby, error getting address");
-        setaddressLoaded(false);
+        setUserAddress("Error fetching address, please try again.");
+        setIsAddressValid(false);
       }
     } catch (error) {
       console.error("Error fetching address:", error.message || error);
-      setAddress("Error fetching address, please try again.");
-      setaddressLoaded(false);
+      setUserAddress("Error fetching address, please try again.");
+      setIsAddressValid(false);
     }
-    setisloading(false);
-  };
-
-  const handleConfirmAddressClick = () => {
-    goToAddressScreen();
-    console.log(coordinator);
+    setIsLoading(false);
   };
 
   return (
     <View style={styles.container}>
-      {isloading && (
+      {isLoading && (
         <View style={styles.loadingContainer}>
           <LottieView
             source={loading}
@@ -79,6 +76,7 @@ const NewSubBranchCoordinatorMap = ({ goToAddressScreen }: any) => {
           />
         </View>
       )}
+
       <MapView
         style={styles.map}
         initialRegion={{
@@ -90,44 +88,41 @@ const NewSubBranchCoordinatorMap = ({ goToAddressScreen }: any) => {
         onPress={onMapPress}>
         {marker && <Marker coordinate={marker} />}
       </MapView>
-      {addressLoaded ? (
-        <View style={styles.infoContainer}>
-          <View style={styles.mapAddressContainer}>
-            <Ionicons
-              name="location"
-              color="blue"
-              size={40}
-              style={{ width: 40 }}></Ionicons>
-            <View>
-              <Text style={styles.addressText}>Location Detected</Text>
-              <Text>{userAddress}</Text>
-            </View>
-          </View>
 
-          <TouchableOpacity
-            style={styles.confirmButton}
-            onPress={() => router.back()}>
-            <Text style={styles.confirmButtonText}>Confirm Address</Text>
-          </TouchableOpacity>
-        </View>
-      ) : (
+      {marker && (
         <View style={styles.infoContainer}>
           <View style={styles.mapAddressContainer}>
             <Ionicons
               name="location"
               color="blue"
               size={40}
-              style={{ width: 40 }}></Ionicons>
-            <View>
+              style={{ width: 40 }}
+            />
+            <View style={{ paddingHorizontal: 10 }}>
               <Text style={styles.addressText}>Location Detected</Text>
               <Text>{userAddress}</Text>
             </View>
           </View>
+          {isAddressValid ? (
+            <TouchableOpacity
+              style={styles.confirmButton}
+              onPress={() => {
+                console.log(coordinator);
+                router.back();
+              }}>
+              <Text style={styles.confirmButtonText}>Confirm Address</Text>
+            </TouchableOpacity>
+          ) : (
+            <Text style={styles.errorText}>
+              Please select an address within Goa
+            </Text>
+          )}
         </View>
       )}
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     width: "100%",
@@ -158,7 +153,7 @@ const styles = StyleSheet.create({
   },
   addressText: {
     fontSize: 20,
-    fontWeight: 900,
+    fontWeight: "900",
     color: "blue",
   },
   confirmButton: {
@@ -171,7 +166,6 @@ const styles = StyleSheet.create({
   },
   confirmButtonText: {
     color: "#fff",
-
     fontSize: 16,
     fontWeight: "bold",
   },
@@ -191,6 +185,12 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+  },
+  errorText: {
+    color: "red",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginTop: 10,
   },
 });
 
