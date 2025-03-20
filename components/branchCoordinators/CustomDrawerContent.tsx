@@ -1,5 +1,12 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  ImageBackground,
+} from "react-native";
 import {
   DrawerContentScrollView,
   DrawerItemList,
@@ -11,7 +18,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { getStoredData } from "@/hooks/useJwt";
 import { useState, useEffect } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
+import bluebg from "../../assets/images/gradients/bluegradient.png";
 const CustomDrawerContent = (props) => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -38,24 +45,35 @@ const CustomDrawerContent = (props) => {
     <DrawerContentScrollView
       {...props}
       style={{ backgroundColor: currentColors.backgroundDarker }}>
-      <View style={{ padding: 10, marginTop: insets.top + 10 }}>
+      <ImageBackground
+        source={bluebg}
+        style={{
+          padding: 10,
+          paddingTop: insets.top + 10,
+          backgroundColor: currentColors.background,
+          borderRadius: 20,
+          marginBottom: 30,
+          overflow: "hidden",
+        }}>
         {userDetails && (
           <>
             <Text
               style={{
                 color: currentColors.text,
-                fontWeight: 500,
+                fontWeight: 900,
                 fontSize: 18,
               }}>
               Hello {userDetails.name}
             </Text>
 
             <Text style={{ color: currentColors.text }}>
-              {userDetails.userType}
+              {userDetails.userType == "department_coordinator"
+                ? "Department Coordinator"
+                : ""}
             </Text>
           </>
         )}
-      </View>
+      </ImageBackground>
       <DrawerItemList {...props} />
 
       <View style={{}}>

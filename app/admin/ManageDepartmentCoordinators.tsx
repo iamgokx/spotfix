@@ -49,7 +49,7 @@ const ManageDepartmentCoordinators = () => {
       );
 
       if (response.data.status) {
-        console.log(response.data.results);
+        console.log('get department coordinators data  : ', response.data.results);
         setDepartmentCoordinatorData(response.data.results);
       } else {
         console.log("No data for department coordinators from backend.");
@@ -142,14 +142,14 @@ const ManageDepartmentCoordinators = () => {
         </Text>
       </View>
 
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={{ alignItems: "flex-end" }}
         onPress={() => handleDeletePress(item)}>
         <Feather
-          name="trash"
+          name="edit"
           size={24}
           color={currentColors.secondary}></Feather>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </Animatable.View>
     )
   };
@@ -168,6 +168,7 @@ const ManageDepartmentCoordinators = () => {
       />
       {departmentCoordinatorData.length > 0 ? (
         <FlatList
+        showsVerticalScrollIndicator={false}
           data={filteredDepartmentCoordinator}
           keyExtractor={(item) => item.email}
           renderItem={renderItem}

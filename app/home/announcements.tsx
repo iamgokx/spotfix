@@ -8,6 +8,7 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
+
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -18,6 +19,8 @@ import { useState, useEffect } from "react";
 import * as Animatable from "react-native-animatable";
 import watermark from "../../assets/images/watermark.png";
 import { router } from "expo-router";
+import { ScrollView } from "react-native-gesture-handler";
+
 const Announcements = () => {
   const colorTheme = useColorScheme();
   const currentColors = colorTheme == "dark" ? Colors.dark : Colors.light;
@@ -26,13 +29,19 @@ const Announcements = () => {
   const [announcementsData, setAnnouncementsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [mediaFiles, setMediaFiles] = useState({});
+  const [emergencyAnnouncements, setEmergencyAnnouncements] = useState([]);
 
-  const convertMediaLinksToArray = (data) => {
-    return data.map((item) => ({
-      ...item,
-      media_links: item.media_links ? item.media_links.split(",") : [],
-    }));
-  };
+  function splitTargetLocation(target_locations) {
+    if (target_locations.toLowerCase() === "all - all") {
+      return { district: "All", taluka: "All" };
+    }
+
+    const [district, taluka] = target_locations
+      .split(" - ")
+      .map((s) => s.trim());
+
+    return { district, taluka };
+  }
 
   const getAnnouncements = async () => {
     try {
@@ -48,6 +57,11 @@ const Announcements = () => {
           b.date_time_created.localeCompare(a.date_time_created)
         );
         setAnnouncementsData(sortedData);
+
+        const emergencyData = sortedData.filter(
+          (item) => item.announcement_type === "emergency"
+        );
+        setEmergencyAnnouncements(emergencyData);
       } else {
         setAnnouncementsData([]);
         console.log("No announcements received.");
@@ -62,18 +76,23 @@ const Announcements = () => {
   useEffect(() => {
     getAnnouncements();
   }, []);
-
   useEffect(() => {
     if (announcementsData.length > 0) {
+      const imageExtensions = ["jpg", "jpeg", "png"];
       const extractedMediaFiles = {};
 
       announcementsData.forEach((item) => {
-        const firstImage =
-          item.media_links && typeof item.media_links === "string"
-            ? item.media_links.split(",")[0]
-            : null;
+        if (item.media_links && typeof item.media_links === "string") {
+          const mediaArray = item.media_links.split(",");
+          const firstImage = mediaArray.find((link) => {
+            const fileExtension = link.split(".").pop().toLowerCase();
+            return imageExtensions.includes(fileExtension);
+          });
 
-        extractedMediaFiles[item.announcement_id] = firstImage;
+          if (firstImage) {
+            extractedMediaFiles[item.announcement_id] = firstImage;
+          }
+        }
       });
 
       setMediaFiles(extractedMediaFiles);
@@ -107,14 +126,16 @@ const Announcements = () => {
 
   const renderItem = ({ item }) => {
     const image = mediaFiles[item.announcement_id];
-    console.log(`http://${API_IP_ADDRESS}:8000/uploads/profile/${image}`);
+
     const time = timeAgo(item.date_time_created);
     const description = item.announcement_description;
     const shortDesc =
       description.length > 40 ? description.slice(0, 80) + "..." : description;
 
-    console.log("time: ", time);
     let delay = 50;
+
+    const location = splitTargetLocation(item.target_locations);
+    console.log("location: ", location);
     return (
       <Animatable.View
         animation="fadeInUp"
@@ -158,9 +179,17 @@ const Announcements = () => {
           <Text style={{ color: currentColors.textShade, fontWeight: 800 }}>
             {item.department_name}
           </Text>
-          <Text style={{ color: currentColors.text, marginBottom: 5 }}>
-            {shortDesc}
+          <Text style={{ color: currentColors.textShade, fontWeight: 800 }}>
+            {location.district == "All" ? "Goa" : location.district}{' '}-{' '}
+          {location.district != "All" && (
+            <Text style={{ color: currentColors.textShade, fontWeight: 800 }}>
+              {location.taluka == 'All' ? "" : location.taluka}
+            </Text>
+          )}
           </Text>
+          {/* <Text style={{ color: currentColors.text, marginBottom: 5 }}>
+            {shortDesc}
+          </Text> */}
           <Text
             style={{
               color: currentColors.textShade,
@@ -176,12 +205,16 @@ const Announcements = () => {
   };
 
   return (
-    <View style={{ backgroundColor: currentColors.backgroundDarker, flex: 1 }}>
-      <View
-        style={{
-          width: "100%",
-          backgroundColor: currentColors.backgroundDarkest,
-        }}>
+    <ScrollView
+      style={{ backgroundColor: currentColors.backgroundDarker, flex: 1 }}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={getAnnouncements}
+          colors={[currentColors.secondary]}
+        />
+      }>
+      <View style={{ backgroundColor: currentColors.backgroundDarkest }}>
         <Animatable.View
           animation={"fadeInDown"}
           style={{
@@ -235,47 +268,136 @@ const Announcements = () => {
           </Text>
         ) : (
           <>
+            {emergencyAnnouncements.length > 0 && (
+              <>
+                <Animatable.Text
+                  animation={"fadeInLeft"}
+                  style={{
+                    color: currentColors.text,
+                    fontSize: 20,
+                    fontWeight: "600",
+                    padding: 10,
+                  }}>
+                  Emergency Announcements
+                </Animatable.Text>
+
+                <FlatList
+                  data={emergencyAnnouncements}
+                  keyExtractor={(item) => item.announcement_id.toString()}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{ paddingLeft: 10 }}
+                  renderItem={({ item }) => {
+                    const img = mediaFiles[item.announcement_id];
+                    return (
+                      <Animatable.View animation={"fadeInLeft"}>
+                        <TouchableOpacity
+                          onPress={() =>
+                            router.push({
+                              pathname:
+                                "/branchAnnouncement/DetailedAnnouncement",
+                              params: { announcement_id: item.announcement_id },
+                            })
+                          }
+                          style={{
+                            width: 300,
+                            marginRight: 10,
+                            backgroundColor: currentColors.backgroundLighter,
+                            padding: 10,
+                            borderRadius: 15,
+                          }}>
+                          {img && (
+                            <Image
+                              source={{
+                                uri: `http://${API_IP_ADDRESS}:8000/uploads/govAnnouncementMedia/${img}`,
+                              }}
+                              style={{
+                                width: "100%",
+                                height: 200,
+                                borderRadius: 20,
+                              }}
+                            />
+                          )}
+
+                          <View>
+                            <Text
+                              style={{
+                                color: currentColors.secondary,
+                                fontSize: 18,
+                                fontWeight: "bold",
+                              }}>
+                              {item.title.length > 30
+                                ? item.title.slice(0, 30) + "..."
+                                : item.title}
+                            </Text>
+                            <Text
+                              style={{
+                                color: currentColors.textShade,
+                                fontWeight: "800",
+                              }}>
+                              {item.department_name}
+                            </Text>
+                            <Text style={{ color: currentColors.text }}>
+                              {timeAgo(item.date_time_created)}
+                            </Text>
+                          </View>
+                        </TouchableOpacity>
+                      </Animatable.View>
+                    );
+                  }}
+                />
+              </>
+            )}
+
+            <Animatable.View
+              animation={"fadeInLeft"}
+              style={{
+                width: "100%",
+                height: 1,
+                backgroundColor: currentColors.textShade,
+                marginVertical: 20,
+              }}></Animatable.View>
+
             <Animatable.Text
               animation={"fadeInLeft"}
               style={{
                 color: currentColors.text,
                 fontSize: 20,
-                fontWeight: 600,
+                fontWeight: "600",
                 padding: 10,
               }}>
               Latest News
             </Animatable.Text>
-            <FlatList
-              data={filteredData}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={renderItem}
-              ListFooterComponent={
-                <Animatable.View
-                  animation={"fadeInUp"}
-                  style={{
-                    marginTop: 100,
-                    paddingBottom: insets.bottom + 100,
-                    gap: 10,
-                  }}>
-                  <Image
-                    source={watermark}
-                    style={{ width: "100%", height: 100, objectFit: "contain" }}
-                  />
-                </Animatable.View>
-              }
-              showsVerticalScrollIndicator={false}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={getAnnouncements}
-                  colors={[currentColors.secondary]}
-                />
-              }
-            />
+
+            <View style={{ flexGrow: 1 }}>
+              <FlatList
+                data={filteredData}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={renderItem}
+                scrollEnabled={false}
+                ListFooterComponent={
+                  <Animatable.View
+                    animation={"fadeInUp"}
+                    style={{
+                      marginTop: 100,
+                      paddingBottom: insets.bottom + 100,
+                    }}>
+                    <Image
+                      source={watermark}
+                      style={{
+                        width: "100%",
+                        height: 100,
+                        objectFit: "contain",
+                      }}
+                    />
+                  </Animatable.View>
+                }
+              />
+            </View>
           </>
         )}
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

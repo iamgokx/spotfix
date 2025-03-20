@@ -18,6 +18,7 @@ import MakeNew from "./MakeNew";
 import ManageSubBranchCoordinators from "./ManageSubBranchCoordinators";
 import { StyleSheet } from "react-native";
 import Subscribers from "./Subscribers";
+import ChangePassword from "./ChangePassword";
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -37,6 +38,7 @@ const TabNavigator = () => {
             Announcement: "bell",
             Proposal: "book",
             MakeNew: "plus-circle",
+            password: "lock",
           };
 
           if (route.name === "MakeNew") {
@@ -112,7 +114,7 @@ const Layout = () => {
             },
 
             drawerContentStyle: {
-              paddingVertical: 20,
+              // paddingVertical: 20,
             },
             drawerItemStyle: {
               marginVertical: 10,
@@ -127,10 +129,12 @@ const Layout = () => {
 
               if (route.name === "DashBoard") {
                 iconName = focused ? "home" : "home-outline";
-              } else if (route.name === "Manage Sub Branch Coordinators") {
+              } else if (route.name === "Manage Sub Branch") {
                 iconName = focused ? "people" : "people-outline";
               } else if (route.name === "Subscribers") {
                 iconName = focused ? "people-circle-outline" : "people-circle";
+              } else if (route.name == "Password") {
+                iconName = focused ? "lock-closed" : "lock-closed-outline";
               }
 
               return <Ionicons name={iconName} size={size} color={color} />;
@@ -138,10 +142,11 @@ const Layout = () => {
           })}>
           <Drawer.Screen name="DashBoard" component={TabNavigator} />
           <Drawer.Screen
-            name="Manage Sub Branch Coordinators"
+            name="Manage Sub Branch"
             component={ManageSubBranchCoordinators}
           />
           <Drawer.Screen name="Subscribers" component={Subscribers} />
+          <Drawer.Screen name="Password" component={ChangePassword} />
         </Drawer.Navigator>
       </NavigationContainer>
     </NavigationIndependentTree>

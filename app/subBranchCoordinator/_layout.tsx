@@ -58,7 +58,7 @@ const SubBranchLayout = () => {
           drawerItemStyle: { marginBottom: 10 },
           drawerIcon: ({ color, size }) => (
             <Ionicons
-              name="checkmark-circle-outline"
+              name="document-text-outline"
               size={size}
               color={color}
             />
@@ -72,6 +72,16 @@ const SubBranchLayout = () => {
           drawerItemStyle: { marginBottom: 10 },
           drawerIcon: ({ color, size }) => (
             <Ionicons name="file-tray-full" size={size} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="ChangePassword"
+        options={{
+          title: "Password",
+          drawerItemStyle: { marginBottom: 10 },
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="lock-closed" size={size} color={color} />
           ),
         }}
       />

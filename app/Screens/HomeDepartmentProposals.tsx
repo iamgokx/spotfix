@@ -1,5 +1,5 @@
 import CustomHeader from "@/components/CustomHeader";
-import { View, Text, RefreshControl, Image } from "react-native";
+import { View, Text, RefreshControl, Image, TextInput } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -11,12 +11,17 @@ import GovProposalCard from "@/components/GovProposalCard";
 
 import watermark from "../../assets/images/watermark.png";
 import * as Animatable from "react-native-animatable";
+import { Ionicons } from "@expo/vector-icons";
 const HomeDepartmentProposals = ({ navigation }: any) => {
   const currentTheme = useColorScheme();
   const currentColors = currentTheme == "dark" ? Colors.dark : Colors.light;
   const [govProposalData, setgovProposalData] = useState();
   const [refreshing, setRefreshing] = useState(false);
   const insets = useSafeAreaInsets();
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredProposalDate, setfilteredProposalDate] = useState([]);
+
   const getUserProposals = async () => {
     try {
       const response = await axios.post(
@@ -24,8 +29,11 @@ const HomeDepartmentProposals = ({ navigation }: any) => {
       );
 
       if (response) {
-        const sortedData = [...response.data].sort((a, b) => b.date_time_created.localeCompare(a.date_time_created));
+        const sortedData = [...response.data].sort((a, b) =>
+          b.date_time_created.localeCompare(a.date_time_created)
+        );
         setgovProposalData(sortedData);
+        setfilteredProposalDate(sortedData);
       }
     } catch (error) {
       console.log("error getting citizen proposals", error);
@@ -43,6 +51,13 @@ const HomeDepartmentProposals = ({ navigation }: any) => {
     getUserProposals();
   };
 
+  useEffect(() => {
+    const filtered = govProposalData?.filter((item) =>
+      item.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setfilteredProposalDate(filtered);
+  }, [searchQuery, govProposalData]);
+
   return (
     <View
       style={{
@@ -50,10 +65,32 @@ const HomeDepartmentProposals = ({ navigation }: any) => {
         alignItems: "center",
         backgroundColor: currentColors.backgroundDarkest,
       }}>
+
+<View
+          style={{
+            backgroundColor: currentColors.backgroundLighter,
+            width: "90%",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            borderRadius: 30,
+            paddingHorizontal: 10,
+            overflow: "hidden",
+            marginVertical : 10,
+          }}>
+          <TextInput
+            style={{ width: "90%", color: currentColors.text }}
+            placeholder="Search for proposals..."
+            placeholderTextColor={currentColors.textShade}
+            value={searchQuery}
+            onChangeText={(text)=> setSearchQuery(text)}
+          />
+          <Ionicons name="search" color={currentColors.secondary} size={24} />
+        </View>
       <FlatList
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ width: "100%", alignItems: "center" }}
-        data={govProposalData}
+        data={filteredProposalDate}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -80,7 +117,6 @@ const HomeDepartmentProposals = ({ navigation }: any) => {
               style={{
                 // backgroundColor: currentColors.textShade,
                 height: 1,
-                marginVertical: 20,
               }}></Text>
           );
         }}

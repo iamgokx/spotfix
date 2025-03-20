@@ -29,6 +29,7 @@ const { width, height } = Dimensions.get("window");
 import { Colors } from "../constants/Colors";
 import { useColorScheme } from "react-native";
 import { useState } from "react";
+import gearAni from "../assets/lottie/loadingGears.json";
 import {
   Poppins_100Thin_Italic,
   Poppins_600SemiBold,
@@ -144,11 +145,21 @@ const Index = () => {
       socket.off("hello");
     };
   }, []);
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const handleIndexChanged = (index: number) => {
     setCurrentIndex(index);
   };
 
+  useEffect(() => {
+    const getUser = async () => {
+      const user = await getStoredData();
+      const email = user.email;
+      socket.emit("setup", email);
+    };
+
+    getUser();
+  }, [socket]);
 
   return (
     <>
@@ -243,7 +254,6 @@ const Index = () => {
               </Animatable.Text>
             </>
           )}
-        
         </View>
 
         <View

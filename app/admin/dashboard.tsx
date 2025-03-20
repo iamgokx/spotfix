@@ -18,6 +18,7 @@ import { ProgressChart } from "react-native-chart-kit";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import watermark from "../../assets/images/watermark.png";
 import * as Animatable from "react-native-animatable";
+
 const screenWidth = Dimensions.get("window").width - 40;
 
 const dummyReportsData = [
@@ -349,7 +350,14 @@ const ChartScreen = () => {
           source={watermark}
           style={{ width: "100%", height: 100, objectFit: "contain" }}
         />
+      <View style={{ paddingBottom: insets.bottom + 20 }}>
+            <Image
+              source={watermark}
+              style={{ width: 300, height: 100, objectFit: "contain" }}
+            />
+          </View>
       </Animatable.View>
+
     </ScrollView>
   );
 };

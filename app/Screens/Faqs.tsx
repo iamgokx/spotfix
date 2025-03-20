@@ -29,34 +29,34 @@ const Faqs = () => {
 
   const data = [
     {
-      question: "FAQ 1",
+      question: "How do I report an issue on SpotFix?",
       answer:
-        "SpotFix revolutionizes the way citizens interact with local government by providing an all-in-one platform for reporting public works issues, tracking progress, and staying informed about essential updates such as road closures or power outages.",
+        "You can report an issue by selecting the location, adding a description, uploading images (if available), and choosing the priority level. You can also enable anonymous mode while reporting.",
     },
     {
-      question: "FAQ 2",
+      question: "How can I track the status of my reported issue?",
       answer:
-        "SpotFix revolutionizes the way citizens interact with local government by providing an all-in-one platform for reporting public works issues, tracking progress, and staying informed about essential updates such as road closures or power outages.",
+        "Once you submit an issue, you can track its progress under the 'My Reports' section. You'll receive updates when the issue is acknowledged, in progress, or resolved.",
     },
     {
-      question: "FAQ 3",
+      question: "Can I vote on issues reported by others?",
       answer:
-        "SpotFix revolutionizes the way citizens interact with local government by providing an all-in-one platform for reporting public works issues, tracking progress, and staying informed about essential updates such as road closures or power outages.",
+        "Yes, you can upvote issues reported by other users. Higher upvotes increase the priority of an issue, making it more likely to be addressed sooner.",
     },
     {
-      question: "FAQ 4",
+      question: "What types of announcements will I receive on the app?",
       answer:
-        "SpotFix revolutionizes the way citizens interact with local government by providing an all-in-one platform for reporting public works issues, tracking progress, and staying informed about essential updates such as road closures or power outages.",
+        "You will get notifications about power outages, water supply disruptions, road closures, and other important updates from government authorities.",
     },
     {
-      question: "FAQ 5",
+      question: "How can I suggest improvements for government projects?",
       answer:
-        "SpotFix revolutionizes the way citizens interact with local government by providing an all-in-one platform for reporting public works issues, tracking progress, and staying informed about essential updates such as road closures or power outages.",
+        "You can participate in the 'Government Proposals' section, where you can upvote/downvote projects and leave comments or suggestions for improvement.",
     },
     {
-      question: "FAQ 6",
+      question: "Is Aadhaar verification mandatory for using SpotFix?",
       answer:
-        "SpotFix revolutionizes the way citizens interact with local government by providing an all-in-one platform for reporting public works issues, tracking progress, and staying informed about essential updates such as road closures or power outages.",
+        "Aadhaar verification is required for posting and voting to ensure authenticity, but you can browse reports and proposals without signing in.",
     },
   ];
 
@@ -65,7 +65,7 @@ const Faqs = () => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: 'white' }}>
+    <View style={{ flex: 1, backgroundColor: "white" }}>
       <ImageBackground
         source={imgBackground}
         style={{

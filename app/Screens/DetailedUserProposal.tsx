@@ -24,6 +24,7 @@ import pdfIcon from "../../assets/images/proposals/pdf.png";
 import lazyLoading from "../../assets/images/welcome/loading.json";
 import LottieView from "lottie-react-native";
 import CitizenProposalSuggestionsList from "@/components/CitizenProposalSuggestionsList";
+import { getStoredData } from "@/hooks/useJwt";
 
 const DetailedUserProposal = () => {
   const currentTheme = useColorScheme();
@@ -37,6 +38,16 @@ const DetailedUserProposal = () => {
   const [isSuggestionsOpen, setisSuggestionsOpen] = useState(false);
   const router = useRouter();
 
+  const [whoIsUser, setwhoIsUser] = useState();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const user = await getStoredData();
+      const userType = user.userType;
+      setwhoIsUser(user.userType);
+    };
+    getUser();
+  });
 
   const handleSuggestionClick = () => {
     setisSuggestionsOpen((prev) => !prev);
@@ -48,7 +59,7 @@ const DetailedUserProposal = () => {
   };
   const getDetailedUserProposal = async () => {
     try {
-      console.log('making req');
+      console.log("making req");
       const response = await axios.post(
         `http://${API_IP_ADDRESS}:8000/api/proposals/getCitizenDetailedProposal`,
         {
@@ -110,7 +121,7 @@ const DetailedUserProposal = () => {
   useEffect(() => {
     getDetailedUserProposal();
 
-    if(suggestions){
+    if (suggestions) {
       setisSuggestionsOpen(true);
     }
   }, []);

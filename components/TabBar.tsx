@@ -26,9 +26,10 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
         styles.tabbar,
         {
           backgroundColor: currentColors.backgroundDarker,
-          bottom: insectsBottom.bottom,
+          // bottom: insectsBottom.bottom,
+          bottom : 0,
        
-         
+         paddingBottom : insectsBottom.bottom + 10
           
         },
       ]}>

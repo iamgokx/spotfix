@@ -10,6 +10,8 @@ import {
   TextInput,
   RefreshControl,
   useColorScheme,
+  ScrollView,
+  ImageBackground,
 } from "react-native";
 import {
   useFonts,
@@ -18,6 +20,7 @@ import {
   Poppins_600SemiBold,
   Poppins_200ExtraLight,
 } from "@expo-google-fonts/poppins";
+import { useRouter } from "expo-router";
 import { getStoredRawToken } from "../../hooks/useJwt";
 import Issue from "@/components/Issue";
 import { jwtDecode } from "jwt-decode";
@@ -30,7 +33,8 @@ import * as Animatable from "react-native-animatable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import watermark from "../../assets/images/watermark.png";
 import { Ionicons } from "@expo/vector-icons";
-
+import mapImg from "../../assets/images/issues/map.png";
+import gradient from "../../assets/images/gradients/orangegradient.png";
 const HomeScreen = ({ navigation }: any) => {
   const [fontsLoaded] = useFonts({
     Poppins_600SemiBold,
@@ -42,11 +46,65 @@ const HomeScreen = ({ navigation }: any) => {
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
-  
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [issuedata, setIssueData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filter, setFilter] = useState("date_latest");
+
+  const applyFilters = (issues) => {
+    let sortedIssues = [...issues];
+
+    switch (filter) {
+      case "status_open":
+        sortedIssues = sortedIssues.filter(
+          (issue) => issue.issue_status === "open"
+        );
+        break;
+      case "status_closed":
+        sortedIssues = sortedIssues.filter(
+          (issue) => issue.issue_status === "closed"
+        );
+        break;
+      case "date_latest":
+        sortedIssues.sort(
+          (a, b) =>
+            new Date(b.date_time_created) - new Date(a.date_time_created)
+        );
+        break;
+      case "date_oldest":
+        sortedIssues.sort(
+          (a, b) =>
+            new Date(a.date_time_created) - new Date(b.date_time_created)
+        );
+        break;
+      case "votes_highest":
+        sortedIssues.sort((a, b) => b.upvote_count - a.upvote_count);
+        break;
+      case "votes_lowest":
+        sortedIssues.sort((a, b) => a.upvote_count - b.upvote_count);
+        break;
+      case "suggestions_highest":
+        sortedIssues.sort((a, b) => b.total_suggestions - a.total_suggestions);
+        break;
+      case "suggestions_lowest":
+        sortedIssues.sort((a, b) => a.total_suggestions - b.total_suggestions);
+        break;
+    }
+
+    return sortedIssues;
+  };
+
+  const filteredIssues = applyFilters(
+    issuedata.filter(
+      (issue) =>
+        issue.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        issue.issue_description
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase())
+    )
+  );
 
   useEffect(() => {
     fetchIssues();
@@ -95,16 +153,12 @@ const HomeScreen = ({ navigation }: any) => {
     }
   };
 
- 
-  const filteredIssues = issuedata.filter(
-    (issue) =>
-      issue.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      issue.issue_description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   return (
-    <View style={[styles.container, { backgroundColor: currentColors.backgroundDarkest }]}>
-      
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: currentColors.backgroundDarkest },
+      ]}>
       <View
         style={[
           styles.headerContainer,
@@ -113,22 +167,35 @@ const HomeScreen = ({ navigation }: any) => {
             paddingTop: insets.top == 0 ? 10 : insets.top * 1.2,
             width: "100%",
           },
-        ]}
-      >
-        <TouchableOpacity onPress={() => navigation.openDrawer()} style={styles.iconButton}>
+        ]}>
+        <TouchableOpacity
+          onPress={() => navigation.openDrawer()}
+          style={styles.iconButton}>
           <Ionicons name="menu" size={28} color={currentColors.secondary} />
         </TouchableOpacity>
 
         <TextInput
-          style={[styles.searchInput, { backgroundColor: currentColors.background, color: currentColors.text }]}
+          style={[
+            styles.searchInput,
+            {
+              backgroundColor: currentColors.background,
+              color: currentColors.text,
+            },
+          ]}
           placeholder="Search"
           placeholderTextColor={currentColors.textShade}
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
 
-        <TouchableOpacity onPress={() => alert("Notification Clicked")} style={styles.iconButton}>
-          <Ionicons name="notifications-circle" size={35} color={currentColors.secondary} />
+        <TouchableOpacity
+          onPress={() => alert("Notification Clicked")}
+          style={styles.iconButton}>
+          <Ionicons
+            name="notifications-circle"
+            size={35}
+            color={currentColors.secondary}
+          />
         </TouchableOpacity>
       </View>
 
@@ -137,41 +204,110 @@ const HomeScreen = ({ navigation }: any) => {
       {/* Loading Animation */}
       {isLoading ? (
         <View style={styles.loadingContainer}>
-          <LottieView source={loading} autoPlay loop style={{ width: 100, height: 100 }} />
+          <LottieView
+            source={loading}
+            autoPlay
+            loop
+            style={{ width: 100, height: 100 }}
+          />
         </View>
       ) : (
-        <FlatList
-          data={filteredIssues}
-          keyExtractor={(item) => item.issue_id.toString()}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-          contentContainerStyle={styles.listContainer}
-          showsVerticalScrollIndicator={false}
-          ListHeaderComponent={<Text style={{ marginTop: 10 }}></Text>}
-          ListFooterComponent={
-            <Animatable.View animation="fadeInUp" style={styles.footerContainer}>
-              <Image source={watermark} style={styles.watermarkImage} />
-            </Animatable.View>
-          }
-          renderItem={({ item }) => (
-            <Issue
-              issue_id={item.issue_id}
-              username={item.full_name}
-              dateTime={item.date_time_created}
-              title={item.title}
-              status={item.issue_status}
-              description={item.issue_description}
-              mediaLinks={item.media_files}
-              is_anonymous={item.is_anonymous}
-              upvotes={item.upvote_count}
-              downvotes={item.downvote_count}
-              suggestions={item.total_suggestions}
-              refreshIssue={refreshIssue}
-              pfp={item.picture_name}
-              latitude={item.latitude}
-              longitude={item.longitude}
-            />
-          )}
-        />
+        <>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{
+              flexDirection: "row",
+
+              marginTop: 20,
+              height: 60,
+              gap: 10,
+              alignItems: "flex-start",
+
+              paddingHorizontal: 20,
+              paddingBottom: 10,
+            }}>
+            {[
+              { label: "Latest", value: "date_latest" },
+              { label: "Oldest", value: "date_oldest" },
+              { label: "Votes ↑", value: "votes_highest" },
+              { label: "Votes ↓", value: "votes_lowest" },
+              { label: "Suggestions ↑", value: "suggestions_highest" },
+              { label: "Suggestions ↓", value: "suggestions_lowest" },
+            ].map(({ label, value }) => (
+              <TouchableOpacity key={value} onPress={() => setFilter(value)}>
+                <Text
+                  style={[
+                    {
+                      color: currentColors.text,
+
+                      fontSize: 19,
+                      backgroundColor:
+                        filter != value
+                          ? currentColors.textShade
+                          : currentColors.secondary,
+                      borderRadius: 20,
+                      padding: 3,
+                      paddingHorizontal: 10,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    },
+                  ]}>
+                  {label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+          <TouchableOpacity onPress={()=> router.push('/screens/IssueMapView')}
+            style={{ position: "absolute", right: 10, bottom: 120,   zIndex: 10, }}>
+            <ImageBackground
+              source={gradient}
+              style={{
+                padding: 10,
+                zIndex: 10,
+                borderRadius: 500,
+                overflow: "hidden",
+              }}>
+              <Image source={mapImg} style={{ width: 40, height: 40 }}></Image>
+            </ImageBackground>
+          </TouchableOpacity>
+          <FlatList
+            data={filteredIssues}
+            keyExtractor={(item) => item.issue_id.toString()}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            contentContainerStyle={styles.listContainer}
+            showsVerticalScrollIndicator={false}
+            ListHeaderComponent={<Text style={{ marginTop: 10 }}></Text>}
+            ListFooterComponent={
+              <Animatable.View
+                animation="fadeInUp"
+                style={styles.footerContainer}>
+                <Image source={watermark} style={styles.watermarkImage} />
+              </Animatable.View>
+            }
+            renderItem={({ item }) => (
+              <Issue
+                issue_id={item.issue_id}
+                username={item.full_name}
+                dateTime={item.date_time_created}
+                title={item.title}
+                status={item.issue_status}
+                description={item.issue_description}
+                mediaLinks={item.media_files}
+                is_anonymous={item.is_anonymous}
+                upvotes={item.upvote_count}
+                downvotes={item.downvote_count}
+                suggestions={item.total_suggestions}
+                refreshIssue={refreshIssue}
+                pfp={item.picture_name}
+                latitude={item.latitude}
+                longitude={item.longitude}
+              />
+            )}
+          />
+        </>
       )}
     </View>
   );
@@ -232,6 +368,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  filterContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginVertical: 10,
+  },
+  filterButton: { padding: 8, color: "gray" },
+  filterSelected: { fontWeight: "bold", color: "black" },
 });
 
 export default HomeScreen;

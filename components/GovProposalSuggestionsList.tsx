@@ -25,7 +25,7 @@ import socket from "@/hooks/useSocket";
 const GovProposalSuggestionsList = ({
   handleSuggestionClick,
   proposalId,
-  allowSuggestion
+  allowSuggestion,
 }: any) => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
@@ -34,8 +34,15 @@ const GovProposalSuggestionsList = ({
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const insets = useSafeAreaInsets();
+  console.log();
+  console.log();
+  console.log();
+  console.log();
+  console.log();
+  console.log();
+  console.log("allow suggestions : ", allowSuggestion);
   const getProposalSuggestions = async () => {
-    console.log('check this proposal id ', proposalId);
+    console.log("check this proposal id ", proposalId);
     const response = await axios.post(
       `http://${API_IP_ADDRESS}:8000/api/proposals/getGovProposalSuggestions`,
       {
@@ -146,6 +153,21 @@ const GovProposalSuggestionsList = ({
     return () => {
       socket.off("newSuggestionProposal", handleNewSuggestion);
     };
+  }, []);
+
+  const [whoIsUser, setwhoIsUser] = useState("");
+  useEffect(() => {
+    const getUser = async () => {
+      const user = await getStoredData();
+
+      console.log("user: ", user.userType);
+
+      if (user.userType == "citizen") {
+        setwhoIsUser(user.userType);
+      }
+    };
+
+    getUser();
   }, []);
 
   return (
@@ -279,51 +301,95 @@ const GovProposalSuggestionsList = ({
           </Animatable.View>
         )}
       />
-      
+
       {/* need to disable for gov user */}
 
-      {allowSuggestion && 
-      <KeyboardAvoidingView
-        onLayout={() => setKeyboardHeight((prev) => prev)}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{
-          width: "100%",
-          backgroundColor: currentColors.background,
-          maxHeight: 100,
-          height: 60,
-          flexDirection: "row",
-          justifyContent: "space-evenly",
-          alignItems: "center",
-          position: "relative",
-          bottom: keyboardHeight ? keyboardHeight : 0,
-          paddingHorizontal: 5,
-          marginBottom: insets.bottom,
-        }}>
-        <Switch
-          trackColor={{
-            false: currentColors.primary,
-            true: currentColors.secondary,
-          }}
-          thumbColor={isAnonymous ? currentColors.text : currentColors.text}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={() => setIsAnonymous((prev) => !prev)}
-          value={isAnonymous}
-        />
+      {allowSuggestion && (
+        <KeyboardAvoidingView
+          onLayout={() => setKeyboardHeight((prev) => prev)}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{
+            width: "100%",
+            backgroundColor: currentColors.background,
+            maxHeight: 100,
+            height: 60,
+            flexDirection: "row",
+            justifyContent: "space-evenly",
+            alignItems: "center",
+            position: "relative",
+            bottom: keyboardHeight ? keyboardHeight : 0,
+            paddingHorizontal: 5,
+            marginBottom: insets.bottom,
+          }}>
+          <Switch
+            trackColor={{
+              false: currentColors.primary,
+              true: currentColors.secondary,
+            }}
+            thumbColor={isAnonymous ? currentColors.text : currentColors.text}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={() => setIsAnonymous((prev) => !prev)}
+            value={isAnonymous}
+          />
 
-        <TextInput
-          style={{ width: "80%", color: currentColors.text }}
-          value={userSuggestions}
-          multiline
-          onChangeText={(text) => setUserSuggestions(text)}
-        />
+          <TextInput
+            style={{ width: "80%", color: currentColors.text }}
+            value={userSuggestions}
+            multiline
+            onChangeText={(text) => setUserSuggestions(text)}
+          />
 
-        <Ionicons
-          name="send"
-          size={25}
-          color={currentColors.secondary}
-          onPress={() => handleSubmitSuggestion()}
-        />
-      </KeyboardAvoidingView>}
+          <Ionicons
+            name="send"
+            size={25}
+            color={currentColors.secondary}
+            onPress={() => handleSubmitSuggestion()}
+          />
+        </KeyboardAvoidingView>
+      )}
+      {whoIsUser == 'citizen' && (
+        <KeyboardAvoidingView
+          onLayout={() => setKeyboardHeight((prev) => prev)}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{
+            width: "100%",
+            backgroundColor: currentColors.background,
+            maxHeight: 100,
+            height: 60,
+            flexDirection: "row",
+            justifyContent: "space-evenly",
+            alignItems: "center",
+            position: "relative",
+            bottom: keyboardHeight ? keyboardHeight : 0,
+            paddingHorizontal: 5,
+            marginBottom: insets.bottom,
+          }}>
+          <Switch
+            trackColor={{
+              false: currentColors.primary,
+              true: currentColors.secondary,
+            }}
+            thumbColor={isAnonymous ? currentColors.text : currentColors.text}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={() => setIsAnonymous((prev) => !prev)}
+            value={isAnonymous}
+          />
+
+          <TextInput
+            style={{ width: "80%", color: currentColors.text }}
+            value={userSuggestions}
+            multiline
+            onChangeText={(text) => setUserSuggestions(text)}
+          />
+
+          <Ionicons
+            name="send"
+            size={25}
+            color={currentColors.secondary}
+            onPress={() => handleSubmitSuggestion()}
+          />
+        </KeyboardAvoidingView>
+      )}
     </Animatable.View>
   );
 };

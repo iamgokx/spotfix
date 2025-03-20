@@ -17,6 +17,8 @@ import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Picker } from "@react-native-picker/picker";
 import { ScrollView } from "react-native-gesture-handler";
+import watermark from "../../assets/images/watermark.png";
+import { StatusBar } from "expo-status-bar";
 const ApproveIssues = () => {
   const router = useRouter();
   const [issuesData, setIssuesData] = useState([]);
@@ -37,6 +39,7 @@ const ApproveIssues = () => {
 
       if (response.data.status) {
         setIssuesData(response.data.results);
+        console.log("response.data.results: ", response.data.results);
         setFilteredIssues(response.data.results);
       } else {
         console.log(response.data.message);
@@ -55,12 +58,6 @@ const ApproveIssues = () => {
     await getIssues();
     setRefreshing(false);
   }, []);
-
-  const logout = () => {
-    console.log("logout clicked");
-    clearStorage();
-    router.replace("/auth");
-  };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -96,51 +93,57 @@ const ApproveIssues = () => {
         paddingHorizontal: 20,
         paddingBottom: insets.bottom + 10,
       }}>
-      <ScrollView
-        style={{ flexDirection: "row", marginBottom: 10 }}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ gap: 10, padding: 10, height : 60 }}>
-        {["registered", "approved", "in process", "completed"].map((status) => (
-          <TouchableOpacity
-            key={status}
-            onPress={() => handleFilterPress(status)}
-            style={{
-              backgroundColor:
-                activeFilter === status
-                  ? currentColors.secondary
-                  : currentColors.background,
-              paddingHorizontal: 15,
-              borderRadius: 50,
-              paddingVertical: 8,
-            }}>
-            <Text
-              style={{
-                color:
-                  activeFilter === status ? "#fff" : currentColors.textShade,
-                fontSize: 16,
-              }}>
-              {status.charAt(0).toUpperCase() + status.slice(1)}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      <StatusBar hidden />
+      <View style={{ marginTop: -20 }}>
+        <ScrollView
+          horizontal
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ gap: 10, padding: 10 }}>
+          {["registered", "approved", "in process", "completed"].map(
+            (status) => (
+              <TouchableOpacity
+                key={status}
+                onPress={() => handleFilterPress(status)}
+                style={{
+                  backgroundColor:
+                    activeFilter === status
+                      ? currentColors.secondary
+                      : currentColors.background,
+                  paddingHorizontal: 15,
+                  borderRadius: 50,
+                  paddingVertical: 8,
+                  height: 40,
+                }}>
+                <Text
+                  style={{
+                    color:
+                      activeFilter === status
+                        ? "#fff"
+                        : currentColors.textShade,
+                    fontSize: 16,
+                  }}>
+                  {status.charAt(0).toUpperCase() + status.slice(1)}
+                </Text>
+              </TouchableOpacity>
+            )
+          )}
+        </ScrollView>
+      </View>
 
       <FlatList
+        showsVerticalScrollIndicator={false}
         data={filteredIssues}
         keyExtractor={(item) => item.issue_id.toString()}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         ListFooterComponent={
-          <Text
-            style={{
-              color: currentColors.text,
-              textAlign: "center",
-              margin: 20,
-            }}>
-            Nothing more to view
-          </Text>
+          <View style={{ marginTop: 100, paddingBottom: insets.bottom + 20 }}>
+            <Image
+              source={watermark}
+              style={{ width: "100%", height: 100, objectFit: "contain" }}
+            />
+          </View>
         }
         renderItem={({ item }) => {
           const firstFileName = item.file_names

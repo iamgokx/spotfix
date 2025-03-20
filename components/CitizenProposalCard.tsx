@@ -28,6 +28,9 @@ const CitizenProposalCard = ({
   const currentTheme = useColorScheme();
   const currentColors = currentTheme == "dark" ? Colors.dark : Colors.light;
 
+
+ 
+
   const getDateFormatted = (date: any) => {
     const formattedDate = format(new Date(date), "eeee d MMMM yyyy");
     return formattedDate;

@@ -115,11 +115,12 @@ const CompletedIssuesScreen = () => {
                 overflow: "hidden",
                 marginTop: 20,
               }}
+              disabled
               onPress={() => {
-                router.push({
-                  pathname: "/screens/SubBranchDetailedIssue",
-                  params: { issue_id: item.issue_id },
-                });
+                // router.push({
+                //   pathname: "/screens/SubBranchDetailedIssue",
+                //   params: { issue_id: item.issue_id },
+                // });
               }}>
               {imageUrl && (
                 <Image

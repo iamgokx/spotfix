@@ -182,7 +182,7 @@ const Announcements = () => {
         <Animatable.View
           animation={"fadeInDown"}
           style={{
-            backgroundColor: currentColors.backgroundDarker,
+            backgroundColor: currentColors.background,
             width: "100%",
             borderBottomLeftRadius: 30,
             borderBottomRightRadius: 30,

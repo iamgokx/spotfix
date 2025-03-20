@@ -24,6 +24,7 @@ import { Colors } from "@/constants/Colors";
 import gradient from "../../assets/images/gradients/profileGradient.png";
 import { StatusBar } from "expo-status-bar";
 import AdminSearchBarHeader from "@/components/admin/AdminSearchBarHeader";
+import ManageProposals from "./ManageProposals";
 const CustomDrawerContent = (props: any) => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
@@ -102,7 +103,6 @@ const AdminDrawer = () => {
             },
           }}
           initialRouteName="Admin Dashboard"
-        
           drawerContent={(props) => <CustomDrawerContent {...props} />}>
           <Drawer.Screen
             name="Admin Dashboard"
@@ -110,7 +110,7 @@ const AdminDrawer = () => {
             options={{
               drawerIcon: ({ focused, size }) => (
                 <Ionicons
-                  name="home-outline"
+                  name="code-slash-outline"
                   size={size}
                   color={focused ? currentColors.secondary : currentColors.text}
                 />
@@ -129,7 +129,7 @@ const AdminDrawer = () => {
                   color={focused ? currentColors.secondary : currentColors.text}
                 />
               ),
-              header: () => <AdminSearchBarHeader title={"Manage Citizens"} />,
+              header: () => <AdminSearchBarHeader title={"Manage Citizens"}    visible={true}/>,
             }}
           />
           <Drawer.Screen
@@ -144,12 +144,13 @@ const AdminDrawer = () => {
                 />
               ),
               header: () => (
-                <AdminSearchBarHeader title={"Manage Departments"} />
+                <AdminSearchBarHeader title={"Manage Departments"}    visible={true} />
+                
               ),
             }}
           />
           <Drawer.Screen
-            name="Manage Department Coordinators"
+            name="Department Coordinators"
             component={ManageDepartmentCoordinators}
             options={{
               drawerIcon: ({ focused, size }) => (
@@ -162,13 +163,14 @@ const AdminDrawer = () => {
               header: () => (
                 <AdminSearchBarHeader
                   title={"Manage Department Coordinators"}
+                  visible={true}
                 />
               ),
             }}
           />
 
           <Drawer.Screen
-            name="Manage Sub Department Coordinators"
+            name="Sub Department Coordinators"
             component={ManageSubDepCoordinators}
             options={{
               drawerIcon: ({ focused, size }) => (
@@ -181,6 +183,27 @@ const AdminDrawer = () => {
               header: () => (
                 <AdminSearchBarHeader
                   title={"Manage Sub Department Coordinators"}
+                  visible={true}
+                />
+              ),
+            }}
+          />
+
+          <Drawer.Screen
+            name="Manage Proposals"
+            component={ManageProposals}
+            options={{
+              drawerIcon: ({ focused, size }) => (
+                <Ionicons
+                  name="reader-outline"
+                  size={size}
+                  color={focused ? currentColors.secondary : currentColors.text}
+                />
+              ),
+              header: () => (
+                <AdminSearchBarHeader
+                  title={"Manage Citizen Proposals"}
+                  visible={false}
                 />
               ),
             }}

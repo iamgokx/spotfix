@@ -66,8 +66,10 @@ const CreateAnnouncement = ({ goToAddressScreen }: any) => {
       valid = false;
     } else if (addedDetails.title.length < 20) {
       newErrors.title = "Title should be at least 20 characters long";
-    } else if (addedDetails.title.length <= 100) {
+      valid = false
+    } else if (addedDetails.title.length >= 100) {
       newErrors.title = "Title should be at most 100 characters long";
+      valid = false
     }
 
     if (!addedDetails.generatedAddress) {

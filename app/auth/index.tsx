@@ -77,13 +77,13 @@ const Index = () => {
         if (jwtRes) {
           console.log("Login Token Set");
           if (jwtRes == "super_admin") {
-            router.push("/admin/home");
+            router.replace("/admin/home");
           } else if (jwtRes == "citizen") {
-            router.push("/home");
+            router.replace("/home");
           } else if (jwtRes == "department_coordinator") {
-            router.push("/branchCoordinators/Home");
+            router.replace("/branchCoordinators/Home");
           } else if (jwtRes == "sub_branch_coordinator") {
-            router.push("/subBranchCoordinator/ApproveIssues");
+            router.replace("/subBranchCoordinator/ApproveIssues");
           }
         }
       } else {

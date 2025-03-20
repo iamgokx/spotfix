@@ -51,6 +51,7 @@ const Issue = ({
   });
   const [geoCodedAddress, setGeoCodedAddress] = useState("");
   const [isAddressLoading, setIsAddressLoading] = useState(true);
+
   const getAddress = async () => {
     try {
       const response = await fetch(
@@ -108,7 +109,7 @@ const Issue = ({
       case "completed": {
         setColors({
           background: "rgb(196, 241, 255)",
-          color: "rgb(0, 194, 255)",
+          color: "rgb(0, 0, 0)",
         });
         break;
       }
@@ -337,6 +338,9 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     gap: 10,
+    borderWidth: 1,
+    marginVertical: 10,
+    borderColor: "rgba(255,255,255,0.2)",
   },
 
   subContainer: {
@@ -376,26 +380,29 @@ const styles = StyleSheet.create({
 
     borderRadius: 20,
   },
+  titleContainer: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+
+    gap: 10,
+  },
   title: {
-    width: " 70%",
+    width: "70%",
     fontSize: 20,
     textAlign: "left",
     paddingLeft: 10,
     fontFamily: "Poppins_400Regular",
   },
-  titleContainer: {
-    width: "100%",
-    display: "flex",
-    flexDirection: "row",
-  },
   progress: {
-    width: "25%",
     textAlign: "center",
     paddingVertical: 5,
-    paddingHorizontal: 0,
+    paddingHorizontal: 10,
     borderRadius: 20,
     color: "white",
     fontFamily: "Poppins_400Regular",
+    width: "30%",
   },
   desc: {
     fontSize: 17,

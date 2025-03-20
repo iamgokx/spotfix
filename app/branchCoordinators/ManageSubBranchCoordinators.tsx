@@ -10,7 +10,7 @@ import {
   Alert,
 } from "react-native";
 import { Colors } from "@/constants/Colors";
-import * as Animatable from 'react-native-animatable'
+import * as Animatable from "react-native-animatable";
 import { useColorScheme } from "react-native";
 import { API_IP_ADDRESS } from "../../ipConfig.json";
 import { useState, useEffect } from "react";
@@ -23,6 +23,8 @@ import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import CustomHeader from "@/components/branchCoordinators/CustomHeader";
+import watermark from "../../assets/images/watermark.png";
+
 const ManageSubBranchCoordinators = () => {
   const [subBranchCoordinatorData, setsubBranchCoordinatorData] = useState([]);
   const router = useRouter();
@@ -86,11 +88,11 @@ const ManageSubBranchCoordinators = () => {
   };
 
   const renderItem = ({ item }) => {
-    let delay = 100
+    let delay = 100;
     return (
       <Animatable.View
-      animation={'fadeInUp'}
-      delay={delay + 50}
+        animation={"fadeInUp"}
+        delay={delay + 50}
         style={[
           styles.departmentContainer,
           { backgroundColor: currentColors.backgroundDarker },
@@ -103,19 +105,22 @@ const ManageSubBranchCoordinators = () => {
             ]}>
             Name: {item.full_name}
           </Text>
-          <Text style={[styles.citizenInfo, { color: currentColors.textShade }]}>
+          <Text
+            style={[styles.citizenInfo, { color: currentColors.textShade }]}>
             Email : {item.sub_department_coordinator_id}
           </Text>
-          <Text style={[styles.citizenInfo, { color: currentColors.textShade }]}>
+          <Text
+            style={[styles.citizenInfo, { color: currentColors.textShade }]}>
             Address : {item.latitude}, {item.longitude}
           </Text>
-  
-          <Text style={[styles.citizenInfo, { color: currentColors.secondary }]}>
+
+          <Text
+            style={[styles.citizenInfo, { color: currentColors.secondary }]}>
             {item.department_name}
           </Text>
         </View>
       </Animatable.View>
-    )
+    );
   };
 
   return (
@@ -128,7 +133,7 @@ const ManageSubBranchCoordinators = () => {
           position: "relative",
         },
       ]}>
-      <CustomHeader title="Dashboard" />
+      <CustomHeader title="Manage Sub Branch" />
 
       <ImageBackground
         source={background}
@@ -163,7 +168,21 @@ const ManageSubBranchCoordinators = () => {
             alignItems: "center",
             justifyContent: "center",
           }}
-          style={{ zIndex: 1 , paddingTop : 10}}
+          ListFooterComponent={
+            <Animatable.View
+              animation={"fadeInUp"}
+              style={{
+                marginTop: 100,
+                paddingBottom: insets.bottom + 20,
+                gap: 10,
+              }}>
+              <Image
+                source={watermark}
+                style={{ width: 300, height: 100, objectFit: "contain" }}
+              />
+            </Animatable.View>
+          }
+          style={{ zIndex: 1, paddingTop: 10 }}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}

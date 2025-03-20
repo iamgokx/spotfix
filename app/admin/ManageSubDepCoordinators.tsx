@@ -22,11 +22,13 @@ const ManageSubDepCoordinators = () => {
   const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedSSubCoordinator, setSelectedSSubCoordinator] = useState(null);
-  const [departmentSubCoordinatorData, setDepartmentSubCoordinatorData] = useState([]);
+  const [departmentSubCoordinatorData, setDepartmentSubCoordinatorData] =
+    useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [addresses, setAddresses] = useState({});
   const { searchValue } = useSearch();
-  const [filteredSubDepartmentCoordinator, setFilteredDepCoordinator] = useState([]);
+  const [filteredSubDepartmentCoordinator, setFilteredDepCoordinator] =
+    useState([]);
 
   const handleDeletePress = (coordinator) => {
     setSelectedSSubCoordinator(coordinator);
@@ -108,7 +110,12 @@ const ManageSubDepCoordinators = () => {
     const searchTerm = searchValue.trim();
 
     const options = {
-      keys: ["full_name", "sub_coordinator_email", "phone_number", "department_name"],
+      keys: [
+        "full_name",
+        "sub_coordinator_email",
+        "phone_number",
+        "department_name",
+      ],
       threshold: 0.3,
       minMatchCharLength: 2,
       findAllMatches: true,
@@ -134,34 +141,56 @@ const ManageSubDepCoordinators = () => {
         marginVertical: 10,
         borderRadius: 20,
       }}>
-      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 5 }}>
-        <Text style={{ color: currentColors.secondary, fontSize: 18, fontWeight: "bold" }}>
+      <View
+        style={{ flexDirection: "row", alignItems: "center", marginBottom: 5 }}>
+        <Text
+          style={{
+            color: currentColors.secondary,
+            fontSize: 18,
+            fontWeight: "bold",
+          }}>
           {item.full_name}
         </Text>
       </View>
 
-      <Text style={{ color: currentColors.text }}>Email: {item.sub_coordinator_email}</Text>
-      <Text style={{ color: currentColors.text }}>Phone: {item.phone_number}</Text>
-      <Text style={{ color: currentColors.text }}>Department: {item.department_name}</Text>
+      <Text style={{ color: currentColors.text }}>
+        Email: {item.sub_coordinator_email}
+      </Text>
+      <Text style={{ color: currentColors.text }}>
+        Phone: {item.phone_number}
+      </Text>
+      <Text style={{ color: currentColors.text }}>
+        Department: {item.department_name}
+      </Text>
       <Text style={{ color: currentColors.text }}>State: {item.state}</Text>
-      <Text style={{ color: currentColors.text }}>Address: {addresses[item.sub_coordinator_email] || "Loading..."}</Text>
+      <Text style={{ color: currentColors.text }}>
+        Address: {addresses[item.sub_coordinator_email] || "Loading..."}
+      </Text>
 
-      <TouchableOpacity style={{ alignItems: "flex-end" }} onPress={() => handleDeletePress(item)}>
-        <Feather name="trash" size={24} color={currentColors.secondary} />
-      </TouchableOpacity>
+      {/* <TouchableOpacity
+        style={{ alignItems: "flex-end" }}
+        onPress={() => handleDeletePress(item)}>
+        <Feather name="edit" size={24} color={currentColors.secondary} />
+      </TouchableOpacity> */}
     </Animatable.View>
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: currentColors.backgroundDarkest, padding: 20 }}>
-
-      
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: currentColors.backgroundDarkest,
+        padding: 20,
+      }}>
       {departmentSubCoordinatorData.length > 0 ? (
         <FlatList
+          showsVerticalScrollIndicator={false}
           data={filteredSubDepartmentCoordinator}
           keyExtractor={(item) => item.sub_coordinator_email}
           renderItem={renderItem}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         />
       ) : (
         <Text style={{ color: "white", textAlign: "center", marginTop: 20 }}>
@@ -169,27 +198,83 @@ const ManageSubDepCoordinators = () => {
         </Text>
       )}
 
-      <Modal transparent animationType="fade" visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
-        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "center", alignItems: "center" }}>
-          <View style={{ backgroundColor: currentColors.background, padding: 20, borderRadius: 20, width: "80%" }}>
-            <Text style={{ color: currentColors.secondary, fontSize: 18, fontWeight: "bold", marginBottom: 10 }}>
+      <Modal
+        transparent
+        animationType="fade"
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}>
+          <View
+            style={{
+              backgroundColor: currentColors.background,
+              padding: 20,
+              borderRadius: 20,
+              width: "80%",
+            }}>
+            <Text
+              style={{
+                color: currentColors.secondary,
+                fontSize: 18,
+                fontWeight: "bold",
+                marginBottom: 10,
+              }}>
               Are you sure you want to delete this sub department coordinator?
             </Text>
 
             {selectedSSubCoordinator && (
               <>
-                <Text style={{ color: currentColors.text }}>Name: {selectedSSubCoordinator.full_name}</Text>
-                <Text style={{ color: currentColors.text }}>Department: {selectedSSubCoordinator.department_name}</Text>
+                <Text style={{ color: currentColors.text }}>
+                  Name: {selectedSSubCoordinator.full_name}
+                </Text>
+                <Text style={{ color: currentColors.text }}>
+                  Department: {selectedSSubCoordinator.department_name}
+                </Text>
               </>
             )}
 
-            <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 20 }}>
-              <TouchableOpacity style={{ backgroundColor: currentColors.secondary, padding: 10, borderRadius: 10, flex: 1, marginRight: 10, alignItems: "center" }} onPress={confirmDelete}>
-                <Text style={{ color: "white", fontWeight: "bold" }}>Delete</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginTop: 20,
+              }}>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: currentColors.secondary,
+                  padding: 10,
+                  borderRadius: 10,
+                  flex: 1,
+                  marginRight: 10,
+                  alignItems: "center",
+                }}
+                onPress={confirmDelete}>
+                <Text style={{ color: "white", fontWeight: "bold" }}>
+                  Delete
+                </Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={{ backgroundColor: currentColors.text, padding: 10, borderRadius: 10, flex: 1, alignItems: "center" }} onPress={() => setModalVisible(false)}>
-                <Text style={{ color: currentColors.textSecondary, fontWeight: "bold" }}>Cancel</Text>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: currentColors.text,
+                  padding: 10,
+                  borderRadius: 10,
+                  flex: 1,
+                  alignItems: "center",
+                }}
+                onPress={() => setModalVisible(false)}>
+                <Text
+                  style={{
+                    color: currentColors.textSecondary,
+                    fontWeight: "bold",
+                  }}>
+                  Cancel
+                </Text>
               </TouchableOpacity>
             </View>
           </View>

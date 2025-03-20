@@ -26,7 +26,7 @@ const userLogout = () => {
       <TouchableOpacity
         style={styles.button}
         onPress={() => router.push("/auth")}>
-        <Text style={[styles.buttonText,{backgroundColor : currentColors.primary}]}>Go to Login</Text>
+        <Text style={[styles.buttonText,{}]}>Go to Login</Text>
       </TouchableOpacity>
     </View>
   );

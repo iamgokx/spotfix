@@ -164,6 +164,7 @@ const DetailedGovProposal = () => {
           contentContainerStyle={{
             alignItems: "center",
           }}>
+          <StatusBar translucent hidden />
           <View style={[styles.header]}>
             <Ionicons
               name="chevron-back-outline"
@@ -216,12 +217,12 @@ const DetailedGovProposal = () => {
               source={govimg}
               style={{
                 borderRadius: 50,
-                width: 70,
+                width: '20%',
                 aspectRatio: 1,
                 backgroundColor: "white",
               }}
             />
-            <View>
+            <View style={{ width: "70%" }}>
               <Text
                 style={{
                   fontSize: 20,

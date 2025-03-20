@@ -169,6 +169,7 @@ const PendingFeedback = () => {
         elevation: 3,
         flexDirection: "row",
         gap: 10,
+        overflow : 'hidden'
       }}>
       <Modal visible={success} transparent animationType="fade">
         <View

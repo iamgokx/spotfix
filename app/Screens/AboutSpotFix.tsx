@@ -17,7 +17,7 @@ import { clearStorage } from "@/hooks/useJwt";
 import { Modal } from "react-native";
 import { useState } from "react";
 import * as Animatable from "react-native-animatable";
-import logo from "../../assets/images/logo.png";
+import logo from "../../assets/images/fullLogo.png";
 
 import gokul from "../../assets/images/team/gokul.jpg";
 import megan from "../../assets/images/team/meg.jpg";
@@ -25,6 +25,8 @@ import aarton from "../../assets/images/team/aarton.jpg";
 import rashita from "../../assets/images/team/rashita.jpg";
 import tanveer from "../../assets/images/team/taanveer.jpg";
 import pinky from "../../assets/images/team/pinky.jpg";
+import rhucha from "../../assets/images/team/rucha.jpg";
+
 const AboutSpotFix = () => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
@@ -72,8 +74,8 @@ const AboutSpotFix = () => {
     },
     {
       name: "Rhucha Bhobe",
-      role: "",
-      img: "../../assets/images/team/gokul.jpg",
+      role: "UI/UX",
+      img: rhucha,
     },
   ];
 
@@ -218,8 +220,7 @@ const styles = StyleSheet.create({
     backgroundColor: "lightgrey",
     marginBottom: 5,
     overflow: "hidden",
-    borderWidth: 3,
-    borderColor: '"rgba(3, 219, 252,1)",',
+    elevation: 10,
   },
   name: {
     fontSize: 17,

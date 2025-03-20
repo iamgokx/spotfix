@@ -1,10 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
-import { KeyboardAvoidingView, useColorScheme } from "react-native";
+import {
+  KeyboardAvoidingView,
+  TouchableOpacity,
+  useColorScheme,
+} from "react-native";
 import { Colors } from "@/constants/Colors";
 import axios from "axios";
 import { API_IP_ADDRESS } from "../ipConfig.json";
 import defaultPfp from "../assets/images/profile/defaultProfile.jpeg";
-
 
 import socket from "@/hooks/useSocket";
 import { formatDistanceToNow } from "date-fns";
@@ -30,7 +33,11 @@ import { FadeInUp, withDecay } from "react-native-reanimated";
 import { getStoredData } from "@/hooks/useJwt";
 import { io } from "socket.io-client";
 import * as Animatable from "react-native-animatable";
-const SuggestionsList = ({ issue_id,allowSuggestions }: any) => {
+const SuggestionsList = ({
+  issue_id,
+  allowSuggestions,
+  closeSuggestions,
+}: any) => {
   const colorScheme = useColorScheme();
   const insets = useSafeAreaInsets();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
@@ -101,8 +108,6 @@ const SuggestionsList = ({ issue_id,allowSuggestions }: any) => {
       }
     );
 
-   
-    
     const keyboardHideListener = Keyboard.addListener(
       Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
       () => setKeyboardHeight(0)
@@ -113,7 +118,7 @@ const SuggestionsList = ({ issue_id,allowSuggestions }: any) => {
       keyboardHideListener.remove();
     };
   }, []);
-  
+
   const getUserDetails = async () => {
     const user = await getStoredData();
     console.log("returned user email : ", user.email);
@@ -173,6 +178,16 @@ const SuggestionsList = ({ issue_id,allowSuggestions }: any) => {
         overflow: "hidden",
         position: "relative",
       }}>
+      <TouchableOpacity onPress={()=>{
+        closeSuggestions(false)
+      }} style={{ alignItems: "flex-end" }}>
+        <Ionicons
+          name={"close-circle"}
+          color={currentColors.secondary}
+          size={24}
+          style={{ marginRight: 10, marginTop: 10 }}
+        />
+      </TouchableOpacity>
       <Text
         style={{
           textAlign: "center",
@@ -280,47 +295,49 @@ const SuggestionsList = ({ issue_id,allowSuggestions }: any) => {
         <Text>Loading...</Text>
       )}
 
-     {allowSuggestions &&  <KeyboardAvoidingView
-        onLayout={() => setKeyboardHeight((prev) => prev)}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{
-          width: "100%",
-          backgroundColor: currentColors.background,
-          maxHeight: 100,
-          height: 60,
-          flexDirection: "row",
-          justifyContent: "space-evenly",
-          alignItems: "center",
-          position: "relative",
-          bottom: keyboardHeight ? keyboardHeight : 0,
-          paddingHorizontal: 5,
-          marginBottom: insets.bottom,
-        }}>
-        <Switch
-          trackColor={{
-            false: currentColors.primary,
-            true: currentColors.secondary,
-          }}
-          thumbColor={isAnonymous ? currentColors.text : currentColors.text}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={() => setIsAnonymous((prev) => !prev)}
-          value={isAnonymous}
-        />
+      {allowSuggestions && (
+        <KeyboardAvoidingView
+          onLayout={() => setKeyboardHeight((prev) => prev)}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{
+            width: "100%",
+            backgroundColor: currentColors.background,
+            maxHeight: 100,
+            height: 60,
+            flexDirection: "row",
+            justifyContent: "space-evenly",
+            alignItems: "center",
+            position: "relative",
+            bottom: keyboardHeight ? keyboardHeight : 0,
+            paddingHorizontal: 5,
+            marginBottom: insets.bottom,
+          }}>
+          <Switch
+            trackColor={{
+              false: currentColors.primary,
+              true: currentColors.secondary,
+            }}
+            thumbColor={isAnonymous ? currentColors.text : currentColors.text}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={() => setIsAnonymous((prev) => !prev)}
+            value={isAnonymous}
+          />
 
-        <TextInput
-          style={{ width: "80%", color: currentColors.text }}
-          value={userSuggestions}
-          multiline
-          onChangeText={(text) => setUserSuggestions(text)} //
-        />
+          <TextInput
+            style={{ width: "80%", color: currentColors.text }}
+            value={userSuggestions}
+            multiline
+            onChangeText={(text) => setUserSuggestions(text)} //
+          />
 
-        <Ionicons
-          name="send"
-          size={25}
-          color={currentColors.secondary}
-          onPress={() => handleSubmitSuggestion()}
-        />
-      </KeyboardAvoidingView>}
+          <Ionicons
+            name="send"
+            size={25}
+            color={currentColors.secondary}
+            onPress={() => handleSubmitSuggestion()}
+          />
+        </KeyboardAvoidingView>
+      )}
     </Animatable.View>
   );
 };

@@ -247,7 +247,7 @@ const ManageCitizensDetailed = () => {
               Delete
             </Text>
           </TouchableOpacity>
-          <View
+          {/* <View
             style={[
               styles.btnContainer,
               {
@@ -287,7 +287,7 @@ const ManageCitizensDetailed = () => {
                 Cancel
               </Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
         </ScrollView>
       ) : (
         <Text style={{ color: "white", textAlign: "center" }}>

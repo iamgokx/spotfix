@@ -19,56 +19,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import watermark from "../../assets/images/watermark.png";
 import * as Animatable from "react-native-animatable";
-const issuesWithReports = [
-  {
-    issue_id: 101,
-    title: "Pothole on Main St.",
-    issue_status: "completed",
-    priority: "high",
-    date_time_created: "2024-03-01T10:30:00",
-    state: "Goa",
-    city: "Panaji",
-    pincode: "403001",
-    file_names: ["pothole1.jpg", "pothole2.jpg"],
-    report: {
-      title: "Pothole Fixed",
-      description: "The pothole was repaired successfully.",
-      date_time_created: "2024-03-05T12:00:00",
-    },
-  },
-  {
-    issue_id: 102,
-    title: "Broken Streetlight",
-    issue_status: "completed",
-    priority: "moderate",
-    date_time_created: "2024-03-02T14:45:00",
-    state: "Goa",
-    city: "Vasco",
-    pincode: "403002",
-    file_names: ["streetlight.jpg"],
-    report: {
-      title: "Streetlight Repaired",
-      description: "New LED light installed.",
-      date_time_created: "2024-03-06T15:30:00",
-    },
-  },
-  {
-    issue_id: 103,
-    title: "Overflowing Garbage",
-    issue_status: "completed",
-    priority: "high",
-    date_time_created: "2024-03-03T08:15:00",
-    state: "Goa",
-    city: "Margao",
-    pincode: "403003",
-    file_names: ["garbage.jpg"],
-    report: {
-      title: "Garbage Cleared",
-      description: "Garbage collected and disposed.",
-      date_time_created: "2024-03-07T09:45:00",
-    },
-  },
-];
+
 import { Modal } from "react-native";
 const Reports = () => {
   const router = useRouter();
@@ -150,7 +101,7 @@ const Reports = () => {
         <Animatable.View
           animation={"fadeInDown"}
           style={{
-            backgroundColor: currentColors.backgroundDarker,
+            backgroundColor: currentColors.background,
             width: "100%",
             borderBottomLeftRadius: 30,
             borderBottomRightRadius: 30,
@@ -214,158 +165,79 @@ const Reports = () => {
             ? item.report_media_files.split(",")
             : null;
           console.log("reportImgsArray: ", reportImgsArray);
+          const delay = 100;
 
           return (
-            <TouchableOpacity
-              style={{
-                width: "100%",
-                backgroundColor: currentColors.backgroundDarker,
-                flexDirection: "row",
-                borderRadius: 20,
-                overflow: "hidden",
-                marginTop: 20,
-              }}
-              onPress={() => {
-                console.log("press");
-                setActiveIssueId(item.issue_id);
-              }}>
-              <Modal transparent visible={activeIssueId === item.issue_id} animationType="fade">
-                <View
-                  style={{
-                    flex: 1,
+            <Animatable.View animation={"slideInUp"} delay={delay + 100}>
+              <TouchableOpacity
+                style={{
+                  width: "100%",
+                  backgroundColor: currentColors.backgroundDarker,
+                  flexDirection: "row",
+                  borderRadius: 20,
+                  overflow: "hidden",
+                  marginTop: 20,
+                }}
+                onPress={() => {
+                  console.log("press");
 
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}>
-                  <View
+                  router.push({
+                    pathname: "/screens/ReportDetailedView",
+                    params: {
+                      sub_dep_id: item.sub_department_coordinator_id,
+                      item: JSON.stringify(item),
+                    },
+                  });
+                }}>
+                {imageUrl && (
+                  <Image
+                    source={{ uri: imageUrl }}
+                    resizeMode="cover"
+                    style={{ width: "30%", borderRadius: 20 }}
+                  />
+                )}
+
+                <View style={{ width: "70%", padding: 10 }}>
+                  <Text
                     style={{
-                      backgroundColor: currentColors.backgroundSecondary,
-                      padding: 10,
-                      borderRadius: 20,
-                      width: "90%",
-                      gap: 20,
+                      color: currentColors.text,
+                      fontSize: 18,
+                      fontWeight: "bold",
                     }}>
-                    <View style={{padding : 10}}>
-                      <TouchableOpacity
-                      onPress={() => setActiveIssueId(null)}
-                        style={{ position: "absolute", right: 10 }}>
-                        <Ionicons name="close-circle-outline" size={25} />
-                      </TouchableOpacity>
-                    </View>
+                    {item.title}
+                  </Text>
+                  <Text style={{ color: currentColors.textShade }}>
+                    Location: {item.city}, {item.state} - {item.pincode}
+                  </Text>
+                  <Text style={{ color: currentColors.text }}>
+                    {formatDate(item.date_time_created)}
+                  </Text>
+                  <View
+                    style={{ flexDirection: "row", gap: 10, marginTop: 10 }}>
                     <Text
                       style={{
-                        textAlign: "center",
-                        fontWeight: 200,
-                        fontSize: 18,
+                        backgroundColor: currentColors.secondary,
+                        paddingHorizontal: 10,
+                        paddingVertical: 5,
+                        borderRadius: 20,
+                        color: currentColors.text,
                       }}>
-                      Report By : {item.sub_department_coordinator_id}
+                      {item.issue_status}
                     </Text>
                     <Text
                       style={{
-                        textAlign: "center",
-                        fontWeight: 200,
-                        fontSize: 18,
+                        backgroundColor: currentColors.text,
+                        paddingHorizontal: 10,
+                        paddingVertical: 5,
+                        borderRadius: 20,
+                        color: currentColors.textSecondary,
                       }}>
-                      Issue : {item.title}
+                      Priority: {item.priority}
                     </Text>
-
-                    <Text
-                      style={{
-                        textAlign: "center",
-                        fontWeight: 200,
-                        fontSize: 18,
-                      }}>
-                      Report Title : {item.report_title}
-                    </Text>
-                    <Text
-                      style={{
-                        textAlign: "center",
-                        fontWeight: 200,
-                        fontSize: 18,
-                      }}>
-                      Report Description : {item.report_description}
-                    </Text>
-                    <Text
-                      style={{
-                        textAlign: "center",
-                        fontWeight: 200,
-                        fontSize: 18,
-                      }}>
-                      Issue : {formatDate(item.report_created_at)}
-                    </Text>
-                    <Text
-                      style={{
-                        textAlign: "center",
-                        fontWeight: 200,
-                        fontSize: 18,
-                      }}>
-                      Work related images
-                    </Text>
-
-                    {reportImgsArray.length > 0 ? (
-                      reportImgsArray.map((img, index) => {
-                        return (
-                          <Image
-                            style={{ width: 100, height: 100 }}
-                            key={`${img} -${index}`}
-                            source={{
-                              uri: `http://${API_IP_ADDRESS}:8000/uploads/reports/${img}`,
-                            }}></Image>
-                        );
-                      })
-                    ) : (
-                      <Text>No media</Text>
-                    )}
                   </View>
                 </View>
-              </Modal>
-              {imageUrl && (
-                <Image
-                  source={{ uri: imageUrl }}
-                  resizeMode="cover"
-                  style={{ width: "30%", borderRadius: 20 }}
-                />
-              )}
-
-              <View style={{ width: "70%", padding: 10 }}>
-                <Text
-                  style={{
-                    color: currentColors.text,
-                    fontSize: 18,
-                    fontWeight: "bold",
-                  }}>
-                  {item.title}
-                </Text>
-                <Text style={{ color: currentColors.textShade }}>
-                  Location: {item.city}, {item.state} - {item.pincode}
-                </Text>
-                <Text style={{ color: currentColors.text }}>
-                  {formatDate(item.date_time_created)}
-                </Text>
-                <View style={{ flexDirection: "row", gap: 10, marginTop: 10 }}>
-                  <Text
-                    style={{
-                      backgroundColor: currentColors.secondary,
-                      paddingHorizontal: 10,
-                      paddingVertical: 5,
-                      borderRadius: 20,
-                      color: currentColors.text,
-                    }}>
-                    {item.issue_status}
-                  </Text>
-                  <Text
-                    style={{
-                      backgroundColor: currentColors.text,
-                      paddingHorizontal: 10,
-                      paddingVertical: 5,
-                      borderRadius: 20,
-                      color: currentColors.textSecondary,
-                    }}>
-                    Priority: {item.priority}
-                  </Text>
-                </View>
-              </View>
-            </TouchableOpacity>
+              </TouchableOpacity>
+            </Animatable.View>
           );
         }}
       />

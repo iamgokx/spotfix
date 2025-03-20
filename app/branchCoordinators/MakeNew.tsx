@@ -1,5 +1,11 @@
 import { useRouter } from "expo-router";
-import { TouchableOpacity, StyleSheet, Modal } from "react-native";
+import {
+  TouchableOpacity,
+  StyleSheet,
+  Modal,
+  ScrollView,
+  Image,
+} from "react-native";
 import { View, Text } from "react-native";
 import { useIssueContext } from "@/context/IssueContext";
 import * as Animatable from "react-native-animatable";
@@ -11,6 +17,7 @@ import LottieView from "lottie-react-native";
 import userUsingPhone from "../../assets/images/issues/usingPhone.json";
 import { useIsFocused } from "@react-navigation/native";
 import construction from "../../assets/images/issues/construction.json";
+import watermark from "../../assets/images/watermark.png";
 import {
   useFonts,
   Poppins_100Thin,
@@ -38,7 +45,7 @@ const MakeNew = () => {
       const luser = await getStoredData();
       setUser(luser.name);
     };
-    userDetails()
+    userDetails();
   }, []);
 
   if (!fontsLoaded) {
@@ -56,154 +63,182 @@ const MakeNew = () => {
   //TODO update the name of the departmetn here
 
   return (
-    <IssueProvider>
+    <ScrollView
+      style={[
+        {
+          backgroundColor: currentColors.backgroundDarker,
+        },
+      ]}
+      contentContainerStyle={{
+        alignItems: "center",
+        paddingVertical: 20,
+        gap: 50,
+        paddingTop: 100,
+        justifyContent: "center",
+
+        paddingBottom: 200,
+      }}>
       <View
-        style={[
-          styles.container,
-          { backgroundColor: currentColors.backgroundDarker },
-        ]}>
+        style={{
+          width: "90%",
+
+          display: "flex",
+          flexDirection: "column",
+        }}>
+        <Animatable.Text
+          animation={isFocused ? "slideInLeft" : undefined}
+          duration={1000}
+          style={{
+            fontFamily: "Poppins_100Thin",
+            fontSize: 35,
+            color: currentColors.text,
+          }}>
+          Hey {user}
+        </Animatable.Text>
+
+        <Animatable.Text
+          animation={isFocused ? "slideInLeft" : undefined}
+          duration={900}
+          style={{
+            fontFamily: "Poppins_500Medium",
+            fontSize: 35,
+            color: currentColors.secondary,
+          }}>
+          What's On Your Mind ?
+        </Animatable.Text>
+      </View>
+      <Animatable.View
+        animation={isFocused ? "slideInUp" : "undefined"}
+        duration={600}
+        style={{
+          width: "90%",
+          overflow: "hidden",
+          backgroundColor: currentColors.card,
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+
+          padding: 10,
+          borderRadius: 20,
+          alignItems: "center",
+          paddingVertical: 20,
+        }}>
         <View
           style={{
-            width: "90%",
-            height: "25%",
+            flexGrow: 1,
+
+            width: "60%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            gap: 50,
+          }}>
+          <Text
+            style={{
+              color: currentColors.cardText,
+              fontFamily: "Poppins_300Light",
+              fontSize: 20,
+              textAlign: "auto",
+              padding: 10,
+            }}>
+            Keep the public informend {"\n"}Send Announcement!
+          </Text>
+          <TouchableOpacity
+            style={styles.btnContainer}
+            onPress={() =>
+              router.push("/branchAnnouncement/CreateAnnouncement")
+            }>
+            <Text
+              style={[
+                styles.btn,
+                {
+                  backgroundColor: currentColors.cardButton,
+                  color: currentColors.cardButtonText,
+                },
+              ]}>
+               New Announcement
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <LottieView
+          autoPlay
+          loop
+          source={userUsingPhone}
+          style={{ width: 150, height: 150 }}
+        />
+      </Animatable.View>
+      <Animatable.View
+        animation={isFocused ? "slideInUp" : "undefined"}
+        duration={700}
+        style={{
+          width: "90%",
+          overflow: "hidden",
+          backgroundColor: currentColors.card,
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+
+          padding: 10,
+          borderRadius: 20,
+          alignItems: "center",
+          paddingVertical: 20,
+        }}>
+        <View
+          style={{
+            flexGrow: 1,
+            width: "60%",
 
             display: "flex",
             flexDirection: "column",
+            justifyContent: "space-between",
+            gap: 50,
           }}>
-          <Animatable.Text
-            animation={isFocused ? "slideInLeft" : undefined}
-            duration={1000}
+          <Text
             style={{
-              fontFamily: "Poppins_100Thin",
-              fontSize: 35,
-              color: currentColors.text,
+              color: currentColors.cardText,
+              fontFamily: "Poppins_300Light",
+              fontSize: 20,
+              textAlign: "auto",
+              padding: 10,
             }}>
-            Hey {user}
-          </Animatable.Text>
-
-          <Animatable.Text
-            animation={isFocused ? "slideInLeft" : undefined}
-            duration={900}
-            style={{
-              fontFamily: "Poppins_500Medium",
-              fontSize: 35,
-              color: currentColors.secondary,
-            }}>
-            What's On Your Mind ?
-          </Animatable.Text>
+            Got a plan? {"\n"}Propose your project here!
+          </Text>
+          <TouchableOpacity
+            style={styles.btnContainer}
+            onPress={() => router.push("/branchProposal/createProposal")}>
+            <Text
+              style={[
+                styles.btn,
+                {
+                  backgroundColor: currentColors.cardButton,
+                  color: currentColors.cardButtonText,
+                },
+              ]}>
+              New Project Idea
+            </Text>
+          </TouchableOpacity>
         </View>
-        <Animatable.View
-          animation={isFocused ? "slideInUp" : "undefined"}
-          duration={600}
-          style={{
-            width: "90%",
-            height: "20%",
-            backgroundColor: currentColors.card,
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            padding: 10,
-            borderRadius: 20,
-          }}>
-          <View
-            style={{
-              flexGrow: 1,
-              height: "100%",
+        <LottieView
+          source={construction}
+          autoPlay
+          loop
+          style={{ width: 150, height: 150 }}
+        />
+      </Animatable.View>
 
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-            }}>
-            <Text
-              style={{
-                color: currentColors.cardText,
-                fontFamily: "Poppins_300Light",
-                fontSize: 20,
-                textAlign: "auto",
-                padding: 10,
-              }}>
-              Keep the public informend {"\n"}Send Announcement!
-            </Text>
-            <TouchableOpacity
-              style={styles.btnContainer}
-              onPress={() =>
-                router.push("/branchAnnouncement/CreateAnnouncement")
-              }>
-              <Text
-                style={[
-                  styles.btn,
-                  {
-                    backgroundColor: currentColors.cardButton,
-                    color: currentColors.cardButtonText,
-                  },
-                ]}>
-                New Announcement
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <LottieView
-            autoPlay
-            loop
-            source={announcement}
-            style={{ width: "40%", height: "100%" }}
-          />
-        </Animatable.View>
-        <Animatable.View
-          animation={isFocused ? "slideInUp" : "undefined"}
-          duration={700}
-          style={{
-            width: "90%",
-            height: "20%",
-            backgroundColor: currentColors.card,
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            padding: 10,
-            borderRadius: 20,
-          }}>
-          <View
-            style={{
-              flexGrow: 1,
-              height: "100%",
-
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-            }}>
-            <Text
-              style={{
-                color: currentColors.cardText,
-                fontFamily: "Poppins_300Light",
-                fontSize: 20,
-                textAlign: "auto",
-                padding: 10,
-              }}>
-              Got a plan? {"\n"}Propose your project here!
-            </Text>
-            <TouchableOpacity
-              style={styles.btnContainer}
-              onPress={() => router.push("/branchProposal/createProposal")}>
-              <Text
-                style={[
-                  styles.btn,
-                  {
-                    backgroundColor: currentColors.cardButton,
-                    color: currentColors.cardButtonText,
-                  },
-                ]}>
-                New Project Idea
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <LottieView
-            source={construction}
-            autoPlay
-            loop
-            style={{ width: "40%", height: "100%" }}
-          />
-        </Animatable.View>
-      </View>
-    </IssueProvider>
+      <Animatable.View
+        animation={"fadeInUp"}
+        style={{
+          marginTop: 50,
+          paddingBottom: 20,
+          gap: 10,
+        }}>
+        <Image
+          source={watermark}
+          style={{ width: 300, height: 100, objectFit: "contain" }}
+        />
+      </Animatable.View>
+    </ScrollView>
   );
 };
 
@@ -218,7 +253,7 @@ const styles = StyleSheet.create({
   },
 
   btn: {
-    width: "80%",
+ 
 
     paddingVertical: 15,
     textAlign: "center",

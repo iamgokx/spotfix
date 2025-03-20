@@ -322,7 +322,7 @@ const UserSubscriptions = () => {
                   }}
                 />
 
-                <Text style={{ color: currentColors.text, width: "50%" }}>
+                <Text style={{ color: currentColors.text, width: "40%" }}>
                   {dep.department}
                 </Text>
 
@@ -333,7 +333,7 @@ const UserSubscriptions = () => {
                   style={{
                     right: 10,
                     position: "absolute",
-                    width: "30%",
+                    width: "35%",
                   }}>
                   <Text
                     style={{

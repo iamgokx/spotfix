@@ -18,6 +18,10 @@ import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import Fuse from "fuse.js";
 import { useSearch } from "@/context/adminSearchContext";
+import watermark from "../../assets/images/watermark.png";
+import * as Animatable from "react-native-animatable";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import defautPfp from "../../assets/images/profile/defaultProfile.jpeg";
 const ManageCitizens = () => {
   const [citizenData, setcitizenData] = useState([]);
   const colorScheme = useColorScheme();
@@ -25,6 +29,7 @@ const ManageCitizens = () => {
   const { searchValue, setSearchValue } = useSearch();
   const [filteredCitizens, setFilteredCitizens] = useState([]);
 
+  const insets = useSafeAreaInsets();
   const getCitizens = async () => {
     try {
       const response = await axios.post(
@@ -87,9 +92,13 @@ const ManageCitizens = () => {
                   { backgroundColor: currentColors.backgroundDarker },
                 ]}>
                 <Image
-                  source={{
-                    uri: `http://${API_IP_ADDRESS}:8000/uploads/profile/${citizen.picture_name}`,
-                  }}
+                  source={
+                    citizen.picture_name
+                      ? {
+                          uri: `http://${API_IP_ADDRESS}:8000/uploads/profile/${citizen.picture_name}`,
+                        }
+                      : defautPfp
+                  }
                   style={[
                     styles.logo,
                     { backgroundColor: "white", borderRadius: 80 },
@@ -123,7 +132,7 @@ const ManageCitizens = () => {
                     onPress={() => {
                       router.push({
                         pathname: "/screens/ManageCitizensDetailed",
-                        params : {email : citizen.email},
+                        params: { email: citizen.email },
                       });
                     }}
                     style={{
@@ -143,6 +152,19 @@ const ManageCitizens = () => {
               </View>
             )
           )}
+
+          <Animatable.View
+            animation={"fadeInUp"}
+            style={{
+              marginTop: 100,
+              paddingBottom: insets.bottom + 100,
+              gap: 10,
+            }}>
+            <Image
+              source={watermark}
+              style={{ width: 300, height: 100, objectFit: "contain" }}
+            />
+          </Animatable.View>
         </ScrollView>
       ) : (
         <Text>Loading data...</Text>

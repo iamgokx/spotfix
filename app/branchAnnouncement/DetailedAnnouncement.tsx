@@ -10,7 +10,8 @@ import {
   Platform,
   Linking,
 } from "react-native";
-
+import docIcon from "../../assets/images/proposals/docs.png";
+import pdfIcon from "../../assets/images/proposals/pdf.png";
 import * as Animatable from "react-native-animatable";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, useLocalSearchParams } from "expo-router";
@@ -36,6 +37,7 @@ const width = Dimensions.get("window").width;
 import image1 from "../../assets/images/gradients/bluegradient.png";
 import image2 from "../../assets/images/gradients/orangegradient.png";
 import image3 from "../../assets/images/gradients/profileGradient.png";
+import { getStateFromPath } from "expo-router/build/fork/getStateFromPath";
 
 const imgs = [image1, image2, image3];
 const DetailedAnnouncement = () => {
@@ -114,18 +116,39 @@ const DetailedAnnouncement = () => {
   }, []);
 
   useEffect(() => {
-    const files = announcementDetails?.media_files
-      .split(",")
-      .map((file) => file.trim());
+    if (announcementDetails?.media_files) {
+      const imageExtensions = ["jpg", "jpeg", "png", "gif", "webp"];
 
-    console.log();
-    console.log();
-    console.log();
-    console.log();
-    console.log();
-    console.log();
-    console.log("files: ", files);
-    setmediaArray(files);
+      const files = announcementDetails.media_files
+        .split(",")
+        .map((file) => file.trim())
+        .filter((file) => {
+          const extension = file.split(".").pop().toLowerCase();
+          return imageExtensions.includes(extension);
+        });
+
+      console.log("Filtered image files: ", files);
+      setmediaArray(files);
+    }
+  }, [announcementDetails]);
+
+  const [documents, setdocuments] = useState();
+
+  useEffect(() => {
+    if (announcementDetails?.media_files) {
+      const imageExtensions = ["pdf", "doc", "docx"];
+
+      const files = announcementDetails.media_files
+        .split(",")
+        .map((file) => file.trim())
+        .filter((file) => {
+          const extension = file.split(".").pop().toLowerCase();
+          return imageExtensions.includes(extension);
+        });
+
+      console.log("Filtered image files: ", files);
+      setdocuments(files);
+    }
   }, [announcementDetails]);
 
   useEffect(() => {
@@ -210,7 +233,7 @@ const DetailedAnnouncement = () => {
             </Text>
           </View>
         </View>
-        <View style={{width : '100%', padding : 20}}>
+        <View style={{ width: "100%", padding: 20 }}>
           <Swiper
             style={styles.wrapper}
             showsButtons={false}
@@ -264,19 +287,18 @@ const DetailedAnnouncement = () => {
             <Text>
               {getDateFormatted(announcementDetails.date_time_created)}
             </Text>
+            <Text>
+              {announcementDetails.districts == "All"
+                ? "Goa"
+                : announcementDetails.districts}
+              <Text>
+                {" "}
+                {announcementDetails.talukas == "All"
+                  ? ""
+                  : announcementDetails.talukas}
+              </Text>
+            </Text>
           </View>
-          <Text
-            style={{
-              color: colors.color,
-              backgroundColor: colors.background,
-              position: "absolute",
-              right: 10,
-              paddingHorizontal: 20,
-              paddingVertical: 10,
-              borderRadius: 20,
-            }}>
-            {announcementDetails.issue_status}
-          </Text>
         </Animatable.View>
         <Animatable.View
           animation="fadeInUp"
@@ -299,7 +321,39 @@ const DetailedAnnouncement = () => {
               "No description available"}
           </Text>
         </Animatable.View>
-       
+
+        <Animatable.View
+            animation="fadeInUp"
+            style={{ width: "90%", gap: 10 }}>
+            {documents?.map((file, index) => {
+              const isPdf = file.endsWith(".pdf");
+              return (
+                <TouchableOpacity
+                  onPress={() => openPdfExternally(file)}
+                  key={index}
+                  style={{
+                    backgroundColor: currentColors.backgroundDarker,
+                    width: "100%",
+                    flexDirection: "row",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                    padding: 10,
+                    gap: 5,
+                    borderRadius: 20,
+                    overflow: "hidden",
+                  }}>
+                  <Image
+                    source={isPdf ? pdfIcon : docIcon}
+                    style={{ width: 40, height: 40 }}
+                  />
+                  <Text
+                    style={{ color: currentColors.secondary, width: "80%" }}>
+                    Download {file}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </Animatable.View>
       </ScrollView>
     </View>
   );
@@ -342,7 +396,7 @@ const styles = StyleSheet.create({
   img: {
     width: "100%",
     height: 350,
-   
+
     borderRadius: 30,
   },
   container: {

@@ -23,7 +23,8 @@ const RootLayout = () => {
         <Stack.Screen name="ManageDepartments" />
         <Stack.Screen name="ManageSubDepCoordinators" />
         <Stack.Screen name="ManageDepartmentCoordinators" />
-        <Stack.Screen name="addBranchCoordinator" />
+        <Stack.Screen name="ManageProposals" />
+       
       
     </Stack>
   );

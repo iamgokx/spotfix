@@ -10,6 +10,7 @@ import {
   Platform,
   Linking,
   Modal,
+  Button,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Animatable from "react-native-animatable";
@@ -20,6 +21,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { Feather, Ionicons } from "@expo/vector-icons";
+import { Alert } from "react-native";
 import { useRouter } from "expo-router";
 import Swiper from "react-native-swiper";
 import LottieView from "lottie-react-native";
@@ -36,6 +38,8 @@ import SuggestionsList from "@/components/SuggestionsList";
 import socket from "@/hooks/useSocket";
 import { Picker } from "@react-native-picker/picker";
 import { Calendar } from "react-native-calendars";
+import { openBrowserAsync } from "expo-web-browser";
+import { withDecay } from "react-native-reanimated";
 const SubBranchDetailedIssue = () => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
@@ -51,18 +55,74 @@ const SubBranchDetailedIssue = () => {
   const [selectedStatus, setSelectedStatus] = useState();
   const [selectedPriority, setSelectedPriority] = useState();
   const [isLoading, setisLoading] = useState(false);
-
+  const [isVisible, setisVisible] = useState(false);
+  const [selectedDepartment, setselectedDepartment] = useState(0);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [estimateCompleteTime, setEstimateCompleteTime] = useState(null);
 
-  const handleDateSelect = (day) => {
+  const handleDayPress = (day) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const selected = new Date(day.dateString);
+    console.log("Selected Date:", selected);
+
+    if (selected < today) {
+      Alert.alert("Invalid Date", "You cannot select a past date.");
+      setEstimateCompleteTime(null);
+      return;
+    }
+
+    const formattedDate = `${day.dateString} 00:00:00`;
+    console.log("Formatted Date:", formattedDate);
+
     setSelectedDate(day.dateString);
+    setEstimateCompleteTime(formattedDate);
   };
 
+  const updateEstimateTimeComplete = async () => {
+    if (issueDetails.issue_status == "registered") {
+      setresponseMessage(
+        "Issue has to be approved before setting estimate complete time..."
+      );
+      setisVisible(true);
+      return;
+    }
 
-  const formatDateForMySQL = (date) => {
-    return `${date} 00:00:00`; 
+    if (issueDetails.issue_status == "completed") {
+      setresponseMessage(
+        "Cannot set estimate complete time when issues is already completed..."
+      );
+      setisVisible(true);
+      return;
+    }
+    try {
+      const response = await axios.post(
+        `http://${API_IP_ADDRESS}:8000/api/subBranchCoordinator/setEstimateTimeComplete`,
+        {
+          issueid: issueDetails.issue_id,
+          date: estimateCompleteTime,
+        }
+      );
+
+      if (response.data.status) {
+        console.log("updated successfully estimate completion time ...");
+        setresponseMessage(response.data.message);
+        setisVisible(true);
+        setSelectedDate(null);
+        setEstimateCompleteTime(null);
+      } else {
+        setresponseMessage(response.data.message);
+        setisVisible(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
+  const closeSuggestions = () => {
+    setIsSuggestionsOpen(false);
+  };
   const getDateFormatted = (date: any) => {
     const formattedDate = format(new Date(date), "eeee d MMMM yyyy");
     return formattedDate;
@@ -70,10 +130,6 @@ const SubBranchDetailedIssue = () => {
 
   const [deleteIssueReason, setDeleteIssueReason] = useState("");
   const [isDeleteModalActive, setIsDeleteModalActive] = useState(false);
-
-  const handleOnDeleteIssue = () => {
-    console.log("deleting issue");
-  };
 
   const [colors, setColors] = useState({
     background: "",
@@ -122,7 +178,9 @@ const SubBranchDetailedIssue = () => {
 
       if (response.data.status) {
         console.log(response.data.message);
+        getIssueDetails();
         setresponseMessage(response.data.message);
+        setisVisible(true);
       } else {
         console.log(response.data.message);
         setresponseMessage(response.data.message);
@@ -163,12 +221,36 @@ const SubBranchDetailedIssue = () => {
       );
       if (response?.data) {
         setIssueDetails(response.data);
+        console.log();
+        console.log("********************");
+
         console.log(response.data);
 
         setIsDataLoaded(true);
+        setselectedDepartment(response.data["department_id"]);
       }
     } catch (error) {
       console.error("Error fetching issue details:", error);
+    }
+  };
+
+  const [departmentData, setdepartmentData] = useState();
+
+  const getDepartmentList = async () => {
+    try {
+      const response = await axios.post(
+        `http://${API_IP_ADDRESS}:8000/api/department/getDepartments`
+      );
+
+      if (response.data.status) {
+        console.log(response.data.results);
+        setdepartmentData(response.data.results);
+      } else {
+        console.log("no departments");
+        return;
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -179,7 +261,7 @@ const SubBranchDetailedIssue = () => {
 
   useEffect(() => {
     getIssueDetails();
-
+    getDepartmentList();
     if (suggestions) {
       setIsSuggestionsOpen(true);
     }
@@ -263,6 +345,30 @@ const SubBranchDetailedIssue = () => {
     }
   };
 
+  const updateDepartmentId = async () => {
+    try {
+      setisLoading(true);
+      const response = await axios.post(
+        `http://${API_IP_ADDRESS}:8000/api/subBranchCoordinator/updateDepId`,
+        {
+          issue_id: issueDetails.issue_id,
+          depId: selectedDepartment,
+        }
+      );
+
+      if (response.data.status) {
+        console.log(response.data.message);
+        setresponseMessage(response.data.message);
+        setisVisible(true);
+      } else {
+        console.log(response.data.message);
+        setresponseMessage(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <View
       style={{
@@ -271,7 +377,52 @@ const SubBranchDetailedIssue = () => {
         height: "100%",
         backgroundColor: currentColors.backgroundDarker,
       }}>
-      <StatusBar translucent hidden />
+      <StatusBar translucent backgroundColor="rgba(0,0,0,0.4)" />
+
+      <Modal transparent visible={isVisible} animationType="slide">
+        <View
+          style={{
+            flex: 1,
+
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+          <View
+            style={{
+              width: "90%",
+              padding: 10,
+              backgroundColor: currentColors.backgroundDarker,
+              borderWidth: 1,
+              borderColor: currentColors.textShade,
+              borderRadius: 20,
+              alignItems: "center",
+              gap: 20,
+            }}>
+            <Text style={{ fontSize: 20, color: currentColors.secondary }}>
+              Server Response
+            </Text>
+            <Text style={{ color: currentColors.text }}>{responseMessage}</Text>
+
+            <TouchableOpacity
+              onPress={() => {
+                setisVisible(false);
+                setresponseMessage("");
+              }}>
+              <Text
+                style={{
+                  paddingHorizontal: 30,
+                  paddingVertical: 10,
+                  backgroundColor: currentColors.secondary,
+                  color: currentColors.text,
+                  borderRadius: 500,
+                  fontSize: 17,
+                }}>
+                Close
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
@@ -318,110 +469,235 @@ const SubBranchDetailedIssue = () => {
             </View>
           )}
         </Swiper>
-        <Animatable.View
-          animation="fadeInUp"
-          duration={400}
-          style={[styles.iconsContainer]}>
-          <View style={[styles.reactions, { width: "30%" }]}>
-            <Ionicons
-              style={styles.reactionsIcon}
-              name="arrow-up-circle"
-              size={24}
-              color={currentColors.secondary}></Ionicons>
-            <Text style={[{ fontSize: 15 }, { color: currentColors.link }]}>
-              {issueDetails.upvote_count}
-            </Text>
-          </View>
 
-          <View style={[styles.reactions, { width: "30%" }]}>
-            <Ionicons
-              style={styles.reactionsIcon}
-              name="arrow-down-circle"
-              size={24}
-              color={currentColors.secondary}></Ionicons>
-            <Text style={[{ fontSize: 15 }, { color: currentColors.link }]}>
-              {issueDetails.downvote_count}
-            </Text>
-          </View>
+        <Animatable.Text
+          animation={"fadeInUp"}
+          style={{ color: currentColors.secondary, fontSize: 18 }}>
+          Estimate Completion Date :{" "}
+          <Text style={{ color: currentColors.text }}>
+            {getDateFormatted(issueDetails.estimate_complete_time)}
+          </Text>
+        </Animatable.Text>
 
-          <View style={[styles.reactions, { width: "30%" }]}>
-            <TouchableOpacity onPress={openSuggestionBox}>
-              <Ionicons
-                style={styles.reactionsIcon}
-                name="chatbubbles"
-                size={24}
-                color={currentColors.secondary}></Ionicons>
-              <Text style={[{ fontSize: 15 }, { color: currentColors.link }]}>
-                {issueDetails.total_suggestions}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </Animatable.View>
-
-        <Animatable.View
-          animation="fadeInUp"
-          duration={500}
-          style={{ width: "90%", gap: 10, marginVertical: 30 }}>
-          <View
-            style={{
-              flex: 1,
-
-              backgroundColor: currentColors.background,
-              borderRadius: 30,
-            }}>
-            <Picker
-              selectedValue={selectedStatus}
-              onValueChange={(value) => {
-                setSelectedStatus(value);
-              }}
-              style={{ color: "white" }}>
-              <Picker.Item label="Registered" value="registered" />
-              <Picker.Item label="Approved" value="approved" />
-              <Picker.Item label="In Process" value="in process" />
-              <Picker.Item label="Completed" value="completed" />
-            </Picker>
-          </View>
-
-          <View
-            style={{
-              flex: 1,
-
-              backgroundColor: currentColors.background,
-              borderRadius: 30,
-            }}>
-            <Picker
-              selectedValue={selectedPriority}
-              onValueChange={(value) => {
-                setSelectedPriority(value);
-              }}
+        {issueDetails.issue_status != "completed" && (
+          <>
+            <Animatable.View
+              animation="fadeInUp"
+              duration={500}
               style={{
-                color: "white",
+                width: "90%",
+                gap: 10,
+
+                alignItems: "center",
+                marginTop: 20,
               }}>
-              <Picker.Item label="Low" value="low" />
-              <Picker.Item label="Moderate" value="moderate" />
-              <Picker.Item label="High" value="high" />
-            </Picker>
-          </View>
+              <View
+                style={{
+                  width: "100%",
 
+                  borderRadius: 30,
+                  flexDirection: "row",
+                  gap: 10,
+                  justifyContent: "center",
+                }}>
+                <Animatable.View
+                  animation={"fadeInUp"}
+                  style={{
+                    width: "44%",
+                    backgroundColor: currentColors.background,
+                    borderRadius: 500,
+                  }}>
+                  <Picker
+                    selectedValue={selectedStatus}
+                    onValueChange={(value) => {
+                      setSelectedStatus(value);
+                    }}
+                    style={{ color: "white" }}>
+                    <Picker.Item label="Registered" value="registered" />
+                    <Picker.Item label="Approved" value="approved" />
+                    <Picker.Item label="In Process" value="in process" />
+                    <Picker.Item label="Completed" value="completed" />
+                  </Picker>
+                </Animatable.View>
 
-        </Animatable.View>
+                <Animatable.View
+                  animation={"fadeInUp"}
+                  style={{
+                    width: "45%",
+                    backgroundColor: currentColors.background,
+                    borderRadius: 500,
+                  }}>
+                  <Picker
+                    selectedValue={selectedPriority}
+                    onValueChange={(value) => {
+                      setSelectedPriority(value);
+                    }}
+                    style={{
+                      color: "white",
+                    }}>
+                    <Picker.Item label="Low" value="low" />
+                    <Picker.Item label="Moderate" value="moderate" />
+                    <Picker.Item label="High" value="high" />
+                  </Picker>
+                </Animatable.View>
+              </View>
 
-        {(selectedPriority != issueDetails.priority ||
-          selectedStatus != issueDetails.issue_status) && (
-          <TouchableOpacity
-            onPress={updateIssueStatusAndPriority}
-            style={{
-              backgroundColor: currentColors.secondary,
-              padding: 10,
-              borderRadius: 30,
-              paddingHorizontal: 15,
-            }}>
-            <View
-              style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-              <Ionicons name="checkmark" size={24} color={"white"} />
-              <Text style={{ color: "white", fontSize: 20 }}>Update</Text>
-            </View>
-          </TouchableOpacity>
+              {(selectedPriority != issueDetails.priority ||
+                selectedStatus != issueDetails.issue_status) && (
+                <TouchableOpacity
+                  onPress={updateIssueStatusAndPriority}
+                  style={{
+                    backgroundColor: currentColors.secondary,
+                    padding: 10,
+                    borderRadius: 30,
+                    paddingHorizontal: 15,
+                    width: "50%",
+                  }}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 10,
+                      justifyContent: "center",
+                    }}>
+                    <Ionicons name="checkmark" size={24} color={"white"} />
+                    <Text style={{ color: "white", fontSize: 20 }}>Update</Text>
+                  </View>
+                </TouchableOpacity>
+              )}
+            </Animatable.View>
+
+            <Animatable.View
+              animation={"fadeInUp"}
+              style={{ width: "100%", padding: 20, gap: 20, width: "90%" }}>
+              <Text
+                style={{
+                  color: currentColors.text,
+                  marginTop: 20,
+                  textAlign: "center",
+                  fontWeight: 900,
+                  fontSize: 20,
+                }}>
+                Select Estimate Complete Date
+              </Text>
+              <Calendar
+                onDayPress={handleDayPress}
+                theme={{
+                  calendarBackground: currentColors.background,
+                  textSectionTitleColor: currentColors.secondary,
+                  selectedDayBackgroundColor: currentColors.secondary,
+                  selectedDayTextColor: "#ffffff",
+                  todayTextColor: currentColors.secondary,
+                  dayTextColor: "#ffffff",
+                  textDisabledColor: "#757575",
+                  monthTextColor: "#00adb5",
+                  arrowColor: "#ff5733",
+                  textDayFontSize: 16,
+                  textMonthFontSize: 18,
+                  textDayHeaderFontSize: 14,
+                }}
+                style={{ borderRadius: 20 }}
+                markedDates={{
+                  [selectedDate]: {
+                    selected: true,
+                    customStyles: {
+                      container: {
+                        backgroundColor: currentColors.secondary,
+                        borderRadius: 10,
+                      },
+                      text: {
+                        color: "#ffffff",
+                      },
+                    },
+                  },
+                }}
+                markingType={"custom"}
+              />
+
+              {estimateCompleteTime != null && (
+                <TouchableOpacity onPress={updateEstimateTimeComplete}>
+                  <Text
+                    style={{
+                      color: currentColors.text,
+                      backgroundColor: currentColors.secondary,
+                      textAlign: "center",
+                      padding: 10,
+                      borderRadius: 20,
+                      fontSize: 20,
+                    }}>
+                    Set Date
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </Animatable.View>
+
+            <Animatable.View
+              animation={"fadeInUp"}
+              style={{ padding: 20, alignItems: "center", width: "100%" }}>
+              <Text
+                style={{
+                  color: currentColors.text,
+                  fontSize: 16,
+                  fontWeight: 900,
+                  textAlign: "center",
+                }}>
+                Incorrect department selected? Please choose the correct
+                department to proceed.
+              </Text>
+
+              <View
+                style={{
+                  backgroundColor: currentColors.secondary,
+                  marginVertical: 10,
+                  borderRadius: 500,
+                  overflow: "hidden",
+                  width: "100%",
+                }}>
+                <Picker
+                  selectedValue={selectedDepartment}
+                  onValueChange={(value) => {
+                    console.log(value);
+                    setselectedDepartment(value);
+                  }}
+                  style={{ color: "white" }}>
+                  {departmentData &&
+                    departmentData.map((dep) => {
+                      return (
+                        <Picker.Item
+                          key={dep.departmentId}
+                          label={dep.department_name}
+                          value={dep.department_id}
+                        />
+                      );
+                    })}
+                </Picker>
+              </View>
+
+              {selectedDepartment != issueDetails.department_id && (
+                <TouchableOpacity
+                  onPress={updateDepartmentId}
+                  style={{
+                    backgroundColor: currentColors.secondary,
+                    padding: 10,
+                    borderRadius: 30,
+                    paddingHorizontal: 15,
+
+                    alignItems: "center",
+                  }}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 10,
+                      justifyContent: "center",
+                    }}>
+                    <Ionicons name="checkmark" size={24} color={"white"} />
+                    <Text style={{ color: "white", fontSize: 20 }}>Update</Text>
+                  </View>
+                </TouchableOpacity>
+              )}
+            </Animatable.View>
+          </>
         )}
 
         <Animatable.View
@@ -542,10 +818,54 @@ const SubBranchDetailedIssue = () => {
         ) : (
           <Text style={{ color: "#0066ff" }}>Loading address...</Text>
         )}
+
+        <Animatable.View
+          animation="fadeInUp"
+          duration={400}
+          style={[styles.iconsContainer]}>
+          <View style={[styles.reactions, { width: "30%" }]}>
+            <Ionicons
+              style={styles.reactionsIcon}
+              name="arrow-up-circle"
+              size={24}
+              color={currentColors.secondary}></Ionicons>
+            <Text style={[{ fontSize: 15 }, { color: currentColors.link }]}>
+              {issueDetails.upvote_count}
+            </Text>
+          </View>
+
+          <View style={[styles.reactions, { width: "30%" }]}>
+            <Ionicons
+              style={styles.reactionsIcon}
+              name="arrow-down-circle"
+              size={24}
+              color={currentColors.secondary}></Ionicons>
+            <Text style={[{ fontSize: 15 }, { color: currentColors.link }]}>
+              {issueDetails.downvote_count}
+            </Text>
+          </View>
+
+          <View style={[styles.reactions, { width: "30%" }]}>
+            <TouchableOpacity onPress={openSuggestionBox}>
+              <Ionicons
+                style={styles.reactionsIcon}
+                name="chatbubbles"
+                size={24}
+                color={currentColors.secondary}></Ionicons>
+              <Text style={[{ fontSize: 15 }, { color: currentColors.link }]}>
+                {issueDetails.total_suggestions}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </Animatable.View>
       </ScrollView>
 
       {isSuggestionsOpen && (
-        <SuggestionsList issue_id={issue_id} allowSuggestions={false} />
+        <SuggestionsList
+          issue_id={issue_id}
+          allowSuggestions={false}
+          closeSuggestions={closeSuggestions}
+        />
       )}
 
       <TouchableOpacity
@@ -640,6 +960,7 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     height: 350,
+    marginBottom: 20,
   },
   img: {
     width: "100%",

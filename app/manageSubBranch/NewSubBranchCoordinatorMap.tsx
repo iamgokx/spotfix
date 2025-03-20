@@ -51,7 +51,12 @@ const NewSubBranchCoordinatorMap = ({ goToAddressScreen }: any) => {
 
         setUserAddress(data.display_name);
         setIsAddressValid(true);
-        setCoordinator({ latitude, longitude }); // Store in context
+
+        setCoordinator((prev) => ({
+          ...prev,
+          latitude,
+          longitude,
+        }));
       } else {
         setUserAddress("Error fetching address, please try again.");
         setIsAddressValid(false);

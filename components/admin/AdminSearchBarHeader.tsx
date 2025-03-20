@@ -17,7 +17,7 @@ import * as Animatable from "react-native-animatable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState, useEffect } from "react";
 import { useSearch } from "@/context/adminSearchContext";
-const AdminSearchBarHeader = ({ title }: any) => {
+const AdminSearchBarHeader = ({ title, visible }: any) => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
   const navigation = useNavigation();
@@ -33,7 +33,10 @@ const AdminSearchBarHeader = ({ title }: any) => {
     }
   };
 
-
+  const handleSearchPress = () => {
+    setSearchValue("");
+    setSearchVisible(!searchVisible);
+  };
 
   return (
     <TouchableWithoutFeedback onPress={handleOutsidePress}>
@@ -82,15 +85,17 @@ const AdminSearchBarHeader = ({ title }: any) => {
           </Text>
         )}
 
-        <TouchableOpacity
-          onPress={() => setSearchVisible(!searchVisible)}
-          style={{
-            position: "absolute",
-            right: searchVisible == true ? 21 : 10,
-            bottom: "50%",
-          }}>
-          <Ionicons name="search" size={24} color={currentColors.secondary} />
-        </TouchableOpacity>
+        {visible && (
+          <TouchableOpacity
+            onPress={handleSearchPress}
+            style={{
+              position: "absolute",
+              right: searchVisible == true ? 21 : 10,
+              bottom: "50%",
+            }}>
+            <Ionicons name="search" size={24} color={currentColors.secondary} />
+          </TouchableOpacity>
+        )}
       </View>
     </TouchableWithoutFeedback>
   );

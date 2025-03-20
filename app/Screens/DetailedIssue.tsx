@@ -46,6 +46,11 @@ const DetailedIssue = () => {
   const [isAddressLoading, setIsAddressLoading] = useState(true);
   const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  const closeSuggestions = () => {
+    setIsSuggestionsOpen(false);
+  };
+
   const getDateFormatted = (date: any) => {
     const formattedDate = format(new Date(date), "eeee d MMMM yyyy");
     return formattedDate;
@@ -356,6 +361,12 @@ const DetailedIssue = () => {
           </Text>
         </Animatable.View>
 
+        <Animatable.View animation={'fadeInUp'}>
+          <Text style={{ color: currentColors.text, fontSize: 18 }}>
+            Estimate Completion Date : <Text style={{color : currentColors.secondary}}>{" "}{getDateFormatted(issueDetails.estimate_complete_time)}</Text>
+          </Text>
+        </Animatable.View>
+
         <Animatable.View
           animation="fadeInUp"
           duration={600}
@@ -429,7 +440,11 @@ const DetailedIssue = () => {
       </ScrollView>
 
       {isSuggestionsOpen && (
-        <SuggestionsList issue_id={issue_id} allowSuggestions={true} />
+        <SuggestionsList
+          issue_id={issue_id}
+          allowSuggestions={true}
+          closeSuggestions={closeSuggestions}
+        />
       )}
     </View>
   );

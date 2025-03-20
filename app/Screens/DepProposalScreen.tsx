@@ -68,19 +68,7 @@ const DepProposalScreen = ({ navigation }: any) => {
         backgroundColor: currentColors.backgroundDarkest,
         width: "100%",
       }}>
-      <Animatable.View
-        animation={"fadeInDown"}
-        style={{
-          backgroundColor: currentColors.backgroundDarker,
-          width: "100%",
-          borderBottomLeftRadius: 30,
-          borderBottomRightRadius: 30,
-          paddingTop: insets.top + 10,
-          alignItems: "center",
-          justifyContent: "center",
-          padding: 10,
-        }}>
-        <View
+       <View
           style={{
             backgroundColor: currentColors.backgroundLighter,
             width: "90%",
@@ -90,17 +78,19 @@ const DepProposalScreen = ({ navigation }: any) => {
             borderRadius: 30,
             paddingHorizontal: 10,
             overflow: "hidden",
+            marginVertical : 10,
           }}>
           <TextInput
             style={{ width: "90%", color: currentColors.text }}
             placeholder="Search for proposals..."
             placeholderTextColor={currentColors.textShade}
             value={searchQuery}
-            onChangeText={setSearchQuery}
+            onChangeText={(text)=> setSearchQuery(text)}
           />
           <Ionicons name="search" color={currentColors.secondary} size={24} />
         </View>
-      </Animatable.View>
+      
+ 
       <FlatList
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ width: "100%", alignItems: "center" }}
@@ -134,6 +124,7 @@ const DepProposalScreen = ({ navigation }: any) => {
             />
           );
         }}
+       
         ListFooterComponent={
           <View
             style={{

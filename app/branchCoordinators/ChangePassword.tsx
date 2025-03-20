@@ -19,14 +19,16 @@ import { useEffect, useState } from "react";
 import * as Animatable from "react-native-animatable";
 import { getStoredData } from "@/hooks/useJwt";
 import axios from "axios";
+import { useNavigation } from "@react-navigation/native";
 import { API_IP_ADDRESS } from "../../ipConfig.json";
-const index = () => {
+const ChangePassword = () => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
   const [IsButtonActive, setIsButtonActive] = useState(false);
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const [user, setUser] = useState();
+  const navigation = useNavigation();
   const getUserPicture = async () => {
     const user = await getStoredData();
     console.log(user);
@@ -71,8 +73,8 @@ const index = () => {
             flexDirection: "row",
           }}>
           <Ionicons
-            onPress={() => router.back()}
-            name="chevron-back-outline"
+           onPress={() => navigation.openDrawer()}
+            name="menu-outline"
             size={24}
             color={"white"}
             style={{ position: "absolute", left: 10 }}
@@ -101,14 +103,14 @@ const index = () => {
 
           position: "relative",
         }}>
-        <Text
+        {/* <Text
           style={{
             color: currentColors.text,
             fontSize: 15,
             textAlign: "center",
           }}>
           Select how the SpotFix team can contact you to change your password.
-        </Text>
+        </Text> */}
 
         <View
           style={{
@@ -129,7 +131,7 @@ const index = () => {
                     }
                   : require("../../assets/images/profile/defaultProfile.jpeg")
               }
-              style={{ width: 100, height: 100, borderRadius: 30 }}
+              style={{ width: 100, height: 100, borderRadius: 300 }}
             />
           )}
           {user && (
@@ -167,4 +169,5 @@ const index = () => {
     </View>
   );
 };
-export default index;
+
+export default ChangePassword;

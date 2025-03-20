@@ -16,14 +16,16 @@ import { useSearch } from "@/context/adminSearchContext";
 import { getStoredData } from "@/hooks/useJwt";
 import Fuse from "fuse.js";
 import CustomHeader from "@/components/branchCoordinators/CustomHeader";
+import watermark from "../../assets/images/watermark.png";
+import * as Animatable from "react-native-animatable";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import {} from "@expo/vector-icons";
 const Subscribers = () => {
   const [subscribersData, setSubscribersData] = useState([]);
   const [filteredCitizens, setFilteredCitizens] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
-
+  const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
   const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
   const { searchValue } = useSearch();
@@ -84,42 +86,51 @@ const Subscribers = () => {
     return date.toLocaleDateString("en-GB", options).replace(",", "");
   };
 
-  const renderItem = ({ item }) => (
-    <View
-      style={[
-        styles.subscriberContainer,
-        { backgroundColor: currentColors.backgroundDarker },
-      ]}>
-      <Image
-        source={{
-          uri: `http://${API_IP_ADDRESS}:8000/uploads/profile/${item.picture_name}`,
-        }}
-        style={{width : 100, aspectRatio: 1, borderRadius : 500}}
-      />
+  const renderItem = ({ item }) => {
+    const delay = 50;
+    return (
+      <Animatable.View
+        animation={"fadeInUp"}
+        delay={delay * 2}
+        style={[
+          styles.subscriberContainer,
+          { backgroundColor: currentColors.backgroundDarker },
+        ]}>
+        <Image
+          source={{
+            uri: `http://${API_IP_ADDRESS}:8000/uploads/profile/${item.picture_name}`,
+          }}
+          style={{ width: 100, aspectRatio: 1, borderRadius: 500 }}
+        />
 
-      <View style={styles.subscriberDetails}>
-        <Text
-          style={[
-            styles.citizenInfo,
-            { color: currentColors.secondary, fontSize: 18 },
-          ]}>
-          {item.full_name}
-        </Text>
-        <Text style={[styles.citizenInfo, { color: currentColors.textShade }]}>
-           {item.email}
-        </Text>
-        <Text style={[styles.citizenInfo, { color: currentColors.textShade }]}>
-           {item.locality}, {item.pincode}
-        </Text>
-        <Text style={[styles.citizenInfo, { color: currentColors.textShade }]}>
-          {formatDate(item.registration_date_time)}
-        </Text>
-        <Text style={[styles.citizenInfo, { color: currentColors.secondary }]}>
-           +91 {item.phone_number}
-        </Text>
-      </View>
-    </View>
-  );
+        <View style={styles.subscriberDetails}>
+          <Text
+            style={[
+              styles.citizenInfo,
+              { color: currentColors.secondary, fontSize: 18 },
+            ]}>
+            {item.full_name}
+          </Text>
+          <Text
+            style={[styles.citizenInfo, { color: currentColors.textShade }]}>
+            {item.email}
+          </Text>
+          <Text
+            style={[styles.citizenInfo, { color: currentColors.textShade }]}>
+            {item.locality}, {item.pincode}
+          </Text>
+          <Text
+            style={[styles.citizenInfo, { color: currentColors.textShade }]}>
+            {formatDate(item.registration_date_time)}
+          </Text>
+          <Text
+            style={[styles.citizenInfo, { color: currentColors.secondary }]}>
+            +91 {item.phone_number}
+          </Text>
+        </View>
+      </Animatable.View>
+    );
+  };
 
   return (
     <View
@@ -140,12 +151,26 @@ const Subscribers = () => {
       ) : (
         <FlatList
           data={filteredCitizens}
-          style={{paddingTop : 10}}
+          style={{ paddingTop: 10 }}
           keyExtractor={(item, index) => index.toString()}
           renderItem={renderItem}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          }
+          ListFooterComponent={
+            <Animatable.View
+              animation={"fadeInUp"}
+              style={{
+                marginTop: 100,
+                paddingBottom: insets.bottom + 20,
+                gap: 10,
+              }}>
+              <Image
+                source={watermark}
+                style={{ width: "100%", height: 100, objectFit: "contain" }}
+              />
+            </Animatable.View>
           }
           ListEmptyComponent={
             filteredCitizens.length === 0 && searchValue.length > 1 ? (
@@ -162,7 +187,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    paddingTop: 10,
   },
   subscriberContainer: {
     flexDirection: "row",

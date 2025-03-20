@@ -33,6 +33,22 @@ const CitizenProposalSuggestionsList = ({
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const insets = useSafeAreaInsets();
+
+  const [isSuggestionsAllowed, setisSuggestionsAllowed] = useState(false);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const user = await getStoredData();
+      const userType = user.userType;
+
+      if (userType == "citizen") {
+        setisSuggestionsAllowed(true);
+      }
+    };
+
+    getUser();
+  }, [proposalId]);
+
   const getProposalSuggestions = async () => {
     const response = await axios.post(
       `http://${API_IP_ADDRESS}:8000/api/proposals/getCitizenProposalSuggestions`,
@@ -277,47 +293,49 @@ const CitizenProposalSuggestionsList = ({
           </Animatable.View>
         )}
       />
-      <KeyboardAvoidingView
-        onLayout={() => setKeyboardHeight((prev) => prev)}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{
-          width: "100%",
-          backgroundColor: currentColors.background,
-          maxHeight: 100,
-          height: 60,
-          flexDirection: "row",
-          justifyContent: "space-evenly",
-          alignItems: "center",
-          position: "relative",
-          bottom: keyboardHeight ? keyboardHeight : 0,
-          paddingHorizontal: 5,
-          marginBottom: insets.bottom,
-        }}>
-        <Switch
-          trackColor={{
-            false: currentColors.primary,
-            true: currentColors.secondary,
-          }}
-          thumbColor={isAnonymous ? currentColors.text : currentColors.text}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={() => setIsAnonymous((prev) => !prev)}
-          value={isAnonymous}
-        />
+      {isSuggestionsAllowed && (
+        <KeyboardAvoidingView
+          onLayout={() => setKeyboardHeight((prev) => prev)}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{
+            width: "100%",
+            backgroundColor: currentColors.background,
+            maxHeight: 100,
+            height: 60,
+            flexDirection: "row",
+            justifyContent: "space-evenly",
+            alignItems: "center",
+            position: "relative",
+            bottom: keyboardHeight ? keyboardHeight : 0,
+            paddingHorizontal: 5,
+            marginBottom: insets.bottom,
+          }}>
+          <Switch
+            trackColor={{
+              false: currentColors.primary,
+              true: currentColors.secondary,
+            }}
+            thumbColor={isAnonymous ? currentColors.text : currentColors.text}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={() => setIsAnonymous((prev) => !prev)}
+            value={isAnonymous}
+          />
 
-        <TextInput
-          style={{ width: "80%", color: currentColors.text }}
-          value={userSuggestions}
-          multiline
-          onChangeText={(text) => setUserSuggestions(text)}
-        />
+          <TextInput
+            style={{ width: "80%", color: currentColors.text }}
+            value={userSuggestions}
+            multiline
+            onChangeText={(text) => setUserSuggestions(text)}
+          />
 
-        <Ionicons
-          name="send"
-          size={25}
-          color={currentColors.secondary}
-          onPress={() => handleSubmitSuggestion()}
-        />
-      </KeyboardAvoidingView>
+          <Ionicons
+            name="send"
+            size={25}
+            color={currentColors.secondary}
+            onPress={() => handleSubmitSuggestion()}
+          />
+        </KeyboardAvoidingView>
+      )}
     </Animatable.View>
   );
 };
