@@ -1,4 +1,6 @@
 import "../gesture-handler";
+import registerNNPushToken from "native-notify";
+
 import React, { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import {
@@ -46,7 +48,10 @@ import axios from "axios";
 import { API_IP_ADDRESS } from "../ipConfig.json";
 import useLogin from "@/hooks/useLogin";
 import loading from "../assets/images/welcome/loading.json";
+
+import { useSocketNotifications } from "@/hooks/useSocketNotifications";
 const Index = () => {
+  registerNNPushToken(23309, "dPvu1htHR2GWbH5imWG9Qd");
   const colorScheme = useColorScheme();
   const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
   const router = useRouter();
@@ -59,6 +64,7 @@ const Index = () => {
     Poppins_300Light,
     Poppins_800ExtraBold,
   });
+
   useEffect(() => {
     if (Platform.OS === "android") {
       RNStatusBar.setBackgroundColor("#fff");
@@ -82,6 +88,8 @@ const Index = () => {
     setisLoading(true);
     fetchTokenData();
   }, []);
+
+  
 
   const verifyUserToken = async (token: any) => {
     setisLoading(true);

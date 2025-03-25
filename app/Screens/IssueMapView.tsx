@@ -14,6 +14,7 @@ import { TouchableOpacity } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
 import * as Animatable from "react-native-animatable";
+import { getStoredData } from "@/hooks/useJwt";
 const IssueMapView = () => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
@@ -24,6 +25,13 @@ const IssueMapView = () => {
   const [issueId, setissueId] = useState("");
   const [issueDescription, setissueDescription] = useState("");
   const router = useRouter();
+  const [user, setuser] = useState();
+
+  const getUser = async () => {
+    const user = await getStoredData();
+    const userType = user.userType;
+    setuser(userType);
+  };
 
   const getIssue = async () => {
     const response = await axios.post(
@@ -38,6 +46,7 @@ const IssueMapView = () => {
 
   useEffect(() => {
     getIssue();
+    getUser();
   }, []);
 
   if (isloading) {
@@ -72,7 +81,7 @@ const IssueMapView = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <View
+      {user == 'citizen' && <View
         style={{
           width: "100%",
           position: "absolute",
@@ -87,7 +96,7 @@ const IssueMapView = () => {
           size={40}
           style={{ color: "black", left: 20, top: 20, width: "10%" }}
         />
-      </View>
+      </View>}
 
       <MapView
         style={styles.map}

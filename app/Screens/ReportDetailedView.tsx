@@ -195,9 +195,30 @@ const ReportDetailedView = () => {
               size={24}></Feather>
             <Text style={{ color: currentColors.secondary, fontSize: 18 }}>
               {" "}
+              {itemValues.sub_dep_coordinator_name}
+            </Text>
+          </View>
+          <View style={{ alignItems: "center", flexDirection: "row", gap: 5 }}>
+            <Feather
+              name="at-sign"
+              color={currentColors.textShade}
+              size={24}></Feather>
+            <Text style={{ color: currentColors.secondary, fontSize: 18 }}>
+              {" "}
               {itemValues.sub_department_coordinator_id}
             </Text>
           </View>
+          <View style={{ alignItems: "center", flexDirection: "row", gap: 5 }}>
+            <Feather
+              name="phone"
+              color={currentColors.textShade}
+              size={24}></Feather>
+            <Text style={{ color: currentColors.secondary, fontSize: 18 }}>
+              {" "}
+              {itemValues.sub_dep_coordinator_phone}
+            </Text>
+          </View>
+
           <View style={{ alignItems: "center", flexDirection: "row", gap: 5 }}>
             <Ionicons
               name="calendar"
@@ -262,7 +283,7 @@ const ReportDetailedView = () => {
             {mediaFiles &&
               mediaFiles.map((img, index) => (
                 <Image
-                key={`${img}-${index}`}
+                  key={`${img}-${index}`}
                   source={{
                     uri: `http://${API_IP_ADDRESS}:8000/uploads/reports/${img}`,
                   }}
@@ -285,7 +306,7 @@ const ReportDetailedView = () => {
             {mediaFilesIssues &&
               mediaFilesIssues.map((img, index) => (
                 <Image
-                key={`${img}-${index}`}
+                  key={`${img}-${index}`}
                   source={{
                     uri: `http://${API_IP_ADDRESS}:8000/uploads/issues/${img}`,
                   }}

@@ -33,7 +33,7 @@ const EditDepartments = () => {
         }
       );
       if (response) {
-        console.log("response ", response.data);
+        console.log("response for dep data in edit dep screen", response.data);
         console.log(setDepartmentData(response.data));
       }
     } catch (error) {
@@ -149,11 +149,13 @@ const EditDepartments = () => {
 
   const updateDepName = async () => {
     try {
+      console.log('this ran');
       const response = await axios.post(
         `http://${API_IP_ADDRESS}:8000/api/admin/updateDepName`,
         {
           id: departmentData[0].department_id,
           value: newDepartmentName,
+          oldValue: departmentData[0].department_name,
         }
       );
 
@@ -183,6 +185,7 @@ const EditDepartments = () => {
         {
           id: departmentData[0].department_id,
           value: newDepartmentCoordinator,
+          oldValue : departmentData[0].full_name
         }
       );
 
@@ -212,6 +215,7 @@ const EditDepartments = () => {
         {
           id: departmentData[0].department_id,
           newEmail: newDepartmentCoordinatorEmail,
+          oldValue : departmentData[0].department_id
         }
       );
 
@@ -235,6 +239,7 @@ const EditDepartments = () => {
   };
 
   const checkDepName = () => {
+ 
     setErrors({});
     if (validate("departmentName")) {
       console.log("all good");
@@ -598,50 +603,49 @@ const EditDepartments = () => {
                   {errors.departmentCoordinatorEmail}
                 </Text>
               )}
-            {newDepartmentCoordinatorEmail != "" && (
-              <View
-                style={{
-                  width: "100%",
-                  padding: 10,
-                  flexDirection: "row",
-                  justifyContent: "flex-end",
-                  gap: 10,
-                }}>
-                <TouchableOpacity
-                  onPress={checkDepCoordEmail}
+              {newDepartmentCoordinatorEmail != "" && (
+                <View
                   style={{
+                    width: "100%",
                     padding: 10,
-
-                    backgroundColor: currentColors.secondary,
-                    borderRadius: 500,
+                    flexDirection: "row",
+                    justifyContent: "flex-end",
+                    gap: 10,
                   }}>
-                  <Ionicons
-                    name={"checkmark"}
-                    color={currentColors.text}
-                    size={24}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    setNewDepartmentCoordinatorEmail("");
-                    setErrors({});
-                  }}
-                  style={{
-                    padding: 10,
+                  <TouchableOpacity
+                    onPress={checkDepCoordEmail}
+                    style={{
+                      padding: 10,
 
-                    borderRadius: 500,
-                    backgroundColor: currentColors.secondary,
-                  }}>
-                  <Ionicons
-                    name={"close"}
-                    color={currentColors.text}
-                    size={24}
-                  />
-                </TouchableOpacity>
-              </View>
-            )}
+                      backgroundColor: currentColors.secondary,
+                      borderRadius: 500,
+                    }}>
+                    <Ionicons
+                      name={"checkmark"}
+                      color={currentColors.text}
+                      size={24}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setNewDepartmentCoordinatorEmail("");
+                      setErrors({});
+                    }}
+                    style={{
+                      padding: 10,
+
+                      borderRadius: 500,
+                      backgroundColor: currentColors.secondary,
+                    }}>
+                    <Ionicons
+                      name={"close"}
+                      color={currentColors.text}
+                      size={24}
+                    />
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
-
 
             <View style={styles.inputContainer}>
               <Text

@@ -18,7 +18,6 @@ const SubBranchLayout = () => {
   return (
     <Drawer
       drawerContent={(props) => <CustomDrawerContent {...props} />}
-      
       screenOptions={{
         headerShown: true,
         drawerStyle: {
@@ -35,7 +34,6 @@ const SubBranchLayout = () => {
         headerPressColor: currentColors.secondary,
       }}
       initialRouteName="Reports">
-    
       <Drawer.Screen
         name="ApproveIssues"
         options={{
@@ -57,11 +55,7 @@ const SubBranchLayout = () => {
           title: "Citizen Feedback",
           drawerItemStyle: { marginBottom: 10 },
           drawerIcon: ({ color, size }) => (
-            <Ionicons
-              name="document-text-outline"
-              size={size}
-              color={color}
-            />
+            <Ionicons name="document-text-outline" size={size} color={color} />
           ),
         }}
       />
@@ -85,6 +79,17 @@ const SubBranchLayout = () => {
           ),
         }}
       />
+      <Drawer.Screen
+        name="IssueMapViewSubDep"
+        options={{
+          title: "Issues Map View",
+          drawerItemStyle: { marginBottom: 10 },
+          drawerIcon: ({ color, size }) => (
+            <Ionicons name="location" size={size} color={color} />
+          ),
+        }}
+      />
+     
     </Drawer>
   );
 };

@@ -224,6 +224,7 @@ const Issue = ({ goToAddressScreen }: any) => {
                 },
               ]}
               value={details.title}
+              multiline
               onChangeText={(text) =>
                 setDetails((prev) => ({ ...prev, title: text }))
               }

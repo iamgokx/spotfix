@@ -23,12 +23,16 @@ import * as Animatable from "react-native-animatable";
 import { getStoredRawToken, getStoredData } from "../../hooks/useJwt";
 import { useColorScheme } from "react-native";
 import { Colors } from "@/constants/Colors";
+import { useSocketNotifications } from "@/hooks/useSocketNotifications";
+
 export default function ProposalMedia() {
   const { details, setDetails, addMedia, removeMedia } = useProposalContext();
   const [user, setuser] = useState("");
   const router = useRouter();
   const colorTheme = useColorScheme();
   const currentColors = colorTheme == "dark" ? Colors.dark : Colors.light;
+
+  useSocketNotifications("lekhwargokul84@gmail.com");
   const pickMedia = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
@@ -59,9 +63,9 @@ export default function ProposalMedia() {
     removeMedia(uri);
   };
 
-  
   const [errors, setErrors] = useState({});
   const safeDetails = details || {};
+  
   const validate = () => {
     let valid = true;
     let newErrors = {};
@@ -75,16 +79,13 @@ export default function ProposalMedia() {
     return valid;
   };
 
-
   const handleNextButtonPress = () => {
     if (validate()) {
-      
-      router.push("/proposals/ProposalFIles")
+      router.push("/proposals/ProposalFIles");
     } else {
       console.log("enter all details");
     }
   };
-
 
   return (
     <View

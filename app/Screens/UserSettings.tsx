@@ -6,10 +6,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { ImageBackground } from "react-native";
 import imgBackground from "../../assets/images/gradients/bluegradient.png";
-import { clearStorage } from "@/hooks/useJwt";
+import { clearStorage, getStoredData } from "@/hooks/useJwt";
 import { Modal } from "react-native";
 import { useState } from "react";
 import * as Animatable from "react-native-animatable";
+import axios from "axios";
+import { API_IP_ADDRESS } from "../../ipConfig.json";
 const UserSettings = () => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
@@ -35,8 +37,29 @@ const UserSettings = () => {
     setisDeleteAccountModaActive(false);
   };
 
-  const onConfirmDeleteAccount = () => {
+  const onConfirmDeleteAccount = async () => {
     console.log("deleting account");
+    try {
+      const user = await getStoredData();
+      const email = user.email;
+      const response = await axios.post(
+        `http://${API_IP_ADDRESS}:8000/api/users/deleteAccount`,
+        {
+          email: email,
+        }
+      );
+
+      if (response.data.status) {
+        console.log(response.data.message);
+        console.log("deleted user account");
+        router.replace("/welcome");
+      } else {
+        console.log(response.data.message);
+        console.log("could not deleted user account");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -134,7 +157,8 @@ const UserSettings = () => {
             <View
               style={{
                 flexDirection: "row",
-                justifyContent: "space-between",
+                justifyContent: "center",
+                gap: 20,
               }}>
               <TouchableOpacity
                 style={{ width: "40%" }}

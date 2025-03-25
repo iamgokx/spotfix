@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Image
+  Image,
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import axios from "axios";
@@ -16,7 +16,7 @@ import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-
+import pfp from "../../assets/images/profile/defaultProfile.jpeg";
 const ManageCitizensDetailed = () => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
@@ -25,7 +25,6 @@ const ManageCitizensDetailed = () => {
 
   const [user, setUser] = useState(null);
   const [isModalActive, setIsModalActive] = useState(false);
-  const [isDeleteModalActive, setisDeleteModalActive] = useState(false);
 
   const [newUserDetails, setNewUserDetails] = useState({
     email: "",
@@ -62,17 +61,24 @@ const ManageCitizensDetailed = () => {
     getCitizenDetails();
   }, [searchParams.email]);
 
-  const handleDeleteUserPress = () => {
-    console.log("deleted user");
-  };
+  const handleBanUser = () => {
+    console.log("banning user in progress...");
 
-  const handleSaveButtonPress = () => {
-    console.log("saved user details");
-    console.log("new details ", newUserDetails);
-  };
-
-  const handleCancelButtonClick = () => {
-    console.log("cancel btn press");
+    try {
+      const response = axios.post(
+        `http://${API_IP_ADDRESS}:8000/api/users/deleteAccount`,
+        {
+          email: user[0].email,
+        }
+      );
+      if (response.data.status) {
+        console.log("banning user successfull....");
+        getCitizenDetails();
+        setIsModalActive();
+      } else {
+        console.log("could not bann user");
+      }
+    } catch (error) {}
   };
 
   return (
@@ -86,23 +92,96 @@ const ManageCitizensDetailed = () => {
         flexDirection: "column",
         backgroundColor: currentColors.backgroundDarkest,
       }}>
+      <Modal transparent visible={isModalActive}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,0.6)",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+          <View
+            style={{
+              width: "90%",
+              backgroundColor: currentColors.background,
+              padding: 20,
+              borderRadius: 20,
+              gap: 20,
+            }}>
+            <Text
+              style={{
+                color: currentColors.text,
+                fontSize: 14,
+                textAlign: "center",
+              }}>
+              Are you sure you want to delete this user? This action cannot be
+              undone.
+            </Text>
+
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 20,
+              }}>
+              <TouchableOpacity
+                onPress={handleBanUser}
+                style={{
+                  padding: 10,
+                  borderRadius: 20,
+                  backgroundColor: "red",
+                  paddingHorizontal: 25,
+                }}>
+                <Text style={{ color: "white", fontWeight: 900, fontSize: 15 }}>
+                  Ban User
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setIsModalActive(false)}
+                style={{
+                  padding: 10,
+                  borderRadius: 20,
+                  backgroundColor: currentColors.secondary,
+                  paddingHorizontal: 25,
+                }}>
+                <Text style={{ color: "white", fontWeight: 900, fontSize: 15 }}>
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
       {user ? (
         <ScrollView
           style={{
             width: "100%",
             display: "flex",
             flexDirection: "column",
-            paddingBottom: insets.bottom,
+            paddingBottom: insets.bottom + 10,
           }}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             flexGrow: 1,
+            alignItems: "center",
           }}>
-          <View style={{ padding : 20, display : 'flex', alignItems : 'center', justifyContent : 'center'}}>
+          <View
+            style={{
+              padding: 20,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}>
             <Image
-              source={{
-                uri: `http://${API_IP_ADDRESS}:8000/uploads/profile/${user[0].picture_name}`,
-              }}
+              source={
+                user[0].picture_name != null
+                  ? {
+                      uri: `http://${API_IP_ADDRESS}:8000/uploads/profile/${user[0].picture_name}`,
+                    }
+                  : pfp
+              }
               style={{
                 width: 150,
                 height: 150,
@@ -110,15 +189,32 @@ const ManageCitizensDetailed = () => {
               }}
             />
           </View>
+
+          {user[0].status == "pending" && (
+            <Text
+              style={{
+                backgroundColor: "red",
+                color: "white",
+                padding: 10,
+                fontSize: 18,
+                textAlign: "center",
+                marginVertical: 20,
+                width: "50%",
+                borderRadius: 20,
+              }}>
+              User Banned
+            </Text>
+          )}
           <View style={styles.inputContainer}>
             <Text
               style={{ color: currentColors.textShade, paddingHorizontal: 15 }}>
               Name of the User:
             </Text>
             <TextInput
+              editable={false}
               style={styles.inputField}
               placeholder={user[0].full_name}
-              placeholderTextColor="#aaa"
+              placeholderTextColor={currentColors.text}
               value={newUserDetails.full_name}
               onChangeText={(text) => {
                 setNewUserDetails((prev) => ({ ...prev, full_name: text }));
@@ -133,9 +229,10 @@ const ManageCitizensDetailed = () => {
               Email
             </Text>
             <TextInput
+              editable={false}
               style={styles.inputField}
               placeholder={user[0].email}
-              placeholderTextColor="#aaa"
+              placeholderTextColor={currentColors.text}
               value={newUserDetails.email}
               onChangeText={(text) =>
                 setNewUserDetails((prev) => ({ ...prev, email: text }))
@@ -149,9 +246,10 @@ const ManageCitizensDetailed = () => {
               AadharCard Number
             </Text>
             <TextInput
+              editable={false}
               style={styles.inputField}
               placeholder={user[0].aadhar_number}
-              placeholderTextColor="#aaa"
+              placeholderTextColor={currentColors.text}
               value={newUserDetails.aadhar_number}
               onChangeText={(text) =>
                 setNewUserDetails((prev) => ({ ...prev, aadhar_number: text }))
@@ -164,39 +262,42 @@ const ManageCitizensDetailed = () => {
               Phone Number
             </Text>
             <TextInput
+              editable={false}
               style={styles.inputField}
               placeholder={user[0].phone_number}
-              placeholderTextColor="#aaa"
+              placeholderTextColor={currentColors.text}
               value={newUserDetails.phone_number}
               onChangeText={(text) =>
                 setNewUserDetails((prev) => ({ ...prev, phone_number: text }))
               }
             />
           </View>
-          <View style={styles.inputContainer}>
+          {/* <View style={styles.inputContainer}>
             <Text
               style={{ color: currentColors.textShade, paddingHorizontal: 15 }}>
               Status
             </Text>
             <TextInput
+              editable={false}
               style={styles.inputField}
               placeholder={user[0].status}
-              placeholderTextColor="#aaa"
+              placeholderTextColor={currentColors.text}
               value={newUserDetails.status}
               onChangeText={(text) =>
                 setNewUserDetails((prev) => ({ ...prev, status: text }))
               }
             />
-          </View>
+          </View> */}
           <View style={styles.inputContainer}>
             <Text
               style={{ color: currentColors.textShade, paddingHorizontal: 15 }}>
               Locality
             </Text>
             <TextInput
+              editable={false}
               style={styles.inputField}
               placeholder={user[0].locality}
-              placeholderTextColor="#aaa"
+              placeholderTextColor={currentColors.text}
               value={newUserDetails.locality}
               onChangeText={(text) =>
                 setNewUserDetails((prev) => ({ ...prev, locality: text }))
@@ -209,44 +310,48 @@ const ManageCitizensDetailed = () => {
               pincode
             </Text>
             <TextInput
+              editable={false}
               style={styles.inputField}
               placeholder={user[0].pincode}
-              placeholderTextColor="#aaa"
+              placeholderTextColor={currentColors.text}
               value={newUserDetails.pincode}
               onChangeText={(text) =>
                 setNewUserDetails((prev) => ({ ...prev, pincode: text }))
               }
             />
           </View>
-          <TouchableOpacity
-            onPress={handleDeleteUserPress}
-            style={{
-              width: "100%",
-              marginTop: 40,
-              backgroundColor: "red",
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: 50,
-              padding: 14,
-              gap: 10,
-            }}>
-            <Ionicons
-              name={"trash-bin-outline"}
-              size={24}
-              color={currentColors.secondary}
-            />
-            <Text
+
+          {user[0].status != "pending" && (
+            <TouchableOpacity
+              onPress={() => setIsModalActive(true)}
               style={{
-                textAlign: "center",
-                borderRadius: 30,
-                color: "white",
-                fontSize: 18,
+                width: "100%",
+                marginTop: 40,
+                backgroundColor: "red",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: 50,
+                padding: 14,
+                gap: 10,
               }}>
-              Delete
-            </Text>
-          </TouchableOpacity>
+              <Ionicons
+                name={"trash-bin-outline"}
+                size={24}
+                color={currentColors.secondary}
+              />
+              <Text
+                style={{
+                  textAlign: "center",
+                  borderRadius: 30,
+                  color: "white",
+                  fontSize: 18,
+                }}>
+                Ban User
+              </Text>
+            </TouchableOpacity>
+          )}
           {/* <View
             style={[
               styles.btnContainer,

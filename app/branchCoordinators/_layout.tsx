@@ -7,6 +7,7 @@ import Home from "./Home";
 import Reports from "./Reports";
 import Announcements from "./Announcements";
 import Proposals from "./Proposals";
+
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import CustomDrawerContent from "@/components/branchCoordinators/CustomDrawerContent";
@@ -19,6 +20,8 @@ import ManageSubBranchCoordinators from "./ManageSubBranchCoordinators";
 import { StyleSheet } from "react-native";
 import Subscribers from "./Subscribers";
 import ChangePassword from "./ChangePassword";
+import IssueMapViewDep from "./IssueMapViewDep";
+import Notifications from "./Notifications";
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -100,7 +103,8 @@ const Layout = () => {
     <NavigationIndependentTree>
       <NavigationContainer>
         <Drawer.Navigator
-          initialRouteName="DashBoard"
+          // initialRouteName="DashBoard"
+          initialRouteName="Manage Sub Branch"
           drawerContent={(props) => <CustomDrawerContent {...props} />}
           screenOptions={({ route }) => ({
             headerShown: false,
@@ -135,6 +139,8 @@ const Layout = () => {
                 iconName = focused ? "people-circle-outline" : "people-circle";
               } else if (route.name == "Password") {
                 iconName = focused ? "lock-closed" : "lock-closed-outline";
+              } else if (route.name == "Issue Map View") {
+                iconName = focused ? "location" : "location-outline";
               }
 
               return <Ionicons name={iconName} size={size} color={color} />;
@@ -147,6 +153,11 @@ const Layout = () => {
           />
           <Drawer.Screen name="Subscribers" component={Subscribers} />
           <Drawer.Screen name="Password" component={ChangePassword} />
+          <Drawer.Screen
+            name="Issue Map View"
+            component={IssueMapViewDep}
+            options={{ headerShown: true }}
+          />
         </Drawer.Navigator>
       </NavigationContainer>
     </NavigationIndependentTree>

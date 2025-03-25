@@ -24,8 +24,9 @@ import { router } from "expo-router";
 import { ScrollView } from "react-native-gesture-handler";
 import socket from "@/hooks/useSocket";
 import { Picker } from "@react-native-picker/picker";
+import { getStoredData } from "@/hooks/useJwt";
 
-const Announcements = () => {
+const UserSubscriptionAnnouncements = () => {
   const colorTheme = useColorScheme();
   const currentColors = colorTheme == "dark" ? Colors.dark : Colors.light;
   const insets = useSafeAreaInsets();
@@ -40,6 +41,8 @@ const Announcements = () => {
   const [selectedTaluka, setSelectedTaluka] = useState("");
   const [selectedType, setselectedType] = useState("");
   const [filterOpen, setfilterOpen] = useState(false);
+
+  const [userSubscriptions, setuserSubscriptions] = useState();
 
   const goaData = {
     "North Goa": [
@@ -107,10 +110,12 @@ const Announcements = () => {
 
   useEffect(() => {
     getAnnouncements();
+    getUserSubscriptions();
+    getDepartmentList();
   }, []);
 
   useEffect(() => {
-    if (announcementsData.length > 0) {
+    if (announcementsData?.length > 0) {
       const imageExtensions = ["jpg", "jpeg", "png"];
       const extractedMediaFiles = {};
 
@@ -153,34 +158,31 @@ const Announcements = () => {
 
   const [searchQuery, setSearchQuery] = useState("");
 
-  // const filteredData = announcementsData.filter((item) =>
-  //   item.title.toLowerCase().includes(searchQuery.toLowerCase())
-  // );
+  const subscribedDepartmentIds = userSubscriptions?.map(
+    (sub) => sub.department_id
+  );
 
-  const filteredData = announcementsData.filter((item) => {
-    const matchesDepartment = selectedDepartment
-      ? item.department_id === selectedDepartment
-      : true;
+  const filteredData = announcementsData?.filter((item) => {
     const location = splitTargetLocation(item.target_locations);
+
+    const matchesDepartment = subscribedDepartmentIds?.includes(
+      item.department_id
+    );
     const matchesDistrict = selectedDistrict
       ? location.district === selectedDistrict
       : true;
     const matchesTaluka = selectedTaluka
       ? location.taluka === selectedTaluka
       : true;
-    const matchesType = selectedType
-      ? item.announcement_type === selectedType
-      : true;
-    const matchesSearch = searchQuery
-      ? item.title.toLowerCase().includes(searchQuery.toLowerCase())
-      : true;
+    const matchesSearchQuery = item.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
 
     return (
       matchesDepartment &&
       matchesDistrict &&
       matchesTaluka &&
-      matchesType &&
-      matchesSearch
+      matchesSearchQuery
     );
   });
 
@@ -195,7 +197,7 @@ const Announcements = () => {
     let delay = 50;
 
     const location = splitTargetLocation(item.target_locations);
-    console.log("location: ", location);
+
     return (
       <Animatable.View
         animation="fadeInUp"
@@ -208,7 +210,6 @@ const Announcements = () => {
           flexDirection: "row",
           alignItems: "flex-start",
           gap: 10,
-          
         }}>
         {image && (
           <Image
@@ -284,10 +285,26 @@ const Announcements = () => {
       console.log(error);
     }
   };
+  const getUserSubscriptions = async () => {
+    const user = await getStoredData();
+    const email = user.email;
+    try {
+      const response = await axios.post(
+        `http://${API_IP_ADDRESS}:8000/api/announcements/getsubscriptions`,
+        {
+          email: email,
+        }
+      );
 
-  useEffect(() => {
-    getDepartmentList();
-  }, []);
+      if (response.data.status) {
+        console.log(response.data.results);
+        setuserSubscriptions(response.data.results);
+      }
+    } catch (error) {
+      console.log(response.data.results);
+      console.log(error);
+    }
+  };
 
   return (
     <ScrollView
@@ -312,7 +329,6 @@ const Announcements = () => {
               borderWidth: 1,
               borderColor: currentColors.textShade,
             }}>
-            {/* Close Button */}
             <TouchableOpacity
               onPress={() => setfilterOpen(false)}
               style={{ alignSelf: "flex-end" }}>
@@ -323,28 +339,6 @@ const Announcements = () => {
               />
             </TouchableOpacity>
 
-            <View
-              style={{
-                borderRadius: 20,
-                borderWidth: 1,
-                borderColor: currentColors.textShade,
-              }}>
-              <Picker
-                selectedValue={selectedDepartment}
-                selectionColor={currentColors.secondary}
-                dropdownIconColor={currentColors.text}
-                onValueChange={(value) => setSelectedDepartment(value)}
-                style={{ color: "white" }}>
-                {departmentData &&
-                  departmentData.map((dep, index) => (
-                    <Picker.Item
-                      key={`${dep.department_id}-${index}`}
-                      label={dep.department_name}
-                      value={dep.department_id}
-                    />
-                  ))}
-              </Picker>
-            </View>
             <View
               style={{
                 borderRadius: 20,
@@ -388,26 +382,6 @@ const Announcements = () => {
               </View>
             )}
 
-            <View
-              style={{
-                borderRadius: 20,
-                borderWidth: 1,
-                borderColor: currentColors.textShade,
-              }}>
-              <Picker
-                selectedValue={selectedType}
-                onValueChange={(itemValue) => {
-                  setselectedType(itemValue);
-                }}
-                dropdownIconColor={currentColors.text}
-                style={{ color: currentColors.text }}>
-                <Picker.Item label={"General"} value={"general"} />
-                <Picker.Item label={"Reports"} value={"reports"} />
-                <Picker.Item label={"Emergeny"} value={"emergency"} />
-                <Picker.Item label={"Others"} value={"custom"} />
-              </Picker>
-            </View>
-
             <TouchableOpacity
               onPress={() => {
                 setSelectedDepartment("");
@@ -444,8 +418,6 @@ const Announcements = () => {
             flexDirection: "row",
 
             gap: 10,
-            backgroundColor : currentColors.background,
-            paddingTop : insets.top +10
           }}>
           <TouchableOpacity
             onPress={() => {
@@ -488,100 +460,19 @@ const Announcements = () => {
             color={currentColors.secondary}
             style={{ marginTop: 20 }}
           />
-        ) : announcementsData.length === 0 ? (
+        ) : announcementsData?.length === 0 ? (
           <Text style={{ color: "white", textAlign: "center", marginTop: 20 }}>
             No announcements found
           </Text>
         ) : (
           <>
-            {emergencyAnnouncements.length > 0 && (
-              <>
-                <Animatable.Text
-                  animation={"fadeInLeft"}
-                  style={{
-                    color: currentColors.text,
-                    fontSize: 20,
-                    fontWeight: "600",
-                    padding: 10,
-                  }}>
-                  Emergency Announcements
-                </Animatable.Text>
-
-                <FlatList
-                  data={emergencyAnnouncements}
-                  keyExtractor={(item) => item.announcement_id.toString()}
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={{ paddingLeft: 10 }}
-                  renderItem={({ item }) => {
-                    const img = mediaFiles[item.announcement_id];
-                    return (
-                      <Animatable.View animation={"fadeInLeft"}>
-                        <TouchableOpacity
-                          onPress={() =>
-                            router.push({
-                              pathname:
-                                "/branchAnnouncement/DetailedAnnouncement",
-                              params: { announcement_id: item.announcement_id },
-                            })
-                          }
-                          style={{
-                            width: 300,
-                            marginRight: 10,
-                            backgroundColor: currentColors.backgroundLighter,
-                            padding: 10,
-                            borderRadius: 15,
-                          }}>
-                          {img && (
-                            <Image
-                              source={{
-                                uri: `http://${API_IP_ADDRESS}:8000/uploads/govAnnouncementMedia/${img}`,
-                              }}
-                              style={{
-                                width: "100%",
-                                height: 200,
-                                borderRadius: 20,
-                              }}
-                            />
-                          )}
-
-                          <View>
-                            <Text
-                              style={{
-                                color: currentColors.secondary,
-                                fontSize: 18,
-                                fontWeight: "bold",
-                              }}>
-                              {item.title.length > 30
-                                ? item.title.slice(0, 30) + "..."
-                                : item.title}
-                            </Text>
-                            <Text
-                              style={{
-                                color: currentColors.textShade,
-                                fontWeight: "800",
-                              }}>
-                              {item.department_name}
-                            </Text>
-                            <Text style={{ color: currentColors.text }}>
-                              {timeAgo(item.date_time_created)}
-                            </Text>
-                          </View>
-                        </TouchableOpacity>
-                      </Animatable.View>
-                    );
-                  }}
-                />
-              </>
-            )}
-
             <Animatable.View
               animation={"fadeInLeft"}
               style={{
                 width: "100%",
                 height: 1,
                 backgroundColor: currentColors.textShade,
-                marginVertical: 20,
+                marginBottom: 20,
               }}></Animatable.View>
 
             <Animatable.Text
@@ -592,7 +483,7 @@ const Announcements = () => {
                 fontWeight: "600",
                 padding: 10,
               }}>
-              Latest News
+              News
             </Animatable.Text>
 
             <View style={{ flexGrow: 1 }}>
@@ -627,4 +518,4 @@ const Announcements = () => {
   );
 };
 
-export default Announcements;
+export default UserSubscriptionAnnouncements;

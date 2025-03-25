@@ -661,15 +661,13 @@ const SubBranchDetailedIssue = () => {
                   }}
                   style={{ color: "white" }}>
                   {departmentData &&
-                    departmentData.map((dep) => {
-                      return (
-                        <Picker.Item
-                          key={dep.departmentId}
-                          label={dep.department_name}
-                          value={dep.department_id}
-                        />
-                      );
-                    })}
+                    departmentData.map((dep, index) => (
+                      <Picker.Item
+                        key={`${dep.department_id}-${index}`}
+                        label={dep.department_name}
+                        value={dep.department_id}
+                      />
+                    ))}
                 </Picker>
               </View>
 

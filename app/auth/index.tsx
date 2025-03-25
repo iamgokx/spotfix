@@ -21,11 +21,12 @@ import useLogin from "@/hooks/useLogin";
 import Blob4 from "../../assets/images/blobs/b4.svg";
 import Blob5 from "../../assets/images/blobs/b5.svg";
 import LottieView from "lottie-react-native";
-import { generateJwt } from "../../hooks/useJwt";
+import { generateJwt, getStoredData } from "../../hooks/useJwt";
 import loginLottie from "../../assets/images/welcome/login.json";
 import { useColorScheme } from "react-native";
 import { Colors } from "../../constants/Colors";
 import * as Animatable from "react-native-animatable";
+import socket from "@/hooks/useSocket";
 const Index = () => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
@@ -57,6 +58,16 @@ const Index = () => {
     };
   }, []);
 
+  // useEffect(() => {
+  //   const getUser = async () => {
+  //     const user = await getStoredData();
+  //     const email = user.email;
+  //     socket.emit("setup", email);
+  //   };
+
+  //   getUser();
+  // }, [socket]);
+
   const handleLogInPress = async () => {
     console.log(email, password);
     if (!email && !password) {
@@ -65,6 +76,8 @@ const Index = () => {
       Keyboard.dismiss();
 
       const user = await login(email, password);
+      console.log("user: ", user);
+
       if (user) {
         const details = {
           name: user.full_name,

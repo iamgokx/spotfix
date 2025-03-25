@@ -25,6 +25,8 @@ import gradient from "../../assets/images/gradients/profileGradient.png";
 import { StatusBar } from "expo-status-bar";
 import AdminSearchBarHeader from "@/components/admin/AdminSearchBarHeader";
 import ManageProposals from "./ManageProposals";
+import AdminDepLogs from "./AdminDepLogs";
+import SubDepLogs from "./SubDepLogs";
 const CustomDrawerContent = (props: any) => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
@@ -129,7 +131,12 @@ const AdminDrawer = () => {
                   color={focused ? currentColors.secondary : currentColors.text}
                 />
               ),
-              header: () => <AdminSearchBarHeader title={"Manage Citizens"}    visible={true}/>,
+              header: () => (
+                <AdminSearchBarHeader
+                  title={"Manage Citizens"}
+                  visible={true}
+                />
+              ),
             }}
           />
           <Drawer.Screen
@@ -144,8 +151,10 @@ const AdminDrawer = () => {
                 />
               ),
               header: () => (
-                <AdminSearchBarHeader title={"Manage Departments"}    visible={true} />
-                
+                <AdminSearchBarHeader
+                  title={"Manage Departments"}
+                  visible={true}
+                />
               ),
             }}
           />
@@ -203,6 +212,44 @@ const AdminDrawer = () => {
               header: () => (
                 <AdminSearchBarHeader
                   title={"Manage Citizen Proposals"}
+                  visible={false}
+                />
+              ),
+            }}
+          />
+          <Drawer.Screen
+            name="Department Edit Logs"
+            component={AdminDepLogs}
+            options={{
+              drawerIcon: ({ focused, size }) => (
+                <Ionicons
+                  name="calendar-number-outline"
+                  size={size}
+                  color={focused ? currentColors.secondary : currentColors.text}
+                />
+              ),
+              header: () => (
+                <AdminSearchBarHeader
+                  title={"Department Edit Logs"}
+                  visible={false}
+                />
+              ),
+            }}
+          />
+          <Drawer.Screen
+            name="Sub Department Edit Logs"
+            component={SubDepLogs}
+            options={{
+              drawerIcon: ({ focused, size }) => (
+                <Ionicons
+                  name="calendar-number-outline"
+                  size={size}
+                  color={focused ? currentColors.secondary : currentColors.text}
+                />
+              ),
+              header: () => (
+                <AdminSearchBarHeader
+                  title={"Sub Department Edit Logs"}
                   visible={false}
                 />
               ),

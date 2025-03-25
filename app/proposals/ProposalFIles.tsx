@@ -146,17 +146,16 @@ export default function ProposalFiles() {
           name: "proposal.jpg",
         });
       }
-   
-     if(details.documents.length > 0){
-      details.documents.forEach((doc, index) => {
-        formData.append(`documents`, {
-          uri: doc.uri.startsWith("file://") ? doc.uri : `file://${doc.uri}`,
-          type: doc.type,
-          name: sanitizeFilename(doc.name || `document_${index + 1}`),
+
+      if (details.documents.length > 0) {
+        details.documents.forEach((doc, index) => {
+          formData.append(`documents`, {
+            uri: doc.uri.startsWith("file://") ? doc.uri : `file://${doc.uri}`,
+            type: doc.type,
+            name: sanitizeFilename(doc.name || `document_${index + 1}`),
+          });
         });
-      });
-      
-     }
+      }
       console.log("FormData:", formData);
 
       const response = await axios.post(
@@ -183,6 +182,30 @@ export default function ProposalFiles() {
   useEffect(() => {
     console.log("documents  : ", details.documents);
   }, [details.documents]);
+
+  const [errors, setErrors] = useState({});
+  const safeDetails = details || {};
+
+  const validate = () => {
+    let valid = true;
+    let newErrors = {};
+
+    if (safeDetails.documents.length < 1) {
+      newErrors.media = "Please select atlease 1 relevant project file";
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
+  const handleNextButtonPress = () => {
+    if (validate()) {
+      submitIssue();
+    } else {
+      console.log("enter all details");
+    }
+  };
 
   return (
     <View
@@ -223,7 +246,11 @@ export default function ProposalFiles() {
           />
           <Text style={{ color: currentColors.text }}>Upload Files</Text>
         </TouchableOpacity>
-
+        {errors.media && (
+          <Text style={{ color: "red", textAlign: "center" }}>
+            {errors.media}
+          </Text>
+        )}
         <View style={styles.documentContainer}>
           {details.documents.map((doc, index) => (
             <View key={index} style={styles.documentItem}>
@@ -276,7 +303,7 @@ export default function ProposalFiles() {
               styles.btnContainer,
               { backgroundColor: currentColors.secondary },
             ]}
-            onPress={() => submitIssue()}>
+            onPress={handleNextButtonPress}>
             {/* onPress={() => router.push("/issues/SaveIssue")}> */}
             <Text style={styles.nextButton}>Submit</Text>
           </TouchableOpacity>

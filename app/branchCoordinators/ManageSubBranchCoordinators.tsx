@@ -24,7 +24,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import CustomHeader from "@/components/branchCoordinators/CustomHeader";
 import watermark from "../../assets/images/watermark.png";
-
+// import SendNotification from "@/components/SendNotification";
 const ManageSubBranchCoordinators = () => {
   const [subBranchCoordinatorData, setsubBranchCoordinatorData] = useState([]);
   const router = useRouter();
@@ -35,6 +35,26 @@ const ManageSubBranchCoordinators = () => {
   const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
   const { searchValue } = useSearch();
   const insets = useSafeAreaInsets();
+
+  const getAddress = async (latitude, longitude) => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`,
+        {
+          headers: {
+            "User-Agent": "spotfix/1.0 (lekhwargokul84.com)",
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data.display_name;
+    } catch (error) {
+      console.log("Error geocoding address: ", error);
+    }
+  };
 
   const getSubBranchCoordinators = async () => {
     setRefreshing(true);
@@ -48,10 +68,13 @@ const ManageSubBranchCoordinators = () => {
       );
 
       if (response.data.status && response.data.results.length > 0) {
-        console.log("Subscribers fetched:", response.data.results);
+        console.log(
+          "sub dep coordinators fetched:",
+          JSON.stringify(response.data.results, null, 2)
+        );
         setsubBranchCoordinatorData(response.data.results);
       } else {
-        console.log("No subscribers found");
+        console.log("No sub dep coordinators found");
         setsubBranchCoordinatorData([]);
       }
     } catch (error) {
@@ -87,12 +110,13 @@ const ManageSubBranchCoordinators = () => {
     return date.toLocaleDateString("en-GB", options).replace(",", "");
   };
 
-  const renderItem = ({ item }) => {
-    let delay = 100;
+  const renderItem = ({ item, index }) => {
+    let delay = 50 * index + 100;
+
     return (
       <Animatable.View
         animation={"fadeInUp"}
-        delay={delay + 50}
+        delay={delay}
         style={[
           styles.departmentContainer,
           { backgroundColor: currentColors.backgroundDarker },
@@ -111,17 +135,52 @@ const ManageSubBranchCoordinators = () => {
           </Text>
           <Text
             style={[styles.citizenInfo, { color: currentColors.textShade }]}>
-            Address : {item.latitude}, {item.longitude}
+            Pincodes : {item.pincodes}
           </Text>
 
           <Text
             style={[styles.citizenInfo, { color: currentColors.secondary }]}>
             {item.department_name}
           </Text>
+
+          <TouchableOpacity
+            onPress={() => {
+              router.push({
+                pathname: "/screens/EditSubDepCoordinator",
+                params: {
+                  depId: item.department_id,
+                  depName: item.department_name,
+                  name: item.full_name,
+                  pincodes: item.pincodes,
+                  id: item.sub_department_coordinator_id,
+                },
+              });
+            }}
+            style={{
+              width: 50,
+              alignItems: "center",
+              alignSelf: "flex-end",
+              padding: 10,
+            }}>
+            <Ionicons
+              name="create-outline"
+              size={24}
+              color={currentColors.secondary}
+            />
+          </TouchableOpacity>
         </View>
       </Animatable.View>
     );
   };
+
+  const [userEmail, setuserEmail] = useState("");
+  useEffect(() => {
+    const getUser = async () => {
+      const user = await getStoredData();
+      const email = user.email;
+      setuserEmail(email);
+    };
+  }, []);
 
   return (
     <View
@@ -135,6 +194,7 @@ const ManageSubBranchCoordinators = () => {
       ]}>
       <CustomHeader title="Manage Sub Branch" />
 
+      
       <ImageBackground
         source={background}
         style={{

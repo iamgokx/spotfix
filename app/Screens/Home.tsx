@@ -12,6 +12,7 @@ import {
   useColorScheme,
   ScrollView,
   ImageBackground,
+  Alert,
 } from "react-native";
 import {
   useFonts,
@@ -21,7 +22,7 @@ import {
   Poppins_200ExtraLight,
 } from "@expo-google-fonts/poppins";
 import { useRouter } from "expo-router";
-import { getStoredRawToken } from "../../hooks/useJwt";
+import { getStoredData, getStoredRawToken } from "../../hooks/useJwt";
 import Issue from "@/components/Issue";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
@@ -33,8 +34,10 @@ import * as Animatable from "react-native-animatable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import watermark from "../../assets/images/watermark.png";
 import { Ionicons } from "@expo/vector-icons";
-import mapImg from "../../assets/images/issues/map.png";
+import mapImg from "../../assets/images/issues/location2.png";
 import gradient from "../../assets/images/gradients/orangegradient.png";
+
+
 const HomeScreen = ({ navigation }: any) => {
   const [fontsLoaded] = useFonts({
     Poppins_600SemiBold,
@@ -52,7 +55,7 @@ const HomeScreen = ({ navigation }: any) => {
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("date_latest");
-
+  const [user, setuser] = useState("");
   const applyFilters = (issues) => {
     let sortedIssues = [...issues];
 
@@ -111,15 +114,22 @@ const HomeScreen = ({ navigation }: any) => {
   }, []);
 
   const fetchIssues = async () => {
+    const user = await getStoredData();
+    const email = user.email;
+    setuser(email);
     setIsLoading(true);
     try {
       const response = await axios.post(
-        `http://${API_IP_ADDRESS}:8000/api/issues/getIssues`
+        `http://${API_IP_ADDRESS}:8000/api/issues/getIssues`,
+        {
+          email,
+        }
       );
       if (response) {
         const sortedData = [...response.data].sort((a, b) =>
           b.date_time_created.localeCompare(a.date_time_created)
         );
+
         setIssueData(sortedData);
       }
     } catch (error) {
@@ -189,7 +199,7 @@ const HomeScreen = ({ navigation }: any) => {
         />
 
         <TouchableOpacity
-          onPress={() => alert("Notification Clicked")}
+          onPress={() => router.push("/screens/Notifications")}
           style={styles.iconButton}>
           <Ionicons
             name="notifications-circle"
@@ -258,8 +268,14 @@ const HomeScreen = ({ navigation }: any) => {
               </TouchableOpacity>
             ))}
           </ScrollView>
-          <TouchableOpacity onPress={()=> router.push('/screens/IssueMapView')}
-            style={{ position: "absolute", right: 10, bottom: 120,   zIndex: 10, }}>
+          <TouchableOpacity
+            onPress={() => router.push("/screens/IssueMapView")}
+            style={{
+              position: "absolute",
+              right: 10,
+              bottom: insets.bottom + 70,
+              zIndex: 10,
+            }}>
             <ImageBackground
               source={gradient}
               style={{
@@ -288,23 +304,25 @@ const HomeScreen = ({ navigation }: any) => {
               </Animatable.View>
             }
             renderItem={({ item }) => (
-              <Issue
-                issue_id={item.issue_id}
-                username={item.full_name}
-                dateTime={item.date_time_created}
-                title={item.title}
-                status={item.issue_status}
-                description={item.issue_description}
-                mediaLinks={item.media_files}
-                is_anonymous={item.is_anonymous}
-                upvotes={item.upvote_count}
-                downvotes={item.downvote_count}
-                suggestions={item.total_suggestions}
-                refreshIssue={refreshIssue}
-                pfp={item.picture_name}
-                latitude={item.latitude}
-                longitude={item.longitude}
-              />
+              <View style={{ alignItems: "center", padding: 5 }}>
+                <Issue
+                  issue_id={item.issue_id}
+                  username={item.full_name}
+                  dateTime={item.date_time_created}
+                  title={item.title}
+                  status={item.issue_status}
+                  description={item.issue_description}
+                  mediaLinks={item.media_files}
+                  is_anonymous={item.is_anonymous}
+                  upvotes={item.upvote_count}
+                  downvotes={item.downvote_count}
+                  suggestions={item.total_suggestions}
+                  refreshIssue={refreshIssue}
+                  pfp={item.picture_name}
+                  latitude={item.latitude}
+                  longitude={item.longitude}
+                />
+              </View>
             )}
           />
         </>

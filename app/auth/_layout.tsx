@@ -54,6 +54,13 @@ const AuthLayout = () => {
             title: "otp",
           }}
         />
+        <Stack.Screen
+          name="IssueMapViewDep"
+          options={{
+            headerShown: false,
+            title: "otp",
+          }}
+        />
       </Stack>
     </SignupProvider>
   );

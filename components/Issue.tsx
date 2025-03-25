@@ -340,7 +340,8 @@ const styles = StyleSheet.create({
     gap: 10,
     borderWidth: 1,
     marginVertical: 10,
-    borderColor: "rgba(255,255,255,0.2)",
+    borderColor: "rgba(255,255,255,0.1)",
+    
   },
 
   subContainer: {

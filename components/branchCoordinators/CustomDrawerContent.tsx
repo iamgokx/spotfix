@@ -28,7 +28,7 @@ const CustomDrawerContent = (props) => {
   const handleLogout = () => {
     Alert.alert("Logout", "Are you sure you want to log out?", [
       { text: "Cancel", style: "cancel" },
-      { text: "Logout", onPress: () => router.push("/welcome") },
+      { text: "Logout", onPress: () => router.replace("/auth") },
     ]);
   };
 

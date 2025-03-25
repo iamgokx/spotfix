@@ -106,6 +106,8 @@ const analytics = () => {
       if (response.data.status) {
         // console.log("API Data:", response.data.results);
         setReportsData(response.data.results);
+
+        
       }
 
       const getPieChart = await axios.post(

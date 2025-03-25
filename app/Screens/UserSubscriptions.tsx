@@ -18,6 +18,7 @@ const UserSubscriptions = () => {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const [citizenId, setCitizenId] = useState(null);
+
   const [departments, setDepartments] = useState([
     { department: "Public Works Department (PWD)", status: "Subscribe" },
     { department: "Electricity Department", status: "Subscribe" },
@@ -37,6 +38,8 @@ const UserSubscriptions = () => {
     { department: "Department of Agriculture", status: "Subscribe" },
     { department: "Department of Social Welfare", status: "Subscribe" },
   ]);
+
+
 
   const handleSubscribeButtonPress = async (status, department) => {
     try {

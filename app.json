@@ -17,7 +17,9 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": ["android.permission.RECORD_AUDIO"],
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
       "package": "com.iamgokx.spotfix"
     },
     "web": {
@@ -33,7 +35,6 @@
     "plugins": [
       "expo-router",
       "expo-splash-screen",
-
       [
         "expo-image-picker",
         {
@@ -64,6 +65,7 @@
       "eas": {
         "projectId": "a206feb5-a391-4bc5-a91e-2056c923fe31"
       }
-    }
+    },
+    "owner": "iamgokx"
   }
 }

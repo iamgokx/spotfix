@@ -24,8 +24,8 @@ import { router } from "expo-router";
 import { ScrollView } from "react-native-gesture-handler";
 import socket from "@/hooks/useSocket";
 import { Picker } from "@react-native-picker/picker";
-
-const Announcements = () => {
+import { useSocketNotifications } from "@/hooks/useSocketNotifications";
+const AnnoucnementsAll = () => {
   const colorTheme = useColorScheme();
   const currentColors = colorTheme == "dark" ? Colors.dark : Colors.light;
   const insets = useSafeAreaInsets();
@@ -108,6 +108,8 @@ const Announcements = () => {
   useEffect(() => {
     getAnnouncements();
   }, []);
+
+  useSocketNotifications("lekhwargokul84@gmail.com");
 
   useEffect(() => {
     if (announcementsData.length > 0) {
@@ -208,7 +210,6 @@ const Announcements = () => {
           flexDirection: "row",
           alignItems: "flex-start",
           gap: 10,
-          
         }}>
         {image && (
           <Image
@@ -444,8 +445,6 @@ const Announcements = () => {
             flexDirection: "row",
 
             gap: 10,
-            backgroundColor : currentColors.background,
-            paddingTop : insets.top +10
           }}>
           <TouchableOpacity
             onPress={() => {
@@ -627,4 +626,4 @@ const Announcements = () => {
   );
 };
 
-export default Announcements;
+export default AnnoucnementsAll;

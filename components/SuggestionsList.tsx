@@ -46,9 +46,17 @@ const SuggestionsList = ({
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [userSuggestions, setUserSuggestions] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
+  const [user, setuser] = useState();
+
+  const getUser = async () => {
+    const user = await getStoredData();
+    const userType = user.userType;
+    setuser(userType);
+  };
 
   useEffect(() => {
     getIssueSuggestions();
+    getUser();
   }, []);
 
   const getDateFormatted = (date: Date | string) => {
@@ -178,9 +186,11 @@ const SuggestionsList = ({
         overflow: "hidden",
         position: "relative",
       }}>
-      <TouchableOpacity onPress={()=>{
-        closeSuggestions(false)
-      }} style={{ alignItems: "flex-end" }}>
+      <TouchableOpacity
+        onPress={() => {
+          closeSuggestions(false);
+        }}
+        style={{ alignItems: "flex-end" }}>
         <Ionicons
           name={"close-circle"}
           color={currentColors.secondary}
@@ -295,7 +305,7 @@ const SuggestionsList = ({
         <Text>Loading...</Text>
       )}
 
-      {allowSuggestions && (
+      {user == 'citizen' && (
         <KeyboardAvoidingView
           onLayout={() => setKeyboardHeight((prev) => prev)}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
