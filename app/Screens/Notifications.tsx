@@ -65,41 +65,67 @@ const Notifications = () => {
           No notifications yet.
         </Text>
       ) : (
-        <FlatList
-          data={notifications}
-          style={{ padding: 10 }}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View
-              style={[
-                styles.notification,
-                item.read ? styles.read : styles.unread,
-                ,
-                { backgroundColor: currentColors.background },
-              ]}>
-              <Image source={logo} style={{ width: 40, height: 40 }} />
-              <Text style={[styles.message, { color: currentColors.text }]}>
-                {item.message}
-              </Text>
+        <View>
+          <FlatList
+            data={notifications}
+            style={{ padding: 10 }}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View
+                style={[
+                  styles.notification,
+                  item.read ? styles.read : styles.unread,
 
-              <View style={styles.actions}>
-                {!item.read && (
-                  <TouchableOpacity onPress={() => markAsRead(item.id)}>
-                    <Text style={[styles.markRead,{color : currentColors.secondary}]}>Mark as Read</Text>
-                  </TouchableOpacity>
-                )}
+                  ,
+                  {
+                    backgroundColor: !item.read
+                      ? colorScheme == "dark"
+                        ? "rgba(225, 165, 0,0.5)"
+                        : "rgba(0, 102, 235,0.5)"
+                      : currentColors.background,
+                  },
+                ]}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    width: "100%",
+                  }}>
+                  <Image source={logo} style={{ width: 40, height: 40 }} />
 
-                <TouchableOpacity onPress={() => removeNotification(item.id)}>
-                  <Ionicons
-                    name="close-outline"
-                    size={24}
-                    color={currentColors.secondary}
-                  />
-                </TouchableOpacity>
+                  <View style={styles.actions}>
+                    <TouchableOpacity
+                      onPress={() => removeNotification(item.id)}>
+                      <Ionicons
+                        name="close-outline"
+                        size={24}
+                        color={currentColors.secondary}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                <Text style={[styles.message, { color: currentColors.text }]}>
+                  {item.message}
+                </Text>
+
+                <View style={{ width: "100%", alignItems: "flex-end" }}>
+                  {!item.read && (
+                    <TouchableOpacity onPress={() => markAsRead(item.id)}>
+                      <Text
+                        style={[
+                          styles.markRead,
+                          { color: currentColors.text },
+                        ]}>
+                        Mark as Read
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
               </View>
-            </View>
-          )}
-        />
+            )}
+          />
+        </View>
       )}
     </View>
   );
@@ -122,7 +148,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
     borderRadius: 20,
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "center",
     gap: 10,
@@ -131,18 +157,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8d7da",
   },
   read: {
-    backgroundColor: "#d4edda",
+    backgroundColor: "orange",
   },
   message: {
     flex: 1,
+    paddingVertical: 10,
   },
   actions: {
     flexDirection: "row",
     gap: 10,
-    alignItems : 'center'
+    alignItems: "center",
   },
   markRead: {
-
     fontWeight: "bold",
   },
   remove: {

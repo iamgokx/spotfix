@@ -42,7 +42,7 @@ const CustomDrawerContentSubBranch = (props) => {
         source={blueBg}
         style={{
           padding: 20,
-          alignItems: "center",
+          alignItems: "flex-start",
           backgroundColor: currentColors.background,
           paddingTop: insets.top + 50,
         }}>
@@ -63,6 +63,7 @@ const CustomDrawerContentSubBranch = (props) => {
         <Text style={{ color: "white" }}>
           {user ? user.email : "Loading..."}
         </Text>
+        <Text style={{ color: "white" }}>Sub Branch Coordinator</Text>
       </ImageBackground>
 
       <DrawerContentScrollView {...props}>

@@ -13,10 +13,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { ImageBackground } from "react-native";
 import imgBackground from "../../assets/images/gradients/bluegradient.png";
-import { clearStorage } from "@/hooks/useJwt";
+import { clearStorage, getStoredData } from "@/hooks/useJwt";
 import { Modal } from "react-native";
 import { useState, useEffect } from "react";
 import * as Animatable from "react-native-animatable";
+import axios from "axios";
+import { API_IP_ADDRESS } from "../../ipConfig.json";
 const ReportaProblem = () => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
@@ -24,8 +26,36 @@ const ReportaProblem = () => {
   const router = useRouter();
   const [problemText, setproblemText] = useState("");
 
+  const reportProblem = async () => {
+    if (!problemText || problemText.length < 50) {
+      alert("Please add appropriate details (minimumn 50 character)");
+    } else {
+      const user = await getStoredData();
+      const email = user.email;
+      try {
+        const response = await axios.post(
+          `http://${API_IP_ADDRESS}:8000/api/users/reportProblem`,
+          {
+            email,
+            problemText,
+          }
+        );
+
+        if (response.data.status) {
+          console.log("submitted");
+          alert("Problem reported");
+          setproblemText("");
+        } else {
+          console.log("could not report ");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
   return (
-    <View style={{ flex: 1, backgroundColor: 'white' }}>
+    <View style={{ flex: 1, backgroundColor: "white" }}>
       <ImageBackground
         source={imgBackground}
         style={{
@@ -63,7 +93,7 @@ const ReportaProblem = () => {
       </ImageBackground>
 
       <Animatable.View
-      animation={'slideInUp'}
+        animation={"slideInUp"}
         style={{
           flex: 1,
           backgroundColor: currentColors.background,
@@ -90,7 +120,7 @@ const ReportaProblem = () => {
               setproblemText(text);
             }}
           />
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={reportProblem}>
             <Text style={styles.buttonText}>Report Problem</Text>
           </TouchableOpacity>
         </View>

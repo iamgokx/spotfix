@@ -361,9 +361,14 @@ const DetailedIssue = () => {
           </Text>
         </Animatable.View>
 
-        <Animatable.View animation={'fadeInUp'}>
+        <Animatable.View animation={"fadeInUp"}>
           <Text style={{ color: currentColors.text, fontSize: 18 }}>
-            Estimate Completion Date : <Text style={{color : currentColors.secondary}}>{" "}{getDateFormatted(issueDetails.estimate_complete_time)}</Text>
+            Estimate Completion Date :{" "}
+            <Text style={{ color: currentColors.secondary }}>
+              {issueDetails.estimate_complete_time == null
+                ? "Not yet set"
+                : getDateFormatted(issueDetails.estimate_complete_time)}
+            </Text>
           </Text>
         </Animatable.View>
 

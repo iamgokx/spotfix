@@ -26,7 +26,7 @@ import rashita from "../../assets/images/team/rashita.jpg";
 import tanveer from "../../assets/images/team/taanveer.jpg";
 import pinky from "../../assets/images/team/pinky.jpg";
 import rhucha from "../../assets/images/team/rucha.jpg";
-
+import jordan from '../../assets/images/team/jordan.jpg'
 const AboutSpotFix = () => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme == "dark" ? Colors.dark : Colors.light;
@@ -69,8 +69,8 @@ const AboutSpotFix = () => {
     },
     {
       name: "Jordan Demelo",
-      role: "",
-      img: "../../assets/images/team/gokul.jpg",
+      role: "Documentation",
+      img: jordan,
     },
     {
       name: "Rhucha Bhobe",

@@ -89,8 +89,6 @@ const Index = () => {
     fetchTokenData();
   }, []);
 
-  
-
   const verifyUserToken = async (token: any) => {
     setisLoading(true);
 
@@ -119,7 +117,7 @@ const Index = () => {
         console.log(response.data);
         router.push("/subBranchCoordinator/ApproveIssues");
       }
-    } else {
+    } else if (response.data.jwtStatus == false) {
       console.log("couldnt authenticate jwt");
       setisLoading(false);
       clearStorage();
@@ -154,11 +152,6 @@ const Index = () => {
     };
   }, []);
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const handleIndexChanged = (index: number) => {
-    setCurrentIndex(index);
-  };
-
   useEffect(() => {
     const getUser = async () => {
       const user = await getStoredData();
@@ -168,6 +161,11 @@ const Index = () => {
 
     getUser();
   }, [socket]);
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const handleIndexChanged = (index: number) => {
+    setCurrentIndex(index);
+  };
 
   return (
     <>

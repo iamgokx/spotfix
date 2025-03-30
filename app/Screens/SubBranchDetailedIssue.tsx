@@ -110,6 +110,7 @@ const SubBranchDetailedIssue = () => {
         setresponseMessage(response.data.message);
         setisVisible(true);
         setSelectedDate(null);
+        getIssueDetails();
         setEstimateCompleteTime(null);
       } else {
         setresponseMessage(response.data.message);
@@ -399,7 +400,7 @@ const SubBranchDetailedIssue = () => {
               gap: 20,
             }}>
             <Text style={{ fontSize: 20, color: currentColors.secondary }}>
-              Server Response
+              Message
             </Text>
             <Text style={{ color: currentColors.text }}>{responseMessage}</Text>
 
@@ -475,7 +476,10 @@ const SubBranchDetailedIssue = () => {
           style={{ color: currentColors.secondary, fontSize: 18 }}>
           Estimate Completion Date :{" "}
           <Text style={{ color: currentColors.text }}>
-            {getDateFormatted(issueDetails.estimate_complete_time)}
+            {/* {getDateFormatted(issueDetails.estimate_complete_time)} */}
+            {issueDetails.estimate_complete_time == null
+              ? "Not yet set"
+              : getDateFormatted(issueDetails.estimate_complete_time)}
           </Text>
         </Animatable.Text>
 

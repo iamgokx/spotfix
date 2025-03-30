@@ -22,6 +22,8 @@ import { Colors } from "@/constants/Colors";
 import { API_IP_ADDRESS } from "../ipConfig.json";
 import axios from "axios";
 import { ScrollView } from "react-native-gesture-handler";
+import { NotificationProvider } from "@/context/NotificationsContext";
+import { useNotifications } from "@/context/NotificationsContext";
 const CustomDrawer = (props: any) => {
   const colorScheme = useColorScheme();
   const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
@@ -29,6 +31,8 @@ const CustomDrawer = (props: any) => {
     name: "",
     email: "",
   });
+
+  const { clearNotifications } = useNotifications();
   const [pfpimage, setImage] = useState();
   const fetchUserData = async () => {
     const tokenFromStorage = await getStoredRawToken();
@@ -64,75 +68,77 @@ const CustomDrawer = (props: any) => {
 
   const handleLogOutButtonPress = () => {
     clearStorage();
+    clearNotifications();
     router.replace("/welcome");
   };
   // fetchUserData();
 
   return (
-    <View
-      style={[
-        styles.drawerContainer,
-        {
-          backgroundColor: currentColors.backgroundDarker,
-          zIndex: 5,
-        },
-      ]}>
-      <View style={[styles.headerContainer]}>
-        <ImageBackground
-          resizeMode="cover"
-          source={gradient}
-          style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            justifyContent: "flex-end",
-            alignItems: "center",
-          }}>
-          <View style={{ width: "90%", marginBottom: 10 }}>
-            <Image
-              source={
-                pfpimage
-                  ? {
-                      uri: `http://${API_IP_ADDRESS}:8000/uploads/profile/${pfpimage}`,
-                    }
-                  : require("../assets/images/profile/defaultProfile.jpeg")
-              }
-              style={styles.profileImage}
-            />
-            <Text
-              className="text-white text-2xl font-extrabold"
-              style={{ textTransform: "capitalize" }}>
-              {user.name}
-            </Text>
-            <Text className="text-white text-l font-extralight">
-              {user.email}
-            </Text>
-          </View>
-        </ImageBackground>
+    <NotificationProvider>
+      <View
+        style={[
+          styles.drawerContainer,
+          {
+            backgroundColor: currentColors.backgroundDarker,
+            zIndex: 5,
+          },
+        ]}>
+        <View style={[styles.headerContainer]}>
+          <ImageBackground
+            resizeMode="cover"
+            source={gradient}
+            style={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+            }}>
+            <View style={{ width: "90%", marginBottom: 10 }}>
+              <Image
+                source={
+                  pfpimage
+                    ? {
+                        uri: `http://${API_IP_ADDRESS}:8000/uploads/profile/${pfpimage}`,
+                      }
+                    : require("../assets/images/profile/defaultProfile.jpeg")
+                }
+                style={styles.profileImage}
+              />
+              <Text
+                className="text-white text-2xl font-extrabold"
+                style={{ textTransform: "capitalize" }}>
+                {user.name}
+              </Text>
+              <Text className="text-white text-l font-extralight">
+                {user.email}
+              </Text>
+            </View>
+          </ImageBackground>
+        </View>
+
+        <DrawerContentScrollView
+          {...props}
+          contentContainerStyle={styles.scrollContainer}>
+          <DrawerItemList {...props} />
+          <DrawerItem
+            label="Logout"
+            labelStyle={{
+              color: currentColors.secondary,
+              fontWeight: "bold",
+            }}
+            icon={({ color, size }) => (
+              <Ionicons
+                name="log-out-outline"
+                size={size}
+                color={currentColors.secondary}
+              />
+            )}
+            onPress={() => handleLogOutButtonPress()}
+          />
+        </DrawerContentScrollView>
       </View>
-
-      <DrawerContentScrollView
-  {...props}
-  contentContainerStyle={styles.scrollContainer}>
-  <DrawerItemList {...props} />
-  <DrawerItem
-    label="Logout"
-    labelStyle={{
-      color: currentColors.secondary,
-      fontWeight: "bold",
-    }}
-    icon={({ color, size }) => (
-      <Ionicons
-        name="log-out-outline"
-        size={size}
-        color={currentColors.secondary}
-      />
-    )}
-    onPress={() => handleLogOutButtonPress()}
-  />
-</DrawerContentScrollView>
-
-    </View>
+    </NotificationProvider>
   );
 };
 
@@ -143,8 +149,8 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flexGrow: 1,
-    gap : 10,
-    paddingBottom: 150, 
+    gap: 10,
+    paddingBottom: 150,
   },
 
   headerContainer: {

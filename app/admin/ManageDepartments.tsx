@@ -86,7 +86,7 @@ const ManageDepartments = () => {
           overflow: "hidden",
           position: "absolute",
           zIndex: 5,
-          bottom: 15,
+          bottom: insets.bottom + 10,
           right: 15,
         }}>
         <TouchableOpacity

@@ -58,15 +58,25 @@ const Index = () => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   const getUser = async () => {
-  //     const user = await getStoredData();
-  //     const email = user.email;
-  //     socket.emit("setup", email);
-  //   };
+  useEffect(() => {
+    socket.on("hello", (data) => {
+      console.log("Data received from server:", data);
+    });
 
-  //   getUser();
-  // }, [socket]);
+    return () => {
+      socket.off("hello");
+    };
+  }, []);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const user = await getStoredData();
+      const email = user.email;
+      socket.emit("setup", email);
+    };
+
+    getUser();
+  }, [socket]);
 
   const handleLogInPress = async () => {
     console.log(email, password);
@@ -138,7 +148,7 @@ const Index = () => {
               <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
                   <Text style={styles.modalTitle}>
-                    Please enter all details to proceed...
+                    Please enter appropriate details to proceed...
                   </Text>
 
                   <Pressable

@@ -19,32 +19,31 @@ const UserSubscriptions = () => {
   const router = useRouter();
   const [citizenId, setCitizenId] = useState(null);
 
-  const [departments, setDepartments] = useState([
-    { department: "Public Works Department (PWD)", status: "Subscribe" },
-    { department: "Electricity Department", status: "Subscribe" },
-    {
-      department: "Municipal Administration (Urban Development)",
-      status: "Subscribe",
-    },
-    { department: "Department of Water Resources", status: "Subscribe" },
-    { department: "Department of Health", status: "Subscribe" },
-    { department: "Department of Transport", status: "Subscribe" },
-    {
-      department: "Department of Environment and Forests",
-      status: "Subscribe",
-    },
-    { department: "Department of Tourism", status: "Subscribe" },
-    { department: "Department of Rural Development", status: "Subscribe" },
-    { department: "Department of Agriculture", status: "Subscribe" },
-    { department: "Department of Social Welfare", status: "Subscribe" },
-  ]);
-
-
+  // const [departments, setDepartments] = useState([
+  //   { department: "Public Works Department (PWD)", status: "Subscribe" },
+  //   { department: "Electricity Dep", status: "Subscribe" },
+  //   {
+  //     department: "Municipal Administration (Urban Development)",
+  //     status: "Subscribe",
+  //   },
+  //   { department: "Department of Water Resources", status: "Subscribe" },
+  //   { department: "Department of Health", status: "Subscribe" },
+  //   { department: "Department of Transport", status: "Subscribe" },
+  //   {
+  //     department: "Department of Environment and Forests",
+  //     status: "Subscribe",
+  //   },
+  //   { department: "Department of Tourism", status: "Subscribe" },
+  //   { department: "Department of Rural Development", status: "Subscribe" },
+  //   { department: "Department of Agriculture", status: "Subscribe" },
+  //   { department: "Department of Social Welfare", status: "Subscribe" },
+  // ]);
+  const [departments, setDepartments] = useState([]);
 
   const handleSubscribeButtonPress = async (status, department) => {
     try {
       const email = await getUserDetailsFromStorage();
-      let citizenIdToUse = citizenId; 
+      let citizenIdToUse = citizenId;
 
       if (!citizenId) {
         console.warn("Citizen ID not found, fetching from backend...");
@@ -57,8 +56,8 @@ const UserSubscriptions = () => {
         );
 
         if (response.data.status) {
-          citizenIdToUse = response.data.id; 
-          setCitizenId(response.data.id); 
+          citizenIdToUse = response.data.id;
+          setCitizenId(response.data.id);
           console.log("Citizen ID retrieved:", response.data.id);
         } else {
           console.error("Failed to fetch Citizen ID");
@@ -72,7 +71,7 @@ const UserSubscriptions = () => {
         const response = await axios.post(
           `http://${API_IP_ADDRESS}:8000/api/users/unSubscribe`,
           {
-            citizenId: citizenIdToUse, 
+            citizenId: citizenIdToUse,
             department: department,
           }
         );
@@ -89,7 +88,7 @@ const UserSubscriptions = () => {
         const response = await axios.post(
           `http://${API_IP_ADDRESS}:8000/api/users/subscribe`,
           {
-            citizenId: citizenIdToUse, 
+            citizenId: citizenIdToUse,
             department: department,
           }
         );
@@ -114,15 +113,39 @@ const UserSubscriptions = () => {
 
   //function to update subscription status in front end
 
-  const updateSubscriptionStatus = (subscriptions) => {
+  // const updateSubscriptionStatus = (subscriptions) => {
+  //   if (!subscriptions || subscriptions.length === 0) {
+  //     return (
+  //       departments?.map((dept) => ({
+  //         ...dept,
+  //         department_id: null,
+  //         status: "Unsubscribed",
+  //       })) || []
+  //     );
+  //   }
+
+  //   setCitizenId(subscriptions[0].citizen_id);
+
+  //   const subscribedDepartmentMap = new Map(
+  //     subscriptions.map((sub) => [sub.department_name, sub.department_id])
+  //   );
+
+  //   return departments.map((dept) => ({
+  //     ...dept,
+  //     department_id: subscribedDepartmentMap.get(dept.department) || null,
+  //     status: subscribedDepartmentMap.has(dept.department)
+  //       ? "Subscribed"
+  //       : "Unsubscribed",
+  //   }));
+  // };
+
+  const updateSubscriptionStatus = (allDepartments, subscriptions) => {
     if (!subscriptions || subscriptions.length === 0) {
-      return (
-        departments?.map((dept) => ({
-          ...dept,
-          department_id: null,
-          status: "Unsubscribed",
-        })) || []
-      );
+      return allDepartments.map((dept) => ({
+        ...dept,
+        department_id: null,
+        status: "Unsubscribed",
+      }));
     }
 
     setCitizenId(subscriptions[0].citizen_id);
@@ -131,7 +154,7 @@ const UserSubscriptions = () => {
       subscriptions.map((sub) => [sub.department_name, sub.department_id])
     );
 
-    return departments.map((dept) => ({
+    return allDepartments.map((dept) => ({
       ...dept,
       department_id: subscribedDepartmentMap.get(dept.department) || null,
       status: subscribedDepartmentMap.has(dept.department)
@@ -139,45 +162,85 @@ const UserSubscriptions = () => {
         : "Unsubscribed",
     }));
   };
-
   //function to get subscription from backend
 
   const getSubscriptionStatus = async () => {
     try {
       const userEmail = await getUserDetailsFromStorage();
 
-      const response = await axios.post(
+      // Fetch all departments
+      const depResponse = await axios.post(
+        `http://${API_IP_ADDRESS}:8000/api/department/getDepartments`
+      );
+
+      if (!depResponse.data || depResponse.data.length === 0) {
+        console.error("No departments received from backend.");
+        return;
+      }
+      console.log(depResponse.data.results);
+      const allDepartments = depResponse.data.results.map((dep) => ({
+        department: dep.department_name,
+        department_id: dep.department_id,
+        status: "Unsubscribed",
+      }));
+
+      // Fetch user subscriptions
+      const subResponse = await axios.post(
         `http://${API_IP_ADDRESS}:8000/api/users/getUserSubscriptions`,
         { user: userEmail }
       );
+      console.log("subResponse: ", subResponse.data.results);
 
-      if (response.data.status && response.data.results.length > 0) {
-        console.log(
-          "this is your results for subscriptions",
-          response.data.results
-        );
+      const updatedDepartments = updateSubscriptionStatus(
+        allDepartments,
+        subResponse.data.status ? subResponse.data.results : []
+      );
 
-        const updatedDepartments = updateSubscriptionStatus(
-          response.data.results
-        );
-        console.log(updatedDepartments);
-
-        setDepartments(updatedDepartments);
-      } else {
-        console.log("no data received, marking all as unsubscribed");
-
-        setDepartments(
-          departments?.map((dept) => ({
-            ...dept,
-            department_id: null,
-            status: "Unsubscribed",
-          })) || []
-        );
-      }
+      setDepartments(updatedDepartments);
     } catch (error) {
       console.error("Error fetching subscription status:", error);
     }
   };
+  // const getSubscriptionStatus = async () => {
+  //   try {
+  //     const userEmail = await getUserDetailsFromStorage();
+
+  //     const response = await axios.post(
+  //       `http://${API_IP_ADDRESS}:8000/api/users/getUserSubscriptions`,
+  //       { user: userEmail }
+  //     );
+
+  //     if (response.data.status && response.data.results.length > 0) {
+  //       console.log(
+  //         "this is your results for subscriptions",
+  //         response.data.results
+  //       );
+
+  //       const updatedDepartments = updateSubscriptionStatus(
+  //         response.data.results
+  //       );
+  //       // console.log(updatedDepartments);
+
+  //       const dep = await axios.post(
+  //         `http://${API_IP_ADDRESS}:8000/api/department/getDepartments`
+  //       );
+
+  //       setDepartments(updatedDepartments);
+  //     } else {
+  //       console.log("no data received, marking all as unsubscribed");
+
+  //       setDepartments(
+  //         departments?.map((dept) => ({
+  //           ...dept,
+  //           department_id: null,
+  //           status: "Unsubscribed",
+  //         })) || []
+  //       );
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching subscription status:", error);
+  //   }
+  // };
 
   useEffect(() => {
     getSubscriptionStatus();

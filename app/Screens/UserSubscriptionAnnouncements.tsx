@@ -84,7 +84,7 @@ const UserSubscriptionAnnouncements = () => {
         `http://${API_IP_ADDRESS}:8000/api/announcements/getAnnouncements`
       );
 
-      console.log("API Response:", response.data);
+      // console.log("API Response:", response.data);
 
       if (response.data.status && Array.isArray(response.data.results)) {
         const sortedData = [...response.data.results].sort((a, b) =>
@@ -285,9 +285,12 @@ const UserSubscriptionAnnouncements = () => {
       console.log(error);
     }
   };
+
   const getUserSubscriptions = async () => {
     const user = await getStoredData();
     const email = user.email;
+    console.log('email: ', email);
+    console.log('on refresh this ran');
     try {
       const response = await axios.post(
         `http://${API_IP_ADDRESS}:8000/api/announcements/getsubscriptions`,
@@ -301,21 +304,28 @@ const UserSubscriptionAnnouncements = () => {
         setuserSubscriptions(response.data.results);
       }
     } catch (error) {
-      console.log(response.data.results);
+     
       console.log(error);
     }
   };
 
+  const handleRefresh = async () => {
+    setRefreshing(true);
+
+    // Reset filter states before fetching data
+    setSearchQuery("");
+    setSelectedDistrict("");
+    setSelectedTaluka("");
+
+    await getAnnouncements(); // Fetch latest announcements
+    await getDepartmentList(); // Fetch latest department list
+    await getUserSubscriptions(); // Fetch latest subscriptions
+
+    setRefreshing(false);
+  };
+
   return (
-    <ScrollView
-      style={{ backgroundColor: currentColors.backgroundDarkest, flex: 1 }}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={getAnnouncements}
-          colors={[currentColors.secondary]}
-        />
-      }>
+    <View style={{ backgroundColor: currentColors.backgroundDarkest, flex: 1 }}>
       <Modal visible={filterOpen} transparent>
         <View
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -466,55 +476,63 @@ const UserSubscriptionAnnouncements = () => {
           </Text>
         ) : (
           <>
-            <Animatable.View
-              animation={"fadeInLeft"}
-              style={{
-                width: "100%",
-                height: 1,
-                backgroundColor: currentColors.textShade,
-                marginBottom: 20,
-              }}></Animatable.View>
-
-            <Animatable.Text
-              animation={"fadeInLeft"}
-              style={{
-                color: currentColors.text,
-                fontSize: 20,
-                fontWeight: "600",
-                padding: 10,
-              }}>
-              News
-            </Animatable.Text>
-
             <View style={{ flexGrow: 1 }}>
               <FlatList
                 data={filteredData}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderItem}
-                scrollEnabled={false}
-                ListFooterComponent={
-                  <Animatable.View
-                    animation={"fadeInUp"}
-                    style={{
-                      marginTop: 100,
-                      paddingBottom: insets.bottom + 100,
-                    }}>
-                    <Image
-                      source={watermark}
+                scrollEnabled={true}
+                ListHeaderComponent={() => (
+                  <View>
+                    <Animatable.View
+                      animation={"fadeInLeft"}
                       style={{
                         width: "100%",
-                        height: 100,
-                        objectFit: "contain",
+                        height: 1,
+                        backgroundColor: currentColors.textShade,
+                        marginBottom: 20,
                       }}
                     />
-                  </Animatable.View>
+                    <Animatable.Text
+                      animation={"fadeInLeft"}
+                      style={{
+                        color: currentColors.text,
+                        fontSize: 20,
+                        fontWeight: "600",
+                        padding: 10,
+                      }}>
+                      News
+                    </Animatable.Text>
+                  </View>
+                )}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={async () => {
+                      setRefreshing(true);
+
+                      // Reset filter states before fetching data
+                      setSearchQuery("");
+                      setSelectedDistrict("");
+                      setSelectedTaluka("");
+
+                      await getAnnouncements(); // Fetch latest announcements
+                      console.log("first");
+                      await getDepartmentList(); // Fetch latest department list
+                      console.log("second");
+                      setRefreshing(false);
+                      await getUserSubscriptions(); // Fetch latest subscriptions
+                      console.log("third");
+                    }}
+                    colors={[currentColors.secondary]}
+                  />
                 }
               />
             </View>
           </>
         )}
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
