@@ -71,7 +71,8 @@ const CustomDrawer = (props: any) => {
     clearNotifications();
     router.replace("/welcome");
   };
-  // fetchUserData();
+ 
+  
 
   return (
     <NotificationProvider>
