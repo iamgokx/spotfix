@@ -275,7 +275,7 @@ const CitizenProposalSuggestionsList = ({
 
                     width: "60%",
                   }}>
-                  {!item.is_anonymous ? item.full_name : "Spotfix User"}
+                  {!item.is_anonymous ? item.citizen_name : "Spotfix User"}
                 </Text>
                 <Text
                   style={{

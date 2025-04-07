@@ -229,7 +229,7 @@ const Issue = ({ goToAddressScreen }: any) => {
                 setDetails((prev) => ({ ...prev, title: text }))
               }
               placeholderTextColor={currentColors.textShade}
-              placeholder="eg. Broke Street Light"></TextInput>
+              placeholder="eg. Broke Street Light (mimimum 20 characters)"></TextInput>
             {errors.title && (
               <Text style={{ color: "red", textAlign: "center" }}>
                 {errors.title}
@@ -253,7 +253,7 @@ const Issue = ({ goToAddressScreen }: any) => {
               onChangeText={(text) =>
                 setDetails((prev) => ({ ...prev, description: text }))
               }
-              placeholder="Briefly describe your issue"
+              placeholder="Briefly describe your issue (mimimum 50 characters)"
               placeholderTextColor={currentColors.textShade}></TextInput>
             {errors.description && (
               <Text style={{ color: "red", textAlign: "center" }}>
@@ -279,7 +279,7 @@ const Issue = ({ goToAddressScreen }: any) => {
                 setDetails((prev) => ({ ...prev, suggestions: text }))
               }
               placeholderTextColor={currentColors.textShade}
-              placeholder="Tell us about your solutions and suggestions to fix this issue"></TextInput>
+              placeholder="Tell us about your solutions and suggestions to fix this issue (mimimum 50 characters)"></TextInput>
             {errors.suggestions && (
               <Text style={{ color: "red", textAlign: "center" }}>
                 {errors.suggestions}

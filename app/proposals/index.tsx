@@ -124,7 +124,7 @@ const index = () => {
               onChangeText={(text) =>
                 setDetails((prev) => ({ ...prev, title: text }))
               }
-              placeholder="eg. Underground Power Cabling"
+              placeholder="eg. Underground Power Cabling (mimimum 20 characters)"
               placeholderTextColor={currentColors.textShade}></TextInput>
             {errors.title && (
               <Text style={{ color: "red", textAlign: "center" }}>
@@ -150,7 +150,7 @@ const index = () => {
               onChangeText={(text) =>
                 setDetails((prev) => ({ ...prev, description: text }))
               }
-              placeholder="Describe your proposal here"
+              placeholder="Describe your proposal here (mimimum 50 characters)"
               placeholderTextColor={currentColors.textShade}></TextInput>
             {errors.description && (
               <Text style={{ color: "red", textAlign: "center" }}>

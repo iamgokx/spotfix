@@ -103,8 +103,8 @@ const Layout = () => {
     <NavigationIndependentTree>
       <NavigationContainer>
         <Drawer.Navigator
-          // initialRouteName="DashBoard"
-          initialRouteName="Manage Sub Branch"
+          initialRouteName="DashBoard"
+          // initialRouteName="Manage Sub Branch"
           drawerContent={(props) => <CustomDrawerContent {...props} />}
           screenOptions={({ route }) => ({
             headerShown: false,
