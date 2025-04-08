@@ -21,6 +21,8 @@ const EditDepartments = () => {
   const [newDepartmentCoordinator, setNewDepartmentCoordinator] = useState("");
   const [newDepartmentCoordinatorEmail, setNewDepartmentCoordinatorEmail] =
     useState("");
+
+  const [newPhone, setnewPhone] = useState("");
   const [newState, setnewState] = useState("");
   const navigation = useNavigation();
   const [isDeleteModalActive, setisDeleteModalActive] = useState(false);
@@ -110,6 +112,27 @@ const EditDepartments = () => {
           }
         }
         break;
+
+      case "phone":
+        {
+          const trimmedPhone = newPhone.trim();
+          console.log("trimmedPhone: ", trimmedPhone);
+
+          if (!trimmedPhone) {
+            errors.phone = "Coordinator phone number is required.";
+            valid = false;
+          } else if (!/^[6-9]\d{9}$/.test(trimmedPhone)) {
+            errors.phone = "Enter a valid 10-digit Indian phone number";
+            valid = false;
+          } else if (departmentData[0].phone_number == trimmedPhone) {
+            errors.phone =
+              "New phone number cannot be the same as the old one.";
+            valid = false;
+          }
+        }
+        break;
+      //TODO check old and new number properly
+
       case "depEmail":
         {
           if (!newDepartmentCoordinatorEmail.trim()) {
@@ -149,7 +172,7 @@ const EditDepartments = () => {
 
   const updateDepName = async () => {
     try {
-      console.log('this ran');
+      console.log("this ran");
       const response = await axios.post(
         `http://${API_IP_ADDRESS}:8000/api/admin/updateDepName`,
         {
@@ -185,7 +208,7 @@ const EditDepartments = () => {
         {
           id: departmentData[0].department_id,
           value: newDepartmentCoordinator,
-          oldValue : departmentData[0].full_name
+          oldValue: departmentData[0].full_name,
         }
       );
 
@@ -215,7 +238,7 @@ const EditDepartments = () => {
         {
           id: departmentData[0].department_id,
           newEmail: newDepartmentCoordinatorEmail,
-          oldValue : departmentData[0].department_id
+          oldValue: departmentData[0].department_id,
         }
       );
 
@@ -237,9 +260,35 @@ const EditDepartments = () => {
       console.log(error);
     }
   };
+  const updateDepCoordPhone = async () => {
+    console.log("this is the new phone number  ");
+    try {
+      const response = await axios.post(
+        `http://${API_IP_ADDRESS}:8000/api/admin/updateDepPhoneNumber`,
+        {
+          id: departmentData[0].email,
+          newPhone: newPhone,
+          oldValue: departmentData[0].phone_number,
+        }
+      );
+      if (response.data.status) {
+        console.log(response.data.message);
+        setDepartmentData((prevData) => [
+          { ...prevData[0], phone_number: newPhone },
+        ]);
+        setmodalMessage(response.data.message);
+        setIsModalActive(true);
+      } else {
+        setmodalMessage(response.data.message);
+        setIsModalActive(true);
+        console.log(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const checkDepName = () => {
- 
     setErrors({});
     if (validate("departmentName")) {
       console.log("all good");
@@ -263,6 +312,16 @@ const EditDepartments = () => {
     if (validate("depEmail")) {
       console.log("all good");
       updateDepCoordEmail();
+    } else {
+      console.log("wrong");
+    }
+  };
+
+  const checkDepCoordPhone = () => {
+    setErrors({});
+    if (validate("phone")) {
+      console.log("all good");
+      updateDepCoordPhone();
     } else {
       console.log("wrong");
     }
@@ -320,6 +379,7 @@ const EditDepartments = () => {
                   setNewDepartmentName("");
                   setNewDepartmentCoordinator("");
                   setNewDepartmentCoordinatorEmail("");
+                  setnewPhone("");
                 }}
                 style={{ width: "40%" }}>
                 <Text
@@ -629,6 +689,75 @@ const EditDepartments = () => {
                   <TouchableOpacity
                     onPress={() => {
                       setNewDepartmentCoordinatorEmail("");
+                      setErrors({});
+                    }}
+                    style={{
+                      padding: 10,
+
+                      borderRadius: 500,
+                      backgroundColor: currentColors.secondary,
+                    }}>
+                    <Ionicons
+                      name={"close"}
+                      color={currentColors.text}
+                      size={24}
+                    />
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+            <View style={styles.inputContainer}>
+              <Text
+                style={{
+                  color: currentColors.textShade,
+                  paddingHorizontal: 15,
+                }}>
+                Phone Number of the Department Coordinator
+              </Text>
+
+              <TextInput
+                style={{
+                  height: 50,
+                  borderRadius: 30,
+                  backgroundColor: currentColors.inputField,
+                  paddingHorizontal: 15,
+                  fontSize: 16,
+                  color: currentColors.text,
+                }}
+                maxLength={10}
+                keyboardType="numeric"
+                placeholder={departmentData[0].phone_number}
+                placeholderTextColor={currentColors.textShade}
+                value={newPhone}
+                onChangeText={(text) => setnewPhone(text)}
+              />
+              {errors.phone && <Text style={styles.error}>{errors.phone}</Text>}
+              {newPhone != "" && (
+                <View
+                  style={{
+                    width: "100%",
+                    padding: 10,
+                    flexDirection: "row",
+                    justifyContent: "flex-end",
+                    gap: 10,
+                  }}>
+                  <TouchableOpacity
+                    onPress={checkDepCoordPhone}
+                    style={{
+                      padding: 10,
+
+                      backgroundColor: currentColors.secondary,
+                      borderRadius: 500,
+                    }}>
+                    <Ionicons
+                      name={"checkmark"}
+                      color={currentColors.text}
+                      size={24}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setnewPhone("");
                       setErrors({});
                     }}
                     style={{

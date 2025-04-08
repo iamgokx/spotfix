@@ -68,7 +68,7 @@ const CustomDrawer = (props: any) => {
 
   const handleLogOutButtonPress = () => {
     clearStorage();
-    clearNotifications();
+    // clearNotifications();
     router.replace("/welcome");
   };
  

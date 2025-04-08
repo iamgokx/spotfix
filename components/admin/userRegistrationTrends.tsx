@@ -166,13 +166,13 @@ const UserRegistrationTrends = () => {
               color: (opacity = 1) => `rgba(229, 245, 5, ${opacity})`,
               strokeWidth: 2,
             },
-            {
-              data: chartData.rejectedData,
-              color: (opacity = 1) => `rgba(255, 0, 0, ${opacity})`,
-              strokeWidth: 2,
-            },
+            // {
+            //   data: chartData.rejectedData,
+            //   color: (opacity = 1) => `rgba(255, 0, 0, ${opacity})`,
+            //   strokeWidth: 2,
+            // },
           ],
-          legend: ["Approved", "Pending", "Rejected"],
+          legend: ["Approved", "Banned"],
         }}
         width={Dimensions.get("window").width - 30}
         height={300}
@@ -211,10 +211,10 @@ const UserRegistrationTrends = () => {
             {chartDatag.pendingData.reduce((total, curr) => total + curr, 0)}
           </Text>
           <Text style={[styles.statsHeading, { color: currentColors.text }]}>
-            Pending Users
+            Banned Users
           </Text>
         </View>
-        <View
+        {/* <View
           style={[
             styles.statsBox,
             { backgroundColor: currentColors.backgroundDarker },
@@ -226,7 +226,7 @@ const UserRegistrationTrends = () => {
           <Text style={[styles.statsHeading, { color: currentColors.text }]}>
             Rejected Users
           </Text>
-        </View>
+        </View> */}
       </View>
     </>
   );

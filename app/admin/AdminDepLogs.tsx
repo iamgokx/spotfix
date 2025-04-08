@@ -66,7 +66,7 @@ const AdminDepLogs = () => {
           borderBottomColor: "#ccc",
           width: "100%",
         }}>
-       <Text style={{ fontWeight: "bold" }}>{item.action}</Text>
+        <Text style={{ fontWeight: "bold" }}>{item.action}</Text>
         <Text style={{ color: currentColors.text }}>
           <Text style={{ color: currentColors.secondary }}>ID : </Text>{" "}
           {item.id}
@@ -160,7 +160,7 @@ const AdminNameLogs = () => {
           borderBottomColor: "#ccc",
           width: "100%",
         }}>
-       <Text style={{ fontWeight: "bold" }}>{item.action}</Text>
+        <Text style={{ fontWeight: "bold" }}>{item.action}</Text>
         <Text style={{ color: currentColors.text }}>
           <Text style={{ color: currentColors.secondary }}>ID : </Text>{" "}
           {item.id}
@@ -254,7 +254,100 @@ const AdminEmailLogs = () => {
           borderBottomColor: "#ccc",
           width: "100%",
         }}>
-       <Text style={{ fontWeight: "bold" }}>{item.action}</Text>
+        <Text style={{ fontWeight: "bold" }}>{item.action}</Text>
+        <Text style={{ color: currentColors.text }}>
+          <Text style={{ color: currentColors.secondary }}>ID : </Text>{" "}
+          {item.id}
+        </Text>
+        <Text style={{ color: currentColors.text }}>
+          <Text style={{ color: currentColors.secondary }}>Old data : </Text>
+          {item.oldData}
+        </Text>
+        <Text style={{ color: currentColors.text }}>
+          <Text style={{ color: currentColors.secondary }}>New data: </Text>{" "}
+          {item.newData}
+        </Text>
+        <Text style={{ color: "gray" }}>
+          <Text style={{ color: currentColors.secondary }}>Timestamp : </Text>{" "}
+          {formattedDate}
+        </Text>
+      </View>
+    );
+  };
+
+  return (
+    <View
+      style={{
+        flex: 1,
+        padding: 20,
+        backgroundColor: currentColors.backgroundDarkest,
+      }}>
+      <FlatList
+        data={depCoordEmailLogs}
+        keyExtractor={(item, index) =>
+          `emaillog${item.id || index}-${item.timestamp}`
+        }
+        renderItem={renderItem}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      />
+    </View>
+  );
+};
+const AdminPhonelogs = () => {
+  const colorScheme = useColorScheme();
+  const currentColors = colorScheme === "dark" ? Colors.dark : Colors.light;
+
+  const [depCoordEmailLogs, setDepCoordEmailLogs] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const getDepLogs = async () => {
+    try {
+      const response = await axios.post(
+        `http://${API_IP_ADDRESS}:8000/api/admin/getDepCoordPhoneLogs`
+      );
+      if (response.data.status) {
+        setDepCoordEmailLogs(response.data.logs);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getDepLogs();
+  }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await getDepLogs();
+    setRefreshing(false);
+  };
+
+  const renderItem = ({ item, index }) => {
+    const utcDate = new Date(item.timestamp);
+    const formattedDate = utcDate.toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+
+    return (
+      <View
+        key={`emaillog-${item.id}-${item.timestamp}-${index}`}
+        style={{
+          padding: 10,
+          borderBottomWidth: 1,
+          borderBottomColor: "#ccc",
+          width: "100%",
+        }}>
+        <Text style={{ fontWeight: "bold" }}>{item.action}</Text>
         <Text style={{ color: currentColors.text }}>
           <Text style={{ color: currentColors.secondary }}>ID : </Text>{" "}
           {item.id}
@@ -316,6 +409,7 @@ const AdminLogs = () => {
           <Tab.Screen name="Department" component={AdminDepLogs} />
           <Tab.Screen name="Name" component={AdminNameLogs} />
           <Tab.Screen name="Email" component={AdminEmailLogs} />
+          <Tab.Screen name="Phone" component={AdminPhonelogs} />
         </Tab.Navigator>
       </NavigationContainer>
     </SafeAreaView>

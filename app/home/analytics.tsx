@@ -11,7 +11,7 @@ import watermark from "../../assets/images/watermark.png";
 import * as Animatable from "react-native-animatable";
 import IssueMapView from "../screens/IssueMapView";
 import { ScrollView } from "react-native-gesture-handler";
-const screenWidth = Dimensions.get("window").width -40;
+const screenWidth = Dimensions.get("window").width - 40;
 
 const dummyReportsData = [
   { month_year: "Jan 2024", report_count: 20 },
@@ -106,8 +106,6 @@ const analytics = () => {
       if (response.data.status) {
         // console.log("API Data:", response.data.results);
         setReportsData(response.data.results);
-
-        
       }
 
       const getPieChart = await axios.post(
@@ -501,7 +499,8 @@ const analytics = () => {
                   decimalPlaces: 2,
                   color: (opacity = 1) => `rgba(0, 128, 0, ${opacity})`,
                 }}
-                hideLegend={false}
+                hideLegend={true}
+                
                 style={{ borderRadius: 20 }}
               />
             </View>

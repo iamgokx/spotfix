@@ -153,6 +153,7 @@ const ManageSubBranchCoordinators = () => {
                   name: item.full_name,
                   pincodes: item.pincodes,
                   id: item.sub_department_coordinator_id,
+                  phonenumber : item.phone_number
                 },
               });
             }}

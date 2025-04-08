@@ -309,7 +309,7 @@ const Home = () => {
                   decimalPlaces: 2,
                   color: (opacity = 1) => `rgba(0, 128, 0, ${opacity})`,
                 }}
-                hideLegend={false}
+                hideLegend={true}
                 style={{ borderRadius: 20 }}
               />
             </View>

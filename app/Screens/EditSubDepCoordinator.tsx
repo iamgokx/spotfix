@@ -14,7 +14,8 @@ import socket from "@/hooks/useSocket";
 import { getStoredData } from "@/hooks/useJwt";
 
 const EditSubDepCoordinator = () => {
-  const { depId, depName, name, pincodes, id } = useLocalSearchParams();
+  const { depId, depName, name, pincodes, id, phonenumber } =
+    useLocalSearchParams();
 
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
@@ -24,11 +25,12 @@ const EditSubDepCoordinator = () => {
   const [subDepCoordName, setSubDepCoordName] = useState(name);
   const [subDepEmail, setSubDepEmail] = useState(id);
   const [subDepPincodes, setSubDepPincodes] = useState(pincodes);
+  const [subDepPhoneNumber, setsubDepPhoneNumber] = useState(phonenumber);
 
   const [newSubDepCoordName, setnewSubDepCoordName] = useState("");
   const [newPincodes, setnewPincodes] = useState("");
   const [newEmail, setnewEmail] = useState("");
-
+  const [newPhone, setnewPhone] = useState("");
   const [isModalActive, setIsModalActive] = useState(false);
   const [modalMessage, setmodalMessage] = useState("");
 
@@ -53,6 +55,26 @@ const EditSubDepCoordinator = () => {
           newSubDepCoordName.toLowerCase() == subDepCoordName.toLowerCase()
         ) {
           newErrors.name = "New name cannot be same as the old name...";
+          valid = false;
+        }
+
+        break;
+        
+      case "phone":
+        const trimmedPhone = newPhone.trim();
+        console.log("trimmedPhone: ", trimmedPhone);
+
+        if (!trimmedPhone) {
+          errors.phonenum = "Coordinator phone number is required.";
+          console.log(' errors.phone: ',  errors.phonenum);
+          valid = false;
+        } else if (!/^[6-9]\d{9}$/.test(trimmedPhone)) {
+          errors.phonenum = "Enter a valid 10-digit Indian phone number";
+          console.log('errors.phone: ', errors.phonenum);
+          valid = false;
+        } else if (phonenumber == trimmedPhone) {
+          errors.phonenum = "New phone number cannot be the same as the old one.";
+          console.log('errors.phone: ', errors.phonenum);
           valid = false;
         }
 
@@ -153,7 +175,7 @@ const EditSubDepCoordinator = () => {
           newName: newSubDepCoordName,
           email: subDepEmail,
           senderEmail: userEmail,
-          oldValue : subDepCoordName
+          oldValue: subDepCoordName,
         }
       );
 
@@ -206,7 +228,7 @@ const EditSubDepCoordinator = () => {
         {
           newPincodes,
           email: subDepEmail,
-          oldValue : subDepPincodes
+          oldValue: subDepPincodes,
         }
       );
 
@@ -214,6 +236,32 @@ const EditSubDepCoordinator = () => {
         console.log("Updated pincodes");
         setSubDepPincodes(newPincodes);
         setnewPincodes("");
+        setmodalMessage(response.data.message);
+        setIsModalActive(true);
+      } else {
+        setmodalMessage(response.data.message);
+        setIsModalActive(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const updateSubBranchPhoneNumber = async () => {
+    console.log("Updating pincodes...");
+    try {
+      const response = await axios.post(
+        `http://${API_IP_ADDRESS}:8000/api/branchCoordinator/updateSubDepCoordPhoneNumber`,
+        {
+          newPhone,
+          email: subDepEmail,
+          oldValue: subDepPhoneNumber,
+        }
+      );
+
+      if (response.data.status) {
+        console.log("Updated pincodes");
+        setsubDepPhoneNumber(newPhone);
+        setnewPhone("");
         setmodalMessage(response.data.message);
         setIsModalActive(true);
       } else {
@@ -242,6 +290,12 @@ const EditSubDepCoordinator = () => {
       case "pincodes":
         if (validate("pincodes")) {
           updateSubBranchPincodes();
+        }
+        break;
+      case "phone":
+        if (validate("phone")) {
+          updateSubBranchPhoneNumber();
+          console.log("valid phone");
         }
         break;
     }
@@ -487,6 +541,78 @@ const EditSubDepCoordinator = () => {
               </View>
             )}
           </View>
+
+          <View style={{ width: "100%", gap: 10 }}>
+            <Text style={{ color: currentColors.text }}>Phone Number</Text>
+
+            <View
+              style={{
+                width: "100%",
+                backgroundColor: currentColors.background,
+                padding: 5,
+                borderRadius: 10,
+              }}>
+              <TextInput
+                value={newPhone}
+                keyboardType="numeric"
+                maxLength={10}
+                placeholder={subDepPhoneNumber}
+                placeholderTextColor={currentColors.textShade}
+                onChangeText={(text) => {
+                  setnewPhone(text);
+                }}
+                style={{ color: currentColors.text }}></TextInput>
+            </View>
+            
+            {errors.phonenum && (
+              <Text style={{ color: "red" }}>{errors.phonenum}</Text>
+            )}
+
+            {newPhone != "" && (
+              <View
+                style={{
+                  width: "100%",
+                  padding: 10,
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+
+                  gap: 10,
+                }}>
+                <TouchableOpacity
+                  onPress={() => handleNameUPdatePress("phone")}
+                  style={{
+                    padding: 10,
+
+                    backgroundColor: currentColors.secondary,
+                    borderRadius: 900,
+                  }}>
+                  <Ionicons
+                    name={"checkmark"}
+                    color={currentColors.text}
+                    size={24}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    setnewPhone("");
+                    setErrors({});
+                  }}
+                  style={{
+                    padding: 10,
+
+                    borderRadius: 500,
+                    backgroundColor: currentColors.secondary,
+                  }}>
+                  <Ionicons
+                    name={"close"}
+                    color={currentColors.text}
+                    size={24}
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+
           <View style={{ width: "100%", gap: 10 }}>
             <Text style={{ color: currentColors.text }}>
               Pincodes (Add separated by comma)
@@ -538,7 +664,7 @@ const EditSubDepCoordinator = () => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
-                    setnewEmail("");
+                    setnewPincodes("");
                     setErrors({});
                   }}
                   style={{

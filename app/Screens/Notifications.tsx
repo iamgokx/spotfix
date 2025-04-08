@@ -25,7 +25,7 @@ const Notifications = () => {
     <View
       style={[
         styles.container,
-        { backgroundColor: currentColors.backgroundDarkest },
+        { backgroundColor: currentColors.backgroundDarkest , },
       ]}>
       <View
         style={{
@@ -55,7 +55,7 @@ const Notifications = () => {
             />
           </TouchableOpacity>
           <Text style={{ fontSize: 18, color: currentColors.secondary }}>
-            Notifications
+          Notifications
           </Text>
         </View>
       </View>
@@ -65,10 +65,10 @@ const Notifications = () => {
           No notifications yet.
         </Text>
       ) : (
-        <View>
+        <View style={{flex : 1,}}>
           <FlatList
             data={notifications}
-            style={{ padding: 10 }}
+            style={{ padding: 10  }}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <View

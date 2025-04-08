@@ -21,7 +21,7 @@ import { StyleSheet } from "react-native";
 import Subscribers from "./Subscribers";
 import ChangePassword from "./ChangePassword";
 import IssueMapViewDep from "./IssueMapViewDep";
-import Notifications from "./Notifications";
+
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -91,6 +91,7 @@ const TabNavigator = () => {
       <Tab.Screen name="MakeNew" component={MakeNew} />
       <Tab.Screen name="Announcement" component={Announcements} />
       <Tab.Screen name="Proposal" component={Proposals} />
+     
     </Tab.Navigator>
   );
 };

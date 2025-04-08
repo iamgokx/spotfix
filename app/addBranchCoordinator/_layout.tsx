@@ -14,7 +14,7 @@ const RootLayout = () => {
   const router = useRouter();
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="adminaddBranchCoordinator.tsx" />
+      <Stack.Screen name="adminaddBranchCoordinator" />
     </Stack>
   );
 };

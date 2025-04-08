@@ -870,7 +870,7 @@ const SubBranchDetailedIssue = () => {
         />
       )}
 
-      <TouchableOpacity
+      {issueDetails.issue_status != "completed" && <TouchableOpacity
         onPress={() => setIsDeleteModalActive(true)}
         style={{
           width: "100%",
@@ -881,7 +881,7 @@ const SubBranchDetailedIssue = () => {
         }}>
         <Feather name="trash-2" size={24} color={"white"} />
         <Text style={{ color: "white" }}>Reject & Delete</Text>
-      </TouchableOpacity>
+      </TouchableOpacity>}
 
       <Modal transparent visible={isDeleteModalActive} animationType="fade">
         <View style={styles.overlay}>
